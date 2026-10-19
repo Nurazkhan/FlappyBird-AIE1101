@@ -92,6 +92,63 @@
                 gain.connect(context.destination);
                 osc.start(now);
                 osc.stop(now + 0.34);
+            } else if (type === 'voltBlink') {
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+
+                osc.connect(gain);
+                gain.connect(context.destination);
+                osc.start(now);
+                osc.stop(now + 0.13);
+            } else if (type === 'echoPhase') {
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(360, now);
+                osc.frequency.linearRampToValueAtTime(720, now + 0.08);
+                osc.frequency.linearRampToValueAtTime(480, now + 0.18);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+                osc.connect(gain);
+                gain.connect(context.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'cinderRewind') {
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(640, now + 0.65);
+
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+                osc.connect(gain);
+                gain.connect(context.destination);
+                osc.start(now);
+                osc.stop(now + 0.7);
+            } else if (type === 'cinderExplosion') {
+                const osc = context.createOscillator();
+                const gain = context.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(190, now);
+                osc.frequency.exponentialRampToValueAtTime(26, now + 0.45);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+
+                osc.connect(gain);
+                gain.connect(context.destination);
+                osc.start(now);
+                osc.stop(now + 0.48);
             }
         }
 
@@ -133,14 +190,14 @@
         const CHARACTER_ROSTER_FILE = './flappy_pixel_9_character_svg_roster_ability_animations.html';
         const CHARACTER_ROSTER = [
             { id: 'cube01', spriteId: 'svg-char-01', name: 'CUBE-01', title: 'THE ORIGIN', ability: 'BASELINE ARCADE SKILL', description: 'No automatic ability. A pure handling test.', color: '#e4e4e7' },
-            { id: 'volt', spriteId: 'svg-char-02', name: 'VOLT-CUBE', title: 'THUNDER', ability: 'PHASE BLINK // EVERY 3RD JUMP', description: 'Teleports forward through the trench every third flap.', color: '#facc15' },
+            { id: 'volt', spriteId: 'svg-char-02', name: 'VOLT-CUBE', title: 'THUNDER', ability: 'PHASE BLINK // LIGHT PIXEL TRAIL', description: 'Teleports forward every 3rd flap, releasing a light yellow pixelated trail.', color: '#facc15' },
             { id: 'nimbus', spriteId: 'svg-char-03', name: 'NIMBUS', title: 'CLOUD', ability: 'MIST FORM // EVERY 5TH JUMP', description: 'Phases through obstacles for two seconds.', color: '#7dd3fc' },
             { id: 'aegis', spriteId: 'svg-char-04', name: 'AEGIS', title: 'IRONCLAD', ability: 'ABLATIVE ARMOR // 1-HIT SHIELD', description: 'Blocks one crash and recharges after five passes.', color: '#fb923c' },
             { id: 'prism', spriteId: 'svg-char-05', name: 'PRISM', title: 'GLASS', ability: 'SHARD RESONANCE // EVERY 4TH OBSTACLE', description: 'Widens every fourth obstacle gap by forty-five percent.', color: '#e879f9' },
-            { id: 'chrono', spriteId: 'svg-char-06', name: 'CHRONO', title: 'GLITCH', ability: 'TIME DILATION // DANGER SLOW-MO', description: 'Slows the world near danger; recharges in six jumps.', color: '#34d399' },
-            { id: 'cinder', spriteId: 'svg-char-07', name: 'CINDER', title: 'PHOENIX', ability: 'THERMAL UPDRAFT + ASH REBIRTH', description: 'Bounces off the floor and revives from one fatal crash.', color: '#f97316' },
-            { id: 'grav0', spriteId: 'svg-char-08', name: 'GRAV-0', title: 'VOID', ability: 'FEATHER-FALL // APEX HOVER', description: 'Hovers at each jump apex and falls more slowly.', color: '#a78bfa' },
-            { id: 'echo', spriteId: 'svg-char-09', name: 'ECHO', title: 'PHANTOM', ability: 'SHADOW DECOY // EVERY 6TH JUMP', description: 'Creates a double-score decoy that blocks one crash.', color: '#2dd4bf' }
+            { id: 'chrono', spriteId: 'svg-char-06', name: 'CHRONO', title: 'GLITCH', ability: 'TIME DILATION // LOW JUMP SLOW-MO', description: 'Slows the world near danger with decreased jump height for precise threading.', color: '#34d399' },
+            { id: 'cinder', spriteId: 'svg-char-07', name: 'CINDER', title: 'PHOENIX', ability: 'THERMAL UPDRAFT + ASH REBIRTH', description: 'Bounces off floor; upon crash, camera rewinds to death point and revives with an obstacle-clearing blast.', color: '#f97316' },
+            { id: 'grav0', spriteId: 'svg-char-08', name: 'GRAV-0', title: 'VOID', ability: 'FEATHER-FALL // EVERY 2ND JUMP HOVER', description: 'Applies apex hover and lower gravity only after every 2 jumps.', color: '#a78bfa' },
+            { id: 'echo', spriteId: 'svg-char-09', name: 'ECHO', title: 'PHANTOM', ability: 'SHADOW DECOY // PHANTOM TRAIL', description: 'Every 6th jump summons an animated shadow decoy with ghost trails and double score.', color: '#2dd4bf' }
         ];
 
         /**
@@ -287,13 +344,27 @@
         let chronoTimer = 0;
         let gravHoverTimer = 0;
         let gravHoverArmed = false;
+        let gravJumpCount = 0;
         let echoTimer = 0;
         let echoDodgeReady = false;
+        let echoTrailHistory = [];
         let aegisShieldReady = true;
         let aegisRechargePasses = 0;
         let chronoReady = true;
         let chronoRechargeJumps = 0;
         let cinderReviveReady = true;
+        let cinderAuraTimer = 0;
+        let voltTrailTimer = 0;
+        let cinderReviveSequence = {
+            active: false,
+            phase: 'none',
+            timer: 0,
+            deathX: 0,
+            deathY: 0,
+            cameraOffset: 0,
+            targetObstacle: null,
+            ashParticles: []
+        };
         let abilityFlashTimer = 0;
         let abilityFlashText = '';
 
@@ -309,13 +380,27 @@
             chronoTimer = 0;
             gravHoverTimer = 0;
             gravHoverArmed = false;
+            gravJumpCount = 0;
             echoTimer = 0;
             echoDodgeReady = false;
+            echoTrailHistory = [];
             aegisShieldReady = true;
             aegisRechargePasses = 0;
             chronoReady = true;
             chronoRechargeJumps = 0;
             cinderReviveReady = true;
+            cinderAuraTimer = 0;
+            voltTrailTimer = 0;
+            cinderReviveSequence = {
+                active: false,
+                phase: 'none',
+                timer: 0,
+                deathX: 0,
+                deathY: 0,
+                cameraOffset: 0,
+                targetObstacle: null,
+                ashParticles: []
+            };
             abilityFlashTimer = 0;
             abilityFlashText = '';
             updateCharacterUI();
@@ -418,12 +503,15 @@
         }
 
         function spawnFlapBurstParticles() {
+            const isChronoSlow = selectedCharacterId === 'chrono' && chronoTimer > 0;
+            const isVoltBlink = selectedCharacterId === 'volt' && jumpCount % 3 === 0;
+
             shockwaves.push({
                 x: hero.x + hero.width / 2,
                 y: hero.y + hero.height + 2,
                 w: 36,
                 h: 6,
-                maxW: 92,
+                maxW: isChronoSlow ? 60 : 92,
                 life: 1.0,
                 type: 'flap'
             });
@@ -432,7 +520,14 @@
                 const isHollow = i < 7;
                 const size = isHollow ? (8 + (i % 2) * 4) : (4 + (i % 2) * 2);
                 const spreadAngle = (Math.PI * 0.5) + (Math.random() - 0.5) * 1.15;
-                const speed = 130 + Math.random() * 210;
+                const speed = (isChronoSlow ? 80 : 130) + Math.random() * (isChronoSlow ? 120 : 210);
+
+                let pColor = i % 3 === 0 ? '#d4d4de' : '#ffffff';
+                if (isChronoSlow) {
+                    pColor = i % 2 === 0 ? '#34d399' : '#a7f3d0';
+                } else if (isVoltBlink) {
+                    pColor = i % 2 === 0 ? '#fef08a' : '#facc15';
+                }
 
                 particles.push({
                     x: hero.x + hero.width * 0.5 + (Math.random() * 24 - 12),
@@ -441,12 +536,319 @@
                     vy: Math.sin(spreadAngle) * speed * 0.85,
                     size: size,
                     hollow: isHollow,
-                    color: i % 3 === 0 ? '#d4d4de' : '#ffffff',
+                    color: pColor,
                     innerColor: '#08080a',
                     life: 1.0,
                     decay: 1.6 + Math.random() * 1.1,
                     gravity: 340
                 });
+            }
+        }
+
+        function spawnVoltBlinkTrail(startX, startY, endX, endY) {
+            const steps = 28;
+            const colors = ['#fef08a', '#facc15', '#fef9c3', '#ffffff', '#fde047'];
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const px = startX + (endX - startX) * t;
+                const py = startY + (endY - startY) * t;
+                const size = (i % 2 === 0) ? (6 + Math.floor(Math.random() * 3) * 2) : (4 + Math.floor(Math.random() * 2) * 2);
+                particles.push({
+                    x: px + (Math.random() * 14 - 7),
+                    y: py + hero.height * 0.5 + (Math.random() * 26 - 13),
+                    vx: -(70 + Math.random() * 80),
+                    vy: (Math.random() - 0.5) * 50,
+                    size: size,
+                    hollow: Math.random() < 0.35,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    innerColor: '#18181b',
+                    life: 1.0,
+                    decay: 1.2 + Math.random() * 0.9,
+                    gravity: 0
+                });
+            }
+
+            shockwaves.push({
+                x: hero.x + hero.width / 2,
+                y: hero.y + hero.height / 2,
+                w: 44,
+                h: 44,
+                maxW: 120,
+                life: 0.85,
+                type: 'explosion'
+            });
+        }
+
+        function spawnEchoAbilityBurst() {
+            shockwaves.push({
+                x: hero.x + hero.width / 2,
+                y: hero.y + hero.height / 2,
+                w: 36,
+                h: 36,
+                maxW: 140,
+                life: 1.0,
+                type: 'explosion'
+            });
+            const colors = ['#2dd4bf', '#5eead4', '#99f6e4', '#14b8a6'];
+            for (let i = 0; i < 24; i++) {
+                const angle = (Math.PI * 2 * i) / 24;
+                const speed = 90 + Math.random() * 140;
+                particles.push({
+                    x: hero.x + hero.width / 2,
+                    y: hero.y + hero.height / 2,
+                    vx: Math.cos(angle) * speed - 60,
+                    vy: Math.sin(angle) * speed,
+                    size: i % 2 === 0 ? 6 : 4,
+                    hollow: i % 3 === 0,
+                    color: colors[i % colors.length],
+                    innerColor: '#042f2e',
+                    life: 0.9,
+                    decay: 1.4,
+                    gravity: 0
+                });
+            }
+        }
+
+        function spawnEchoDecoyShatter(cx, cy) {
+            impactFlashAlpha = 0.6;
+            screenShakeTime = 0.25;
+            screenShakeIntensity = 8;
+            shockwaves.push({
+                x: cx + 20,
+                y: cy + 20,
+                w: 24,
+                h: 24,
+                maxW: 130,
+                life: 0.8,
+                type: 'explosion'
+            });
+            for (let i = 0; i < 28; i++) {
+                const angle = (Math.PI * 2 * i) / 28;
+                const speed = 100 + Math.random() * 220;
+                particles.push({
+                    x: cx + 20,
+                    y: cy + 20,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 40,
+                    size: i % 2 === 0 ? 8 : 4,
+                    hollow: true,
+                    color: i % 2 === 0 ? '#2dd4bf' : '#99f6e4',
+                    innerColor: '#09090b',
+                    life: 0.8,
+                    decay: 1.6,
+                    gravity: 300
+                });
+            }
+        }
+
+        function findNearestObstacle(heroX) {
+            if (obstacles.length === 0) return null;
+            let closest = null;
+            let minDist = Infinity;
+            for (let i = 0; i < obstacles.length; i++) {
+                const ob = obstacles[i];
+                const dist = Math.abs((ob.x + ob.width / 2) - heroX);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = ob;
+                }
+            }
+            return closest;
+        }
+
+        function spawnObstacleExplosionFragments(ob) {
+            const ox = ob.x + ob.width / 2;
+            for (let i = 0; i < 22; i++) {
+                const py = Math.random() * ob.gapTop;
+                particles.push({
+                    x: ox + (Math.random() * 64 - 32),
+                    y: py,
+                    vx: (Math.random() - 0.4) * 360,
+                    vy: (Math.random() - 0.5) * 320 - 90,
+                    size: 6 + Math.floor(Math.random() * 4) * 2,
+                    hollow: Math.random() < 0.4,
+                    color: Math.random() < 0.45 ? '#f97316' : (Math.random() < 0.5 ? '#ffffff' : '#3f3f46'),
+                    innerColor: '#09090b',
+                    life: 1.2,
+                    decay: 0.85 + Math.random() * 0.5,
+                    gravity: 720
+                });
+            }
+            for (let i = 0; i < 22; i++) {
+                const py = ob.gapBottom + Math.random() * (GAME_HEIGHT - ob.gapBottom);
+                particles.push({
+                    x: ox + (Math.random() * 64 - 32),
+                    y: py,
+                    vx: (Math.random() - 0.4) * 360,
+                    vy: (Math.random() - 0.5) * 320 - 90,
+                    size: 6 + Math.floor(Math.random() * 4) * 2,
+                    hollow: Math.random() < 0.4,
+                    color: Math.random() < 0.45 ? '#fde047' : (Math.random() < 0.5 ? '#e4e4e7' : '#27272a'),
+                    innerColor: '#09090b',
+                    life: 1.2,
+                    decay: 0.85 + Math.random() * 0.5,
+                    gravity: 720
+                });
+            }
+            shockwaves.push({
+                x: ox,
+                y: Math.max(40, ob.gapTop - 20),
+                w: 48,
+                h: 48,
+                maxW: 180,
+                life: 0.95,
+                type: 'explosion'
+            });
+            shockwaves.push({
+                x: ox,
+                y: Math.min(GAME_HEIGHT - 40, ob.gapBottom + 20),
+                w: 48,
+                h: 48,
+                maxW: 180,
+                life: 0.95,
+                type: 'explosion'
+            });
+        }
+
+        function startCinderReviveSequence(obstacle) {
+            cinderReviveSequence.active = true;
+            cinderReviveSequence.phase = 'shatter';
+            cinderReviveSequence.timer = 0;
+            cinderReviveSequence.deathX = hero.x;
+            cinderReviveSequence.deathY = hero.y;
+            cinderReviveSequence.cameraOffset = 0;
+            cinderReviveSequence.targetObstacle = obstacle || findNearestObstacle(hero.x);
+            cinderReviveSequence.ashParticles = [];
+
+            hero.alive = false;
+            screenShakeTime = 0.35;
+            screenShakeIntensity = 12;
+            impactFlashAlpha = 0.9;
+            playPixelSound('collision');
+
+            const colors = ['#f97316', '#ef4444', '#fde047', '#ffffff', '#ea580c'];
+            for (let i = 0; i < 46; i++) {
+                const angle = (Math.PI * 2 * i) / 46 + (Math.random() - 0.5) * 0.3;
+                const speed = 60 + Math.random() * 220;
+                cinderReviveSequence.ashParticles.push({
+                    x: hero.x + hero.width / 2,
+                    y: hero.y + hero.height / 2,
+                    originX: hero.x + hero.width / 2,
+                    originY: hero.y + hero.height / 2,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 30,
+                    size: i % 2 === 0 ? 6 : 4,
+                    color: colors[i % colors.length],
+                    alpha: 1.0
+                });
+            }
+
+            announceAbility('ASH REBIRTH // REVERSING TIME...', 1.4);
+        }
+
+        function updateCinderReviveSequence(dt) {
+            cinderReviveSequence.timer += dt;
+
+            if (cinderReviveSequence.phase === 'shatter') {
+                for (let i = 0; i < cinderReviveSequence.ashParticles.length; i++) {
+                    const p = cinderReviveSequence.ashParticles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vx *= 0.92;
+                    p.vy *= 0.92;
+                }
+                if (cinderReviveSequence.timer >= 0.4) {
+                    cinderReviveSequence.phase = 'rewind';
+                    cinderReviveSequence.timer = 0;
+                    playPixelSound('cinderRewind');
+                    announceAbility('TIME REVERSING // RECONVERGING AT DEATH POINT', 1.0);
+                }
+            } else if (cinderReviveSequence.phase === 'rewind') {
+                const duration = 0.8;
+                const t = Math.min(1, cinderReviveSequence.timer / duration);
+                const rewindMax = 180;
+                cinderReviveSequence.cameraOffset = Math.sin(t * Math.PI) * rewindMax;
+
+                const targetX = cinderReviveSequence.deathX + hero.width / 2;
+                const targetY = cinderReviveSequence.deathY + hero.height / 2;
+                for (let i = 0; i < cinderReviveSequence.ashParticles.length; i++) {
+                    const p = cinderReviveSequence.ashParticles[i];
+                    p.x += (targetX - p.x) * 6 * dt;
+                    p.y += (targetY - p.y) * 6 * dt;
+                }
+
+                if (cinderReviveSequence.timer >= duration) {
+                    cinderReviveSequence.phase = 'explode';
+                    cinderReviveSequence.timer = 0;
+                    cinderReviveSequence.cameraOffset = 0;
+
+                    playPixelSound('cinderExplosion');
+                    screenShakeTime = 0.48;
+                    screenShakeIntensity = 18;
+                    impactFlashAlpha = 1.0;
+
+                    shockwaves.push({
+                        x: targetX,
+                        y: targetY,
+                        w: 32,
+                        h: 32,
+                        maxW: 240,
+                        life: 1.0,
+                        type: 'explosion'
+                    });
+
+                    const colors = ['#f97316', '#fde047', '#ef4444', '#ffffff'];
+                    for (let i = 0; i < 50; i++) {
+                        const angle = (Math.PI * 2 * i) / 50;
+                        const speed = 120 + Math.random() * 340;
+                        particles.push({
+                            x: targetX,
+                            y: targetY,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed - 50,
+                            size: i % 2 === 0 ? 8 : 4,
+                            hollow: i % 3 === 0,
+                            color: colors[i % colors.length],
+                            innerColor: '#09090b',
+                            life: 1.1,
+                            decay: 1.0 + Math.random() * 0.5,
+                            gravity: 500
+                        });
+                    }
+
+                    let destroyedAny = false;
+                    for (let i = obstacles.length - 1; i >= 0; i--) {
+                        const ob = obstacles[i];
+                        if (ob === cinderReviveSequence.targetObstacle ||
+                            (ob.x < hero.x + 130 && ob.x + ob.width > hero.x - 50)) {
+                            spawnObstacleExplosionFragments(ob);
+                            obstacles.splice(i, 1);
+                            destroyedAny = true;
+                        }
+                    }
+                    if (!destroyedAny) {
+                        const nearest = findNearestObstacle(hero.x);
+                        if (nearest) {
+                            spawnObstacleExplosionFragments(nearest);
+                            const idx = obstacles.indexOf(nearest);
+                            if (idx >= 0) obstacles.splice(idx, 1);
+                        }
+                    }
+
+                    hero.alive = true;
+                    hero.x = cinderReviveSequence.deathX;
+                    hero.y = Math.max(40, Math.min(GAME_HEIGHT - 120, cinderReviveSequence.deathY));
+                    hero.vy = -430;
+                    cinderAuraTimer = 1.3;
+                    announceAbility('PHOENIX REBIRTH // OBSTACLE DESTROYED!', 1.4);
+                }
+            } else if (cinderReviveSequence.phase === 'explode') {
+                if (cinderReviveSequence.timer >= 0.4) {
+                    cinderReviveSequence.active = false;
+                    cinderReviveSequence.phase = 'none';
+                    cinderReviveSequence.cameraOffset = 0;
+                    cinderReviveSequence.ashParticles = [];
+                }
             }
         }
 
@@ -580,6 +982,11 @@
                 e.preventDefault();
             }
 
+            // During Cinder's shatter/rewind cutscene, ignore flap until revived
+            if (cinderReviveSequence.active && cinderReviveSequence.phase !== 'explode') {
+                return;
+            }
+
             // Request the audio unlock inside the actual input event. Browsers will
             // otherwise keep Web Audio suspended even though the game is running.
             if (soundEnabled) unlockAudio();
@@ -602,9 +1009,14 @@
 
         function applyHeroFlapImpulse() {
             const preset = DIFFICULTY_PRESETS[currentDifficulty];
-            hero.vy = preset.jumpImpulse;
-            hero.scaleX = 1.18;
-            hero.scaleY = 0.82;
+            let impulse = preset.jumpImpulse;
+            // Chrono: In slowed motion, decrease the jump height for tight, controlled micro-hops
+            if (selectedCharacterId === 'chrono' && chronoTimer > 0) {
+                impulse *= 0.65;
+            }
+            hero.vy = impulse;
+            hero.scaleX = (selectedCharacterId === 'chrono' && chronoTimer > 0) ? 1.09 : 1.18;
+            hero.scaleY = (selectedCharacterId === 'chrono' && chronoTimer > 0) ? 0.91 : 0.82;
             hero.flapAnimTimer = 0.16;
 
             spawnFlapBurstParticles();
@@ -616,8 +1028,12 @@
             jumpCount += 1;
 
             if (selectedCharacterId === 'volt' && jumpCount % 3 === 0) {
-                obstacles.forEach((obstacle) => { obstacle.x -= 112; });
-                announceAbility('PHASE BLINK', 0.65);
+                const blinkDist = 112;
+                obstacles.forEach((obstacle) => { obstacle.x -= blinkDist; });
+                voltTrailTimer = 0.65;
+                spawnVoltBlinkTrail(hero.x - blinkDist, hero.y, hero.x, hero.y);
+                announceAbility('PHASE BLINK // LIGHT TRAIL', 0.65);
+                playPixelSound('voltBlink');
             } else if (selectedCharacterId === 'nimbus' && jumpCount % 5 === 0) {
                 phaseTimer = 2;
                 announceAbility('MIST FORM // 2.0S', 2);
@@ -629,11 +1045,22 @@
                     announceAbility('TIME CORE READY', 0.8);
                 }
             } else if (selectedCharacterId === 'grav0') {
-                gravHoverArmed = true;
+                // Grav-O: Ability applied only after 2 jumps, not after every
+                gravJumpCount += 1;
+                if (gravJumpCount % 2 === 0) {
+                    gravHoverArmed = true;
+                    announceAbility('VOID CORE READY // APEX HOVER ARMED', 0.65);
+                } else {
+                    gravHoverArmed = false;
+                    announceAbility('GRAV-0 CHARGING // JUMP 1/2', 0.5);
+                }
             } else if (selectedCharacterId === 'echo' && jumpCount % 6 === 0) {
                 echoTimer = 2.5;
                 echoDodgeReady = true;
-                announceAbility('SHADOW DECOY // 2X SCORE', 2.5);
+                echoTrailHistory = [];
+                spawnEchoAbilityBurst();
+                announceAbility('SHADOW DECOY // PHANTOM TRAIL', 2.5);
+                playPixelSound('echoPhase');
             }
         }
 
@@ -724,8 +1151,31 @@
                 const thumbCtx = thumb.getContext('2d');
                 thumbCtx.imageSmoothingEnabled = false;
                 thumbCtx.clearRect(0, 0, thumb.width, thumb.height);
-                thumbCtx.drawImage(sprite, 8, 8, thumb.width - 16, thumb.height - 16);
+
+                // Subtle floor shadow pedestal under the cube
+                thumbCtx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+                thumbCtx.fillRect(Math.round(thumb.width * 0.15), thumb.height - 10, Math.round(thumb.width * 0.7), 6);
+
+                // Draw sprite large, crisp, edge-to-edge
+                thumbCtx.drawImage(sprite, 2, 2, thumb.width - 4, thumb.height - 12);
             });
+
+            // Also draw the large active pilot showcase preview in the shop detail footer
+            const active = getActiveCharacter();
+            const bigCanvas = document.getElementById('shopSelectedHeroBig');
+            const bigSprite = SPRITE_CACHE[`character-${active.id}`];
+            if (bigCanvas && bigSprite) {
+                const bigCtx = bigCanvas.getContext('2d');
+                bigCtx.imageSmoothingEnabled = false;
+                bigCtx.clearRect(0, 0, bigCanvas.width, bigCanvas.height);
+
+                // Pedestal shadow
+                bigCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                bigCtx.fillRect(16, bigCanvas.height - 14, bigCanvas.width - 32, 8);
+
+                // Draw large showcase cube
+                bigCtx.drawImage(bigSprite, 4, 4, bigCanvas.width - 8, bigCanvas.height - 16);
+            }
         }
 
         function renderShop() {
@@ -735,19 +1185,41 @@
 
             grid.innerHTML = CHARACTER_ROSTER.map((character, index) => {
                 const selected = character.id === selectedCharacterId;
-                return `<button type="button" onclick="selectCharacter('${character.id}')" class="border-2 bg-neutral-900 p-2 text-left transition-transform active:translate-y-px ${selected ? 'border-white' : 'border-neutral-700 hover:border-neutral-400'}" aria-pressed="${selected}">
-                    <div class="flex items-start justify-between gap-2">
-                        <span class="font-pixel text-[9px]" style="color:${character.color}">0${index + 1}</span>
-                        <span class="font-pixel text-[8px] text-neutral-500">${selected ? 'EQUIPPED' : 'SELECT'}</span>
+                return `<button type="button" onclick="selectCharacter('${character.id}')" class="group relative border-2 bg-neutral-900 p-3 sm:p-4 text-left transition-all active:translate-y-px ${selected ? 'border-white bg-neutral-800/90 shadow-[0_0_16px_rgba(255,255,255,0.2)]' : 'border-neutral-700 hover:border-neutral-400 hover:bg-neutral-850'}" aria-pressed="${selected}">
+                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                        <span class="font-pixel text-[10px] font-bold" style="color:${character.color}">0${index + 1}</span>
+                        <span class="font-pixel text-[8px] px-1.5 py-0.5 rounded-sm ${selected ? 'bg-white text-black font-bold' : 'text-neutral-400 bg-neutral-950/80 border border-neutral-800'}">${selected ? 'EQUIPPED' : 'SELECT'}</span>
                     </div>
-                    <canvas id="shopSprite-${character.id}" width="88" height="88" class="mx-auto my-1 block h-16 w-16 sm:h-20 sm:w-20"></canvas>
-                    <span class="block font-pixel text-[10px] text-white sm:text-xs">${character.name}</span>
-                    <span class="mt-1 block text-[9px] leading-snug text-neutral-400">${character.title}</span>
+                    <!-- Large Sprite Canvas Display -->
+                    <div class="relative py-2 flex items-center justify-center bg-neutral-950/70 rounded-md border border-neutral-800/80 my-2">
+                        <canvas id="shopSprite-${character.id}" width="160" height="160" class="block h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 drop-shadow-[0_4px_8px_rgba(0,0,0,0.65)] transition-transform group-hover:scale-105"></canvas>
+                    </div>
+                    <span class="block font-pixel text-xs sm:text-sm text-white font-bold tracking-wide">${character.name}</span>
+                    <span class="mt-0.5 block font-pixel text-[9px] leading-snug" style="color:${character.color}">${character.title}</span>
                 </button>`;
             }).join('');
 
             const active = getActiveCharacter();
-            detail.innerHTML = `<span class="font-pixel text-[10px]" style="color:${active.color}">${active.name} // ${active.title}</span><p class="mt-1 font-pixel text-[10px] text-white">${active.ability}</p><p class="mt-1 text-[11px] text-neutral-400">${active.description}</p>`;
+            detail.innerHTML = `
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                    <div class="relative flex-shrink-0">
+                        <canvas id="shopSelectedHeroBig" width="180" height="180" class="w-24 h-24 sm:w-28 sm:h-28 border-2 bg-neutral-950 p-1.5 rounded-md" style="border-color:${active.color}; box-shadow: 0 0 18px ${active.color}40;"></canvas>
+                        <span class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-black border text-[8px] font-pixel text-white whitespace-nowrap shadow-sm" style="border-color:${active.color}">EQUIPPED</span>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-between gap-2 border-b border-neutral-800 pb-2">
+                            <div>
+                                <span class="font-pixel text-sm sm:text-base font-bold text-white tracking-wider">${active.name}</span>
+                                <span class="ml-2 font-pixel text-[10px] px-2 py-0.5 rounded-sm" style="color:${active.color}; background: ${active.color}22; border: 1px solid ${active.color}66">${active.title}</span>
+                            </div>
+                            <span class="font-pixel text-[9px] text-neutral-400">PILOT HANGAR // STATUS: READY</span>
+                        </div>
+                        <div class="mt-2.5">
+                            <span class="font-pixel text-[10px] text-amber-300 block mb-1">ABILITY: ${active.ability}</span>
+                            <p class="text-xs leading-relaxed text-neutral-300">${active.description}</p>
+                        </div>
+                    </div>
+                </div>`;
             drawShopSpriteThumbnails();
         }
 
@@ -791,6 +1263,7 @@
             if (selectedCharacterId === 'echo' && echoDodgeReady) {
                 echoDodgeReady = false;
                 echoTimer = 0;
+                spawnEchoDecoyShatter(hero.x - 56, hero.y);
                 if (obstacle) {
                     hero.y = Math.max(12, Math.min(GAME_HEIGHT - hero.height - 28, (obstacle.gapTop + obstacle.gapBottom) / 2 - hero.height / 2));
                     const obstacleIndex = obstacles.indexOf(obstacle);
@@ -803,13 +1276,7 @@
 
             if (selectedCharacterId === 'cinder' && cinderReviveReady) {
                 cinderReviveReady = false;
-                hero.y = GAME_HEIGHT * 0.42;
-                hero.vy = -440;
-                if (obstacle) {
-                    const obstacleIndex = obstacles.indexOf(obstacle);
-                    if (obstacleIndex >= 0) obstacles.splice(obstacleIndex, 1);
-                }
-                announceAbility('ASH REBIRTH // ONE REVIVE USED', 1.3);
+                startCinderReviveSequence(obstacle);
                 return true;
             }
 
@@ -818,6 +1285,7 @@
 
         function triggerGameOver(reasonText, obstacle = null) {
             if (!hero.alive) return;
+            if (cinderReviveSequence.active) return;
             if (avertCrash(obstacle)) return;
             hero.alive = false;
             gameState = 'GAMEOVER';
@@ -850,6 +1318,11 @@
         }
 
         function updateGame(dt) {
+            if (cinderReviveSequence.active) {
+                updateCinderReviveSequence(dt);
+                return;
+            }
+
             const preset = DIFFICULTY_PRESETS[currentDifficulty];
             const chronoMultiplier = chronoTimer > 0 ? 0.6 : 1;
             const scrollSpeed = (gameState === 'PLAYING' ? preset.speed : (gameState === 'START' ? 110 : 40)) * chronoMultiplier;
@@ -928,7 +1401,55 @@
             if (phaseTimer > 0) phaseTimer = Math.max(0, phaseTimer - dt);
             if (chronoTimer > 0) chronoTimer = Math.max(0, chronoTimer - dt);
             if (gravHoverTimer > 0) gravHoverTimer = Math.max(0, gravHoverTimer - dt);
-            if (echoTimer > 0) echoTimer = Math.max(0, echoTimer - dt);
+            if (cinderAuraTimer > 0) cinderAuraTimer = Math.max(0, cinderAuraTimer - dt);
+
+            // Volt Cube: Continuous light yellow pixelated trail during blink ability
+            if (voltTrailTimer > 0) {
+                voltTrailTimer = Math.max(0, voltTrailTimer - dt);
+                if (Math.random() < 0.85) {
+                    const colors = ['#fef08a', '#facc15', '#fef9c3', '#ffffff', '#fde047'];
+                    particles.push({
+                        x: hero.x - 6 + (Math.random() * 8 - 4),
+                        y: hero.y + hero.height * 0.5 + (Math.random() * 22 - 11),
+                        vx: -(150 + Math.random() * 80),
+                        vy: (Math.random() - 0.5) * 40,
+                        size: Math.random() < 0.4 ? 6 : 4,
+                        hollow: Math.random() < 0.3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        innerColor: '#09090b',
+                        life: 0.8,
+                        decay: 1.8 + Math.random() * 0.8,
+                        gravity: 0
+                    });
+                }
+            }
+
+            // Echo: Continuous phantom trail particles and position history during shadow decoy ability
+            if (echoTimer > 0) {
+                echoTimer = Math.max(0, echoTimer - dt);
+                echoTrailHistory.unshift({ x: hero.x, y: hero.y, rotation: hero.rotation });
+                if (echoTrailHistory.length > 20) echoTrailHistory.pop();
+
+                if (Math.random() < 0.85) {
+                    const colors = ['#2dd4bf', '#5eead4', '#99f6e4', '#14b8a6'];
+                    particles.push({
+                        x: hero.x - 8 + (Math.random() * 8 - 4),
+                        y: hero.y + hero.height * 0.5 + (Math.random() * 24 - 12),
+                        vx: -(130 + Math.random() * 70),
+                        vy: (Math.random() - 0.5) * 35,
+                        size: Math.random() < 0.4 ? 6 : 4,
+                        hollow: Math.random() < 0.35,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        innerColor: '#042f2e',
+                        life: 0.8,
+                        decay: 1.6 + Math.random() * 0.8,
+                        gravity: 0
+                    });
+                }
+            } else {
+                if (echoTrailHistory.length > 0) echoTrailHistory.pop();
+            }
+
             if (abilityFlashTimer > 0) {
                 abilityFlashTimer = Math.max(0, abilityFlashTimer - dt);
                 if (abilityFlashTimer === 0) updateCharacterUI();
@@ -949,7 +1470,12 @@
 
             // 6. Update Hero Physics (Smooth 60FPS Gravity, Squash & Stretch)
             let gravityMultiplier = chronoTimer > 0 ? 0.6 : 1;
-            if (selectedCharacterId === 'grav0') gravityMultiplier *= gravHoverTimer > 0 ? 0 : 0.65;
+            if (selectedCharacterId === 'grav0') {
+                // Feather-fall gravity applies only when apex hover is armed (jump 2) or active
+                if (gravHoverArmed || gravHoverTimer > 0) {
+                    gravityMultiplier *= 0.65;
+                }
+            }
             hero.vy += preset.gravity * gravityMultiplier * dt;
             if (selectedCharacterId === 'grav0' && gravHoverArmed && hero.vy >= 0) {
                 gravHoverArmed = false;
@@ -1205,6 +1731,7 @@
             const cy = Math.round(hero.y + hero.height / 2);
             const character = getActiveCharacter();
             const active = phaseTimer > 0 || chronoTimer > 0 || gravHoverTimer > 0 || echoTimer > 0 ||
+                voltTrailTimer > 0 || gravHoverArmed || cinderAuraTimer > 0 ||
                 (selectedCharacterId === 'aegis' && aegisShieldReady);
             if (!active) return;
 
@@ -1217,21 +1744,118 @@
                 ctx.strokeRect(cx - 38, cy - 38, 76, 76);
                 ctx.strokeRect(cx - 34, cy - 34, 68, 68);
             } else if (selectedCharacterId === 'echo' && echoTimer > 0) {
-                ctx.strokeRect(cx - 58, cy - 24, 40, 40);
-                ctx.fillStyle = character.color;
-                ctx.globalAlpha = 0.22;
-                ctx.fillRect(cx - 56, cy - 22, 36, 36);
+                // 1. Phasing ghost trail along recent flight trajectory
+                for (let i = 0; i < echoTrailHistory.length; i += 4) {
+                    const ghost = echoTrailHistory[i];
+                    if (!ghost) continue;
+                    const ghostIndex = i / 4;
+                    const ghostAlpha = Math.max(0, (1 - ghostIndex * 0.28) * 0.5);
+                    ctx.save();
+                    ctx.globalAlpha = ghostAlpha;
+                    ctx.strokeStyle = '#2dd4bf';
+                    ctx.lineWidth = 2;
+                    const gx = Math.round(ghost.x + hero.width / 2);
+                    const gy = Math.round(ghost.y + hero.height / 2);
+                    const glitchOffset = Math.sin(performance.now() * 0.04 + ghostIndex) * 3;
+                    ctx.strokeRect(gx - 22 + glitchOffset, gy - 22, 44, 44);
+                    ctx.fillStyle = '#5eead4';
+                    ctx.globalAlpha = ghostAlpha * 0.22;
+                    ctx.fillRect(gx - 20 + glitchOffset, gy - 20, 40, 40);
+                    ctx.restore();
+                }
+
+                // 2. Animated Shadow Decoy with holographic scanlines & 2X badge
+                const decoyX = cx - 58;
+                const decoyY = cy + Math.sin(performance.now() * 0.007) * 7;
+                ctx.save();
+                ctx.strokeStyle = '#2dd4bf';
+                ctx.lineWidth = 2.5;
+                ctx.globalAlpha = 0.8 + Math.sin(performance.now() * 0.02) * 0.2;
+                ctx.strokeRect(decoyX - 22, decoyY - 22, 44, 44);
+                ctx.fillStyle = '#115e59';
+                ctx.globalAlpha = 0.25;
+                ctx.fillRect(decoyX - 20, decoyY - 20, 40, 40);
+
+                const echoSprite = SPRITE_CACHE['character-echo'];
+                if (echoSprite) {
+                    ctx.globalAlpha = 0.45;
+                    ctx.drawImage(echoSprite, decoyX - 22, decoyY - 22, 44, 44);
+                }
+
+                ctx.fillStyle = '#2dd4bf';
+                ctx.globalAlpha = 0.6;
+                for (let sy = -18; sy <= 18; sy += 6) {
+                    ctx.fillRect(decoyX - 20, decoyY + sy, 40, 1.5);
+                }
+
+                ctx.fillStyle = '#09090b';
+                ctx.globalAlpha = 0.85;
+                ctx.fillRect(decoyX - 28, decoyY - 34, 56, 12);
+                ctx.strokeStyle = '#2dd4bf';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(decoyX - 28, decoyY - 34, 56, 12);
+                ctx.fillStyle = '#5eead4';
+                ctx.font = '7px Silkscreen, monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('2X DECOY', decoyX, decoyY - 25);
+                ctx.restore();
+            } else if (selectedCharacterId === 'volt' && voltTrailTimer > 0) {
+                // Stepped light yellow pixelated trail afterimages
+                const alpha = (voltTrailTimer / 0.65) * 0.85;
+                for (let step = 1; step <= 3; step++) {
+                    const tx = cx - step * 26;
+                    const ty = cy;
+                    ctx.save();
+                    ctx.globalAlpha = alpha * (1 - step * 0.25);
+                    ctx.strokeStyle = '#fef08a';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(tx - 22, ty - 22, 44, 44);
+                    ctx.fillStyle = '#fde047';
+                    ctx.globalAlpha = alpha * 0.22;
+                    ctx.fillRect(tx - 20, ty - 20, 40, 40);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.globalAlpha = alpha * 0.9;
+                    ctx.fillRect(tx + 6, ty - 12 + step * 3, 4, 4);
+                    ctx.fillRect(tx - 10, ty + 8 - step * 3, 4, 4);
+                    ctx.restore();
+                }
             } else if (selectedCharacterId === 'chrono' && chronoTimer > 0) {
                 ctx.strokeRect(cx - 46, cy - 46, 92, 92);
                 ctx.strokeRect(cx - 40, cy - 40, 80, 80);
-            } else if (selectedCharacterId === 'grav0' && gravHoverTimer > 0) {
-                ctx.fillStyle = character.color;
-                ctx.fillRect(cx - 50, cy + 35, 100, 3);
-                ctx.fillRect(cx - 36, cy + 41, 72, 2);
+            } else if (selectedCharacterId === 'grav0') {
+                if (gravHoverTimer > 0) {
+                    ctx.fillStyle = character.color;
+                    ctx.fillRect(cx - 50, cy + 35, 100, 3);
+                    ctx.fillRect(cx - 36, cy + 41, 72, 2);
+                } else if (gravHoverArmed) {
+                    // Glowing void frame indicating 2nd jump apex hover armed
+                    ctx.save();
+                    ctx.strokeStyle = character.color;
+                    ctx.lineWidth = 2;
+                    ctx.globalAlpha = 0.55 + Math.sin(performance.now() * 0.015) * 0.3;
+                    ctx.strokeRect(cx - 28, cy - 28, 56, 56);
+                    ctx.restore();
+                }
             } else if (selectedCharacterId === 'nimbus' && phaseTimer > 0) {
                 ctx.strokeRect(cx - 42, cy - 42, 84, 84);
                 ctx.strokeRect(cx - 34, cy - 34, 68, 68);
             }
+
+            if (selectedCharacterId === 'cinder' && cinderAuraTimer > 0) {
+                ctx.save();
+                const auraAlpha = (cinderAuraTimer / 1.3) * 0.9;
+                ctx.globalAlpha = auraAlpha;
+                ctx.strokeStyle = '#f97316';
+                ctx.lineWidth = 3;
+                const pulse = Math.sin(performance.now() * 0.025) * 5;
+                ctx.strokeRect(cx - 26 - pulse, cy - 26 - pulse, 52 + pulse * 2, 52 + pulse * 2);
+                ctx.strokeStyle = '#fde047';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(cx - 23, cy - 23, 46, 46);
+                ctx.restore();
+            }
+
             ctx.restore();
         }
 
@@ -1291,7 +1915,7 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(28, orbitY, 4, 4);
                 ctx.restore();
-            } else {
+            } else if (!cinderReviveSequence.active) {
                 if (impactFlashAlpha > 0) {
                     ctx.save();
                     ctx.globalAlpha = impactFlashAlpha;
@@ -1327,11 +1951,45 @@
                 ctx.translate(Math.round(dx), Math.round(dy));
             }
 
+            // Apply camera rewind offset during Cinder's revival sequence
+            if (cinderReviveSequence.active && cinderReviveSequence.cameraOffset !== 0) {
+                ctx.translate(Math.round(cinderReviveSequence.cameraOffset), 0);
+            }
+
             drawLighterAtmosphericSky();
             drawParallaxBackgroundTowers();
             drawVolumetricSmoke(false);
             drawObstacles();
             drawHeroAndParticles();
+
+            // Draw Cinder Phoenix ash particles during revival
+            if (cinderReviveSequence.active && cinderReviveSequence.ashParticles) {
+                for (let i = 0; i < cinderReviveSequence.ashParticles.length; i++) {
+                    const ap = cinderReviveSequence.ashParticles[i];
+                    ctx.save();
+                    ctx.globalAlpha = ap.alpha || 1.0;
+                    ctx.fillStyle = ap.color;
+                    ctx.fillRect(Math.round(ap.x), Math.round(ap.y), ap.size, ap.size);
+                    ctx.restore();
+                }
+            }
+
+            // Rewind scanlines and glitch streaks during Cinder rewind phase
+            if (cinderReviveSequence.active && cinderReviveSequence.phase === 'rewind') {
+                ctx.save();
+                ctx.fillStyle = 'rgba(249, 115, 22, 0.08)';
+                for (let y = 0; y < GAME_HEIGHT; y += 6) {
+                    ctx.fillRect(0, y, GAME_WIDTH, 2);
+                }
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                for (let s = 0; s < 10; s++) {
+                    const lx = (performance.now() * 1.8 + s * 95) % GAME_WIDTH;
+                    const ly = (s * 53) % GAME_HEIGHT;
+                    ctx.fillRect(lx, ly, 28, 2);
+                }
+                ctx.restore();
+            }
+
             drawVolumetricSmoke(true);
 
             ctx.restore();
