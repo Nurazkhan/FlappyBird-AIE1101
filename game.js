@@ -355,6 +355,10 @@
         let cinderReviveReady = true;
         let cinderAuraTimer = 0;
         let voltTrailTimer = 0;
+        let voltDashTimer = 0;
+        const voltDashDuration = 0.14; // Snappy 140ms phase warp
+        const voltDashTotalDist = 112;
+        let voltTrailHistory = [];
         let cinderReviveSequence = {
             active: false,
             phase: 'none',
@@ -391,6 +395,8 @@
             cinderReviveReady = true;
             cinderAuraTimer = 0;
             voltTrailTimer = 0;
+            voltDashTimer = 0;
+            voltTrailHistory = [];
             cinderReviveSequence = {
                 active: false,
                 phase: 'none',
@@ -545,38 +551,25 @@
             }
         }
 
-        function spawnVoltBlinkTrail(startX, startY, endX, endY) {
-            const steps = 28;
+        function spawnVoltBlinkBurst() {
             const colors = ['#fef08a', '#facc15', '#fef9c3', '#ffffff', '#fde047'];
-            for (let i = 0; i <= steps; i++) {
-                const t = i / steps;
-                const px = startX + (endX - startX) * t;
-                const py = startY + (endY - startY) * t;
-                const size = (i % 2 === 0) ? (6 + Math.floor(Math.random() * 3) * 2) : (4 + Math.floor(Math.random() * 2) * 2);
+            for (let i = 0; i < 20; i++) {
+                const angle = (Math.PI * 2 * i) / 20 + (Math.random() - 0.5) * 0.35;
+                const speed = 70 + Math.random() * 150;
                 particles.push({
-                    x: px + (Math.random() * 14 - 7),
-                    y: py + hero.height * 0.5 + (Math.random() * 26 - 13),
-                    vx: -(70 + Math.random() * 80),
-                    vy: (Math.random() - 0.5) * 50,
-                    size: size,
+                    x: hero.x + hero.width * 0.5,
+                    y: hero.y + hero.height * 0.5,
+                    vx: Math.cos(angle) * speed - 90,
+                    vy: Math.sin(angle) * speed * 0.65,
+                    size: (i % 2 === 0) ? 6 : 4,
                     hollow: Math.random() < 0.35,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     innerColor: '#18181b',
-                    life: 1.0,
-                    decay: 1.2 + Math.random() * 0.9,
+                    life: 0.8,
+                    decay: 1.5 + Math.random() * 0.8,
                     gravity: 0
                 });
             }
-
-            shockwaves.push({
-                x: hero.x + hero.width / 2,
-                y: hero.y + hero.height / 2,
-                w: 44,
-                h: 44,
-                maxW: 120,
-                life: 0.85,
-                type: 'explosion'
-            });
         }
 
         function spawnEchoAbilityBurst() {
@@ -1028,10 +1021,10 @@
             jumpCount += 1;
 
             if (selectedCharacterId === 'volt' && jumpCount % 3 === 0) {
-                const blinkDist = 112;
-                obstacles.forEach((obstacle) => { obstacle.x -= blinkDist; });
+                voltDashTimer = voltDashDuration;
                 voltTrailTimer = 0.65;
-                spawnVoltBlinkTrail(hero.x - blinkDist, hero.y, hero.x, hero.y);
+                phaseTimer = Math.max(phaseTimer, 0.22);
+                spawnVoltBlinkBurst();
                 announceAbility('PHASE BLINK // LIGHT TRAIL', 0.65);
                 playPixelSound('voltBlink');
             } else if (selectedCharacterId === 'nimbus' && jumpCount % 5 === 0) {
@@ -1403,25 +1396,68 @@
             if (gravHoverTimer > 0) gravHoverTimer = Math.max(0, gravHoverTimer - dt);
             if (cinderAuraTimer > 0) cinderAuraTimer = Math.max(0, cinderAuraTimer - dt);
 
+            // Volt Cube: High-speed smooth phase dash (Zero camera lag, 60fps continuous interpolation)
+            let voltPhaseSpeed = 0;
+            if (voltDashTimer > 0) {
+                const stepDt = Math.min(dt, voltDashTimer);
+                voltDashTimer -= stepDt;
+                voltPhaseSpeed = voltDashTotalDist / voltDashDuration;
+                const extraMove = voltPhaseSpeed * stepDt;
+
+                for (let i = 0; i < obstacles.length; i++) {
+                    obstacles[i].x -= extraMove;
+                }
+                for (let i = 0; i < bgParallaxLayers.length; i++) {
+                    bgParallaxLayers[i].scrollX = (bgParallaxLayers[i].scrollX + extraMove * bgParallaxLayers[i].speedFactor) % 320;
+                }
+                for (let i = 0; i < skyAshMotes.length; i++) {
+                    skyAshMotes[i].x -= extraMove * 0.2;
+                }
+
+                hero.scaleX = 1.34;
+                hero.scaleY = 0.76;
+            }
+
             // Volt Cube: Continuous light yellow pixelated trail during blink ability
-            if (voltTrailTimer > 0) {
-                voltTrailTimer = Math.max(0, voltTrailTimer - dt);
-                if (Math.random() < 0.85) {
+            if (voltTrailTimer > 0 || voltDashTimer > 0) {
+                if (voltTrailTimer > 0) voltTrailTimer = Math.max(0, voltTrailTimer - dt);
+
+                // Record dynamic trail snapshot in world space
+                voltTrailHistory.unshift({
+                    x: hero.x,
+                    y: hero.y,
+                    rotation: hero.rotation,
+                    scaleX: hero.scaleX,
+                    scaleY: hero.scaleY,
+                    alpha: 1.0
+                });
+                if (voltTrailHistory.length > 22) voltTrailHistory.pop();
+
+                if (Math.random() < 0.9) {
                     const colors = ['#fef08a', '#facc15', '#fef9c3', '#ffffff', '#fde047'];
                     particles.push({
-                        x: hero.x - 6 + (Math.random() * 8 - 4),
+                        x: hero.x - 4 + (Math.random() * 8 - 4),
                         y: hero.y + hero.height * 0.5 + (Math.random() * 22 - 11),
-                        vx: -(150 + Math.random() * 80),
+                        vx: -(150 + Math.random() * 80) - (voltDashTimer > 0 ? 300 : 0),
                         vy: (Math.random() - 0.5) * 40,
-                        size: Math.random() < 0.4 ? 6 : 4,
-                        hollow: Math.random() < 0.3,
+                        size: Math.random() < 0.45 ? 6 : 4,
+                        hollow: Math.random() < 0.35,
                         color: colors[Math.floor(Math.random() * colors.length)],
                         innerColor: '#09090b',
                         life: 0.8,
-                        decay: 1.8 + Math.random() * 0.8,
+                        decay: 1.7 + Math.random() * 0.8,
                         gravity: 0
                     });
                 }
+            } else {
+                if (voltTrailHistory.length > 0) voltTrailHistory.pop();
+            }
+
+            // Scroll and fade active volt trail snapshots with world movement
+            for (let i = 0; i < voltTrailHistory.length; i++) {
+                const pt = voltTrailHistory[i];
+                pt.x -= (preset.speed * chronoMultiplier + voltPhaseSpeed) * dt;
+                pt.alpha = Math.max(0, pt.alpha - dt * 2.8);
             }
 
             // Echo: Continuous phantom trail particles and position history during shadow decoy ability
@@ -1799,25 +1835,50 @@
                 ctx.textAlign = 'center';
                 ctx.fillText('2X DECOY', decoyX, decoyY - 25);
                 ctx.restore();
-            } else if (selectedCharacterId === 'volt' && voltTrailTimer > 0) {
-                // Stepped light yellow pixelated trail afterimages
-                const alpha = (voltTrailTimer / 0.65) * 0.85;
-                for (let step = 1; step <= 3; step++) {
-                    const tx = cx - step * 26;
-                    const ty = cy;
+            } else if (selectedCharacterId === 'volt' && (voltTrailTimer > 0 || voltTrailHistory.length > 0)) {
+                // 1. Fluid, dynamic light-yellow pixelated ghost trail in world coordinates
+                for (let i = 2; i < voltTrailHistory.length; i += 3) {
+                    const pt = voltTrailHistory[i];
+                    if (!pt || pt.alpha <= 0.05) continue;
+                    const trailAlpha = pt.alpha * Math.min(1, voltTrailTimer / 0.5) * 0.85;
+                    if (trailAlpha <= 0.02) continue;
+
                     ctx.save();
-                    ctx.globalAlpha = alpha * (1 - step * 0.25);
+                    const tx = Math.round(pt.x + hero.width / 2);
+                    const ty = Math.round(pt.y + hero.height / 2);
+                    ctx.translate(tx, ty);
+                    ctx.rotate(pt.rotation || 0);
+                    ctx.scale(pt.scaleX || 1, pt.scaleY || 1);
+
+                    // Light yellow pixel ghost outline
+                    ctx.globalAlpha = trailAlpha;
                     ctx.strokeStyle = '#fef08a';
                     ctx.lineWidth = 2;
-                    ctx.strokeRect(tx - 22, ty - 22, 44, 44);
-                    ctx.fillStyle = '#fde047';
-                    ctx.globalAlpha = alpha * 0.22;
-                    ctx.fillRect(tx - 20, ty - 20, 40, 40);
+                    ctx.strokeRect(-22, -22, 44, 44);
 
+                    // Translucent glowing yellow core
+                    ctx.fillStyle = '#fde047';
+                    ctx.globalAlpha = trailAlpha * 0.22;
+                    ctx.fillRect(-20, -20, 40, 40);
+
+                    // Yellow electric spark ticks
                     ctx.fillStyle = '#ffffff';
-                    ctx.globalAlpha = alpha * 0.9;
-                    ctx.fillRect(tx + 6, ty - 12 + step * 3, 4, 4);
-                    ctx.fillRect(tx - 10, ty + 8 - step * 3, 4, 4);
+                    ctx.globalAlpha = trailAlpha * 0.85;
+                    ctx.fillRect(6, -8, 6, 4);
+                    ctx.fillRect(-12, 8, 4, 4);
+
+                    ctx.restore();
+                }
+
+                // 2. High-speed phase electric streaks during the dash
+                if (voltDashTimer > 0) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(254, 240, 138, 0.45)';
+                    for (let s = 0; s < 7; s++) {
+                        const sy = cy - 22 + s * 7;
+                        const slen = 35 + (s % 3) * 20;
+                        ctx.fillRect(cx - 24 - slen, sy, slen, 2);
+                    }
                     ctx.restore();
                 }
             } else if (selectedCharacterId === 'chrono' && chronoTimer > 0) {
