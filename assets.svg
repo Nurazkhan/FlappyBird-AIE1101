@@ -1,600 +1,357 @@
-// Flappy Pixel — High-Resolution Pure SVG Graphics Asset Dictionary (No Game Logic)
-const FLAPPY_PIXEL_GRAPHICS = {
-  HERO_IDLE: `<svg id="svg-hero-idle" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Far Orbiting Particle Stream (Smooth 60fps) -->
-                                <g class="anim-particle-drift-alt">
-                                    <rect x="8" y="54" width="4" height="4" fill="#b0b0ba"></rect>
-                                    <rect x="14" y="34" width="6" height="6" fill="#dcdce4"></rect>
-                                    <rect x="18" y="74" width="5" height="5" fill="#90909a"></rect>
-                                    <rect x="28" y="24" width="4" height="4" fill="#ffffff"></rect>
-                                    <rect x="102" y="32" width="4" height="4" fill="#ffffff"></rect>
-                                    <rect x="98" y="78" width="5" height="5" fill="#c8c8d2"></rect>
-                                </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="milestone-assets-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+                <!-- 1. HERO IDLE CUBIC PIXEL (64x64 Symbol with 48x48 High-Detail Beveled Cube) -->
+                <symbol id="sprite-hero-idle" viewBox="0 0 64 64">
+                    <!-- Outer White Shell -->
+                    <rect x="8" y="8" width="48" height="48" fill="#ffffff"></rect>
+                    <!-- Chamfered Corner Notches -->
+                    <rect x="8" y="8" width="3" height="3" fill="#2c2c34"></rect>
+                    <rect x="53" y="8" width="3" height="3" fill="#2c2c34"></rect>
+                    <rect x="8" y="53" width="3" height="3" fill="#2c2c34"></rect>
+                    <rect x="53" y="53" width="3" height="3" fill="#2c2c34"></rect>
+                    <!-- Inner Armor Frame -->
+                    <rect x="11" y="11" width="42" height="42" fill="#08080a"></rect>
+                    <!-- 3D Metallic Pixel Bevel -->
+                    <rect x="14" y="14" width="36" height="4" fill="#dcdce4"></rect>
+                    <rect x="14" y="18" width="4" height="32" fill="#9696a2"></rect>
+                    <rect x="46" y="18" width="4" height="32" fill="#383840"></rect>
+                    <rect x="18" y="46" width="28" height="4" fill="#24242a"></rect>
+                    <!-- Corner Bolts -->
+                    <rect x="15" y="15" width="2" height="2" fill="#08080a"></rect>
+                    <rect x="47" y="15" width="2" height="2" fill="#08080a"></rect>
+                    <rect x="15" y="47" width="2" height="2" fill="#08080a"></rect>
+                    <rect x="47" y="47" width="2" height="2" fill="#08080a"></rect>
+                    <!-- Core Matrix & Circuit Grid -->
+                    <rect x="18" y="18" width="28" height="28" fill="#0d0d11"></rect>
+                    <rect x="18" y="32" width="28" height="2" fill="#222229"></rect>
+                    <rect x="30" y="18" width="2" height="28" fill="#222229"></rect>
+                    <!-- Glowing Visor Eye -->
+                    <rect x="26" y="21" width="16" height="10" fill="#ffffff"></rect>
+                    <rect x="28" y="23" width="12" height="6" fill="#d8d8e2"></rect>
+                    <rect x="34" y="23" width="5" height="6" fill="#08080a"></rect>
+                    <rect x="35" y="24" width="2" height="2" fill="#ffffff"></rect>
+                    <!-- Power Vents -->
+                    <rect x="21" y="38" width="4" height="5" fill="#686872"></rect>
+                    <rect x="27" y="38" width="4" height="5" fill="#9e9ea8"></rect>
+                    <rect x="33" y="38" width="4" height="5" fill="#d4d4dc"></rect>
+                    <rect x="39" y="38" width="4" height="5" fill="#ffffff"></rect>
+                </symbol>
 
-                                <!-- Close Trailing Hollow & Beveled Particle Cubes -->
-                                <g class="anim-particle-drift">
-                                    <rect x="16" y="46" width="12" height="12" fill="#ffffff"></rect>
-                                    <rect x="18" y="48" width="8" height="8" fill="#101014"></rect>
-                                    <rect x="20" y="50" width="4" height="4" fill="#aaaaaa"></rect>
+                <!-- 2. HERO PRESS / FLAP THRUST CUBE -->
+                <symbol id="sprite-hero-flap" viewBox="0 0 64 64">
+                    <!-- Side Wing-Tip Streaks -->
+                    <rect x="1" y="28" width="6" height="3" fill="#ffffff"></rect>
+                    <rect x="57" y="28" width="6" height="3" fill="#ffffff"></rect>
+                    <!-- Compressed Outer White Shell -->
+                    <rect x="6" y="10" width="52" height="42" fill="#ffffff"></rect>
+                    <rect x="9" y="13" width="46" height="36" fill="#08080a"></rect>
+                    <!-- Top Bright Bevel -->
+                    <rect x="12" y="16" width="40" height="4" fill="#ffffff"></rect>
+                    <rect x="12" y="20" width="4" height="26" fill="#a8a8b4"></rect>
+                    <rect x="48" y="20" width="4" height="26" fill="#3a3a44"></rect>
+                    <!-- Inner Core -->
+                    <rect x="16" y="20" width="32" height="24" fill="#101015"></rect>
+                    <!-- Boosted Wide Eye Visor -->
+                    <rect x="26" y="22" width="18" height="12" fill="#ffffff"></rect>
+                    <rect x="36" y="24" width="6" height="8" fill="#08080a"></rect>
+                    <rect x="37" y="25" width="2" height="2" fill="#ffffff"></rect>
+                    <!-- Glowing Bottom Thruster Nozzles -->
+                    <rect x="18" y="46" width="8" height="8" fill="#ffffff"></rect>
+                    <rect x="28" y="46" width="8" height="10" fill="#ffffff"></rect>
+                    <rect x="38" y="46" width="8" height="8" fill="#ffffff"></rect>
+                </symbol>
 
-                                    <rect x="24" y="64" width="10" height="10" fill="#ffffff"></rect>
-                                    <rect x="26" y="66" width="6" height="6" fill="#18181c"></rect>
+                <!-- 3. BOTTOM JUNK SHADOW OBSTACLE (House + 3-Drawer Desk + Lamp + Casement Window + Spindle Chair) -->
+                <symbol id="sprite-obstacle-junk-bottom" viewBox="0 0 120 220">
+                    <!-- LEVEL 1 (BASE): Pitched-Roof House with Chimney, Shingles, Door & Parlor Window -->
+                    <rect x="82" y="126" width="16" height="28" fill="#ffffff"></rect>
+                    <rect x="84" y="128" width="12" height="24" fill="#18181c"></rect>
+                    <rect x="80" y="122" width="20" height="4" fill="#ffffff"></rect>
+                    <polygon points="6,154 60,114 114,154" fill="#ffffff"></polygon>
+                    <polygon points="10,154 60,117 110,154" fill="#0a0a0c"></polygon>
+                    <rect x="38" y="128" width="44" height="2" fill="#3a3a42"></rect>
+                    <rect x="28" y="136" width="64" height="2" fill="#3a3a42"></rect>
+                    <rect x="18" y="144" width="84" height="2" fill="#3a3a42"></rect>
+                    <!-- Attic Window -->
+                    <rect x="54" y="128" width="12" height="12" fill="#ffffff"></rect>
+                    <rect x="56" y="130" width="8" height="8" fill="#686874"></rect>
+                    <rect x="59" y="130" width="2" height="8" fill="#0a0a0c"></rect>
+                    <rect x="56" y="133" width="8" height="2" fill="#0a0a0c"></rect>
+                    <!-- House Clapboard Body -->
+                    <rect x="12" y="154" width="96" height="66" fill="#ffffff"></rect>
+                    <rect x="14" y="156" width="92" height="64" fill="#09090b"></rect>
+                    <rect x="16" y="162" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="170" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="178" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="186" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="194" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="202" width="88" height="1" fill="#2d2d34"></rect>
+                    <rect x="16" y="210" width="88" height="1" fill="#2d2d34"></rect>
+                    <!-- Parlor Window -->
+                    <rect x="20" y="164" width="38" height="36" fill="#ffffff"></rect>
+                    <rect x="22" y="166" width="34" height="32" fill="#0a0a0c"></rect>
+                    <rect x="24" y="168" width="14" height="13" fill="#dcdce4"></rect>
+                    <rect x="40" y="168" width="14" height="13" fill="#dcdce4"></rect>
+                    <rect x="24" y="183" width="14" height="13" fill="#888894"></rect>
+                    <rect x="40" y="183" width="14" height="13" fill="#888894"></rect>
+                    <rect x="18" y="200" width="42" height="4" fill="#ffffff"></rect>
+                    <!-- 4-Panel Front Door -->
+                    <rect x="68" y="164" width="28" height="56" fill="#ffffff"></rect>
+                    <rect x="70" y="166" width="24" height="54" fill="#0d0d10"></rect>
+                    <rect x="72" y="168" width="20" height="6" fill="#b8b8c4"></rect>
+                    <rect x="73" y="178" width="7" height="14" fill="#32323a"></rect>
+                    <rect x="84" y="178" width="7" height="14" fill="#32323a"></rect>
+                    <rect x="73" y="196" width="7" height="16" fill="#32323a"></rect>
+                    <rect x="84" y="196" width="7" height="16" fill="#32323a"></rect>
+                    <rect x="88" y="193" width="3" height="3" fill="#ffffff"></rect>
+                    <!-- LEVEL 2: Executive Desk -->
+                    <rect x="14" y="88" width="92" height="8" fill="#ffffff"></rect>
+                    <rect x="16" y="90" width="88" height="4" fill="#08080a"></rect>
+                    <rect x="20" y="96" width="8" height="34" fill="#ffffff"></rect>
+                    <rect x="22" y="96" width="4" height="32" fill="#08080a"></rect>
+                    <rect x="28" y="96" width="36" height="10" fill="#ffffff"></rect>
+                    <rect x="30" y="96" width="32" height="8" fill="#16161c"></rect>
+                    <rect x="43" y="99" width="6" height="2" fill="#ffffff"></rect>
+                    <rect x="64" y="96" width="34" height="34" fill="#ffffff"></rect>
+                    <rect x="66" y="96" width="30" height="32" fill="#08080a"></rect>
+                    <rect x="68" y="98" width="26" height="8" fill="#2c2c34"></rect>
+                    <rect x="78" y="101" width="6" height="2" fill="#ffffff"></rect>
+                    <rect x="68" y="108" width="26" height="8" fill="#2c2c34"></rect>
+                    <rect x="78" y="111" width="6" height="2" fill="#ffffff"></rect>
+                    <rect x="68" y="118" width="26" height="8" fill="#2c2c34"></rect>
+                    <rect x="78" y="121" width="6" height="2" fill="#ffffff"></rect>
+                    <!-- LEVEL 3: Desk Lamp & Casement Window -->
+                    <rect x="80" y="84" width="14" height="4" fill="#ffffff"></rect>
+                    <rect x="86" y="66" width="3" height="18" fill="#ffffff"></rect>
+                    <polygon points="74,66 94,66 90,58 78,58" fill="#ffffff"></polygon>
+                    <polygon points="76,64 92,64 89,60 79,60" fill="#08080a"></polygon>
+                    <rect x="24" y="46" width="48" height="42" fill="#ffffff"></rect>
+                    <rect x="26" y="48" width="44" height="38" fill="#08080a"></rect>
+                    <rect x="29" y="51" width="17" height="15" fill="#c8c8d2"></rect>
+                    <rect x="50" y="51" width="17" height="15" fill="#888894"></rect>
+                    <rect x="29" y="68" width="17" height="15" fill="#686874"></rect>
+                    <rect x="50" y="68" width="17" height="15" fill="#d8d8e2"></rect>
+                    <!-- LEVEL 4: Spindle Chair -->
+                    <rect x="34" y="30" width="6" height="16" fill="#ffffff"></rect>
+                    <rect x="36" y="30" width="2" height="16" fill="#08080a"></rect>
+                    <rect x="56" y="30" width="6" height="16" fill="#ffffff"></rect>
+                    <rect x="58" y="30" width="2" height="16" fill="#08080a"></rect>
+                    <rect x="40" y="37" width="16" height="2" fill="#cccccc"></rect>
+                    <rect x="30" y="23" width="36" height="7" fill="#ffffff"></rect>
+                    <rect x="32" y="25" width="32" height="3" fill="#08080a"></rect>
+                    <rect x="32" y="2" width="6" height="21" fill="#ffffff"></rect>
+                    <rect x="34" y="4" width="2" height="19" fill="#08080a"></rect>
+                    <rect x="58" y="2" width="6" height="21" fill="#ffffff"></rect>
+                    <rect x="60" y="4" width="2" height="19" fill="#08080a"></rect>
+                    <rect x="40" y="6" width="2" height="17" fill="#cccccc"></rect>
+                    <rect x="45" y="6" width="2" height="17" fill="#ffffff"></rect>
+                    <rect x="50" y="6" width="2" height="17" fill="#cccccc"></rect>
+                    <rect x="54" y="6" width="2" height="17" fill="#ffffff"></rect>
+                    <rect x="30" y="2" width="36" height="5" fill="#ffffff"></rect>
+                    <rect x="32" y="4" width="32" height="2" fill="#08080a"></rect>
+                </symbol>
 
-                                    <rect x="28" y="34" width="8" height="8" fill="#e4e4ec"></rect>
-                                    <rect x="30" y="36" width="4" height="4" fill="#222228"></rect>
+                <!-- 4. TOP JUNK SHADOW OBSTACLE (Inverted House Story + Shuttered Window + Desk + Chair) -->
+                <symbol id="sprite-obstacle-junk-top" viewBox="0 0 120 220">
+                    <rect x="12" y="0" width="96" height="62" fill="#ffffff"></rect>
+                    <rect x="14" y="0" width="92" height="60" fill="#09090b"></rect>
+                    <rect x="16" y="8" width="88" height="1" fill="#2e2e36"></rect>
+                    <rect x="16" y="16" width="88" height="1" fill="#2e2e36"></rect>
+                    <rect x="16" y="24" width="88" height="1" fill="#2e2e36"></rect>
+                    <rect x="16" y="32" width="88" height="1" fill="#2e2e36"></rect>
+                    <rect x="16" y="40" width="88" height="1" fill="#2e2e36"></rect>
+                    <rect x="16" y="48" width="88" height="1" fill="#2e2e36"></rect>
+                    <!-- Twin Sash Windows -->
+                    <rect x="22" y="10" width="30" height="38" fill="#ffffff"></rect>
+                    <rect x="24" y="12" width="26" height="34" fill="#08080a"></rect>
+                    <rect x="26" y="14" width="10" height="14" fill="#d8d8e2"></rect>
+                    <rect x="38" y="14" width="10" height="14" fill="#d8d8e2"></rect>
+                    <rect x="26" y="30" width="10" height="14" fill="#787884"></rect>
+                    <rect x="38" y="30" width="10" height="14" fill="#787884"></rect>
+                    <rect x="68" y="10" width="30" height="38" fill="#ffffff"></rect>
+                    <rect x="70" y="12" width="26" height="34" fill="#08080a"></rect>
+                    <rect x="72" y="14" width="10" height="14" fill="#d8d8e2"></rect>
+                    <rect x="84" y="14" width="10" height="14" fill="#d8d8e2"></rect>
+                    <rect x="72" y="30" width="10" height="14" fill="#787884"></rect>
+                    <rect x="84" y="30" width="10" height="14" fill="#787884"></rect>
+                    <!-- Inverted Roof Gable -->
+                    <polygon points="6,62 60,96 114,62" fill="#ffffff"></polygon>
+                    <polygon points="10,62 60,93 110,62" fill="#0d0d10"></polygon>
+                    <!-- Shuttered Window -->
+                    <rect x="22" y="88" width="76" height="44" fill="#ffffff"></rect>
+                    <rect x="24" y="90" width="72" height="40" fill="#09090b"></rect>
+                    <rect x="26" y="92" width="12" height="36" fill="#2c2c34"></rect>
+                    <rect x="28" y="96" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="28" y="104" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="28" y="112" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="28" y="120" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="82" y="92" width="12" height="36" fill="#2c2c34"></rect>
+                    <rect x="84" y="96" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="84" y="104" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="84" y="112" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="84" y="120" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="42" y="94" width="16" height="15" fill="#d8d8e2"></rect>
+                    <rect x="62" y="94" width="16" height="15" fill="#9898a4"></rect>
+                    <rect x="42" y="111" width="16" height="15" fill="#787884"></rect>
+                    <rect x="62" y="111" width="16" height="15" fill="#d8d8e2"></rect>
+                    <!-- Inverted Writing Desk -->
+                    <rect x="20" y="132" width="8" height="28" fill="#ffffff"></rect>
+                    <rect x="22" y="132" width="4" height="28" fill="#08080a"></rect>
+                    <rect x="68" y="132" width="32" height="28" fill="#ffffff"></rect>
+                    <rect x="70" y="132" width="28" height="28" fill="#08080a"></rect>
+                    <rect x="72" y="135" width="24" height="7" fill="#2e2e36"></rect>
+                    <rect x="81" y="138" width="6" height="2" fill="#ffffff"></rect>
+                    <rect x="72" y="146" width="24" height="7" fill="#2e2e36"></rect>
+                    <rect x="81" y="149" width="6" height="2" fill="#ffffff"></rect>
+                    <rect x="14" y="160" width="92" height="8" fill="#ffffff"></rect>
+                    <rect x="16" y="162" width="88" height="4" fill="#08080a"></rect>
+                    <!-- Inverted Dangling Chair -->
+                    <rect x="38" y="168" width="6" height="16" fill="#ffffff"></rect>
+                    <rect x="40" y="168" width="2" height="16" fill="#08080a"></rect>
+                    <rect x="68" y="168" width="6" height="16" fill="#ffffff"></rect>
+                    <rect x="70" y="168" width="2" height="16" fill="#08080a"></rect>
+                    <rect x="44" y="175" width="24" height="2" fill="#cccccc"></rect>
+                    <rect x="34" y="184" width="44" height="7" fill="#ffffff"></rect>
+                    <rect x="36" y="186" width="40" height="3" fill="#08080a"></rect>
+                    <rect x="36" y="191" width="6" height="24" fill="#ffffff"></rect>
+                    <rect x="38" y="191" width="2" height="22" fill="#08080a"></rect>
+                    <rect x="70" y="191" width="6" height="24" fill="#ffffff"></rect>
+                    <rect x="72" y="191" width="2" height="22" fill="#08080a"></rect>
+                    <rect x="46" y="191" width="2" height="20" fill="#cccccc"></rect>
+                    <rect x="52" y="191" width="3" height="20" fill="#ffffff"></rect>
+                    <rect x="59" y="191" width="2" height="20" fill="#cccccc"></rect>
+                    <rect x="64" y="191" width="2" height="20" fill="#ffffff"></rect>
+                    <rect x="34" y="211" width="44" height="6" fill="#ffffff"></rect>
+                    <rect x="36" y="213" width="40" height="2" fill="#08080a"></rect>
+                </symbol>
 
-                                    <rect x="34" y="82" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="94" y="54" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="96" y="56" width="2" height="2" fill="#000000"></rect>
-                                </g>
+                <!-- 5. TOP CAVE SHARD STALACTITE CLUSTER -->
+                <symbol id="sprite-cave-top" viewBox="0 0 110 220">
+                    <polygon points="5,0 105,0 96,44 86,44 78,96 68,96 60,154 55,216 50,154 42,96 32,96 24,44 14,44" fill="#ffffff"></polygon>
+                    <polygon points="9,0 101,0 93,40 83,40 75,92 65,92 58,150 55,202 52,150 45,92 35,92 27,40 17,40" fill="#09090b"></polygon>
+                    <polygon points="22,0 55,0 55,192 46,90 30,38" fill="#2c2c34"></polygon>
+                    <polygon points="55,0 78,0 62,146 55,192" fill="#4e4e5a"></polygon>
+                    <rect x="54" y="12" width="2" height="176" fill="#e4e4ec"></rect>
+                    <rect x="38" y="20" width="3" height="68" fill="#888894"></rect>
+                    <rect x="66" y="18" width="3" height="72" fill="#383842"></rect>
+                    <polygon points="6,28 28,28 16,104" fill="#ffffff"></polygon>
+                    <polygon points="9,30 25,30 16,92" fill="#18181e"></polygon>
+                    <polygon points="82,24 104,24 92,98" fill="#ffffff"></polygon>
+                    <polygon points="85,26 101,26 92,86" fill="#18181e"></polygon>
+                    <rect x="24" y="120" width="5" height="14" fill="#ffffff"></rect>
+                    <rect x="80" y="114" width="5" height="12" fill="#c8c8d4"></rect>
+                </symbol>
 
-                                <!-- Main High-Resolution Cubic Hero (48x48 centered at 40,36) -->
-                                <g class="anim-pixel-float">
-                                    <!-- Outer Crisp White Shell -->
-                                    <rect x="40" y="36" width="48" height="48" fill="#ffffff"></rect>
-                                    <!-- Chamfered Pixel Corners -->
-                                    <rect x="40" y="36" width="3" height="3" fill="#28282e"></rect>
-                                    <rect x="85" y="36" width="3" height="3" fill="#28282e"></rect>
-                                    <rect x="40" y="81" width="3" height="3" fill="#28282e"></rect>
-                                    <rect x="85" y="81" width="3" height="3" fill="#28282e"></rect>
+                <!-- 6. BOTTOM CAVE SHARD STALAGMITE CLUSTER -->
+                <symbol id="sprite-cave-bottom" viewBox="0 0 110 220">
+                    <polygon points="55,4 60,66 68,124 78,124 86,176 96,176 105,220 5,220 14,176 24,176 32,124 42,124 50,66" fill="#ffffff"></polygon>
+                    <polygon points="55,18 58,70 65,128 75,128 83,180 93,180 101,220 9,220 17,180 27,180 35,128 45,128 52,70" fill="#09090b"></polygon>
+                    <polygon points="55,24 55,220 32,220 46,128" fill="#4e4e5a"></polygon>
+                    <polygon points="55,24 78,220 55,220" fill="#26262e"></polygon>
+                    <rect x="54" y="30" width="2" height="178" fill="#e4e4ec"></rect>
+                    <rect x="40" y="134" width="3" height="72" fill="#888894"></rect>
+                    <polygon points="18,120 6,220 30,220" fill="#ffffff"></polygon>
+                    <polygon points="18,132 9,220 27,220" fill="#18181e"></polygon>
+                    <polygon points="92,116 80,220 104,220" fill="#ffffff"></polygon>
+                    <polygon points="92,128 83,220 101,220" fill="#18181e"></polygon>
+                    <rect x="28" y="78" width="5" height="14" fill="#ffffff"></rect>
+                    <rect x="76" y="56" width="4" height="12" fill="#d0d0da"></rect>
+                </symbol>
 
-                                    <!-- Inner Black Frame -->
-                                    <rect x="43" y="39" width="42" height="42" fill="#08080a"></rect>
+                <!-- 7. HYBRID SHARD-IMPALED WINDOW, DESK & CHAIR OBSTACLE -->
+                <symbol id="sprite-obstacle-hybrid" viewBox="0 0 120 220">
+                    <polygon points="8,220 18,162 102,162 112,220" fill="#ffffff"></polygon>
+                    <polygon points="12,220 21,165 99,165 108,220" fill="#09090b"></polygon>
+                    <rect x="24" y="172" width="32" height="40" fill="#2c2c34"></rect>
+                    <rect x="36" y="178" width="8" height="3" fill="#ffffff"></rect>
+                    <rect x="36" y="192" width="8" height="3" fill="#ffffff"></rect>
+                    <rect x="68" y="172" width="24" height="40" fill="#1e1e24"></rect>
+                    <!-- Shuttered Window Frame -->
+                    <rect x="18" y="96" width="84" height="66" fill="#ffffff"></rect>
+                    <rect x="20" y="98" width="80" height="62" fill="#08080a"></rect>
+                    <rect x="22" y="100" width="12" height="58" fill="#2c2c34"></rect>
+                    <rect x="24" y="106" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="24" y="116" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="24" y="126" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="24" y="136" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="86" y="100" width="12" height="58" fill="#2c2c34"></rect>
+                    <rect x="88" y="106" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="88" y="116" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="88" y="126" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="88" y="136" width="8" height="2" fill="#b8b8c2"></rect>
+                    <rect x="38" y="104" width="20" height="22" fill="#d4d4de"></rect>
+                    <rect x="62" y="104" width="20" height="22" fill="#787884"></rect>
+                    <rect x="38" y="130" width="20" height="22" fill="#585864"></rect>
+                    <rect x="62" y="130" width="20" height="22" fill="#c8c8d2"></rect>
+                    <!-- Crystal Spire Impaling Upward -->
+                    <polygon points="60,4 70,58 78,96 42,96 50,58" fill="#ffffff"></polygon>
+                    <polygon points="60,14 67,58 74,96 46,96 53,58" fill="#09090b"></polygon>
+                    <polygon points="60,16 60,96 48,96" fill="#4c4c58"></polygon>
+                    <rect x="59" y="18" width="2" height="78" fill="#ffffff"></rect>
+                    <!-- Tilted Chair Impaled on Left Shoulder -->
+                    <rect x="24" y="66" width="30" height="6" fill="#ffffff"></rect>
+                    <rect x="26" y="68" width="26" height="2" fill="#08080a"></rect>
+                    <rect x="26" y="72" width="4" height="24" fill="#ffffff"></rect>
+                    <rect x="46" y="72" width="4" height="24" fill="#ffffff"></rect>
+                    <rect x="24" y="40" width="5" height="26" fill="#ffffff"></rect>
+                    <rect x="32" y="42" width="2" height="24" fill="#cccccc"></rect>
+                    <rect x="38" y="42" width="2" height="24" fill="#ffffff"></rect>
+                    <rect x="24" y="38" width="22" height="4" fill="#ffffff"></rect>
+                </symbol>
 
-                                    <!-- Multi-Tone Metallic Pixel Bevel -->
-                                    <rect x="46" y="42" width="36" height="4" fill="#dcdce4"></rect>
-                                    <rect x="46" y="46" width="4" height="32" fill="#9696a2"></rect>
-                                    <rect x="78" y="46" width="4" height="32" fill="#383840"></rect>
-                                    <rect x="50" y="74" width="28" height="4" fill="#24242a"></rect>
-
-                                    <!-- Corner Bolts -->
-                                    <rect x="47" y="43" width="2" height="2" fill="#08080a"></rect>
-                                    <rect x="79" y="43" width="2" height="2" fill="#08080a"></rect>
-                                    <rect x="47" y="75" width="2" height="2" fill="#08080a"></rect>
-                                    <rect x="79" y="75" width="2" height="2" fill="#08080a"></rect>
-
-                                    <!-- Inner Core Matrix & Circuit Grid -->
-                                    <rect x="50" y="46" width="28" height="28" fill="#0d0d11"></rect>
-                                    <rect x="50" y="60" width="28" height="2" fill="#222229"></rect>
-                                    <rect x="62" y="46" width="2" height="28" fill="#222229"></rect>
-
-                                    <!-- Articulated Glowing Pixel Visor Eye -->
-                                    <rect x="58" y="50" width="16" height="10" fill="#ffffff"></rect>
-                                    <rect x="60" y="52" width="12" height="6" fill="#d8d8e2"></rect>
-                                    <rect x="66" y="52" width="5" height="6" fill="#08080a"></rect>
-                                    <rect x="67" y="53" width="2" height="2" fill="#ffffff"></rect>
-
-                                    <!-- Lower Power Vent Bars -->
-                                    <rect x="53" y="66" width="4" height="5" fill="#686872"></rect>
-                                    <rect x="59" y="66" width="4" height="5" fill="#9e9ea8"></rect>
-                                    <rect x="65" y="66" width="4" height="5" fill="#d4d4dc"></rect>
-                                    <rect x="71" y="66" width="4" height="5" fill="#ffffff"></rect>
-                                </g>
-                            </svg>`,
-
-  HERO_PRESS: `<svg id="svg-hero-press" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Expanding Downward Shockwave Rings & Jet Plume (Smooth 60fps) -->
-                                <g class="anim-shockwave" style="transform-origin: 60px 76px;">
-                                    <!-- Upper Compression Wave Ring -->
-                                    <rect x="28" y="76" width="64" height="4" fill="#ffffff"></rect>
-                                    <rect x="22" y="80" width="12" height="4" fill="#d0d0da"></rect>
-                                    <rect x="86" y="80" width="12" height="4" fill="#d0d0da"></rect>
-                                    <!-- Secondary Expanding Ring -->
-                                    <rect x="34" y="88" width="52" height="3" fill="#b8b8c4"></rect>
-
-                                    <!-- Ejected High-Detail Hollow Cube Particles -->
-                                    <rect x="42" y="82" width="12" height="12" fill="#ffffff"></rect>
-                                    <rect x="44" y="84" width="8" height="8" fill="#08080a"></rect>
-                                    <rect x="46" y="86" width="4" height="4" fill="#ffffff"></rect>
-
-                                    <rect x="64" y="84" width="10" height="10" fill="#ffffff"></rect>
-                                    <rect x="66" y="86" width="6" height="6" fill="#18181e"></rect>
-
-                                    <rect x="28" y="92" width="8" height="8" fill="#dcdce4"></rect>
-                                    <rect x="54" y="96" width="10" height="10" fill="#ffffff"></rect>
-                                    <rect x="56" y="98" width="6" height="6" fill="#000000"></rect>
-                                    <rect x="78" y="94" width="8" height="8" fill="#b0b0bc"></rect>
-
-                                    <!-- Micro Jet Sparks -->
-                                    <rect x="38" y="106" width="5" height="5" fill="#9898a4"></rect>
-                                    <rect x="58" y="110" width="4" height="4" fill="#ffffff"></rect>
-                                    <rect x="72" y="106" width="5" height="5" fill="#c8c8d2"></rect>
-                                </g>
-
-                                <!-- Aerodynamic Squashed/Thrusting Cubic Hero -->
-                                <g class="anim-press-pulse" style="transform-origin: 60px 50px;">
-                                    <!-- Side Wing-Tip Spark Streaks -->
-                                    <rect x="22" y="54" width="8" height="3" fill="#ffffff"></rect>
-                                    <rect x="90" y="54" width="8" height="3" fill="#ffffff"></rect>
-
-                                    <!-- Outer White Shell (52x42 Thrust Compression) -->
-                                    <rect x="34" y="28" width="52" height="42" fill="#ffffff"></rect>
-                                    <rect x="37" y="31" width="46" height="36" fill="#08080a"></rect>
-                                    <!-- Top Bright Bevel -->
-                                    <rect x="40" y="34" width="40" height="4" fill="#ffffff"></rect>
-                                    <rect x="40" y="38" width="4" height="26" fill="#a8a8b4"></rect>
-                                    <rect x="76" y="38" width="4" height="26" fill="#3a3a44"></rect>
-                                    <!-- Inner Core -->
-                                    <rect x="44" y="38" width="32" height="24" fill="#101015"></rect>
-                                    <!-- Wide Boosted Pixel Eye Visor -->
-                                    <rect x="54" y="41" width="18" height="12" fill="#ffffff"></rect>
-                                    <rect x="64" y="43" width="6" height="8" fill="#08080a"></rect>
-                                    <rect x="65" y="44" width="2" height="2" fill="#ffffff"></rect>
-                                    <!-- Glowing Bottom Thruster Nozzles -->
-                                    <rect x="46" y="64" width="8" height="6" fill="#ffffff"></rect>
-                                    <rect x="56" y="64" width="8" height="6" fill="#ffffff"></rect>
-                                    <rect x="66" y="64" width="8" height="6" fill="#ffffff"></rect>
-                                </g>
-                            </svg>`,
-
-  HERO_COLLISION: `<svg id="svg-hero-collision" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                                <g class="anim-shatter" style="transform-origin: 60px 60px;">
-                                    <!-- Outer Shockwave Octagon Pixel Ring -->
-                                    <rect x="42" y="14" width="36" height="3" fill="#d8d8e2"></rect>
-                                    <rect x="42" y="103" width="36" height="3" fill="#d8d8e2"></rect>
-                                    <rect x="14" y="42" width="3" height="36" fill="#d8d8e2"></rect>
-                                    <rect x="103" y="42" width="3" height="36" fill="#d8d8e2"></rect>
-
-                                    <!-- Central 1-Bit Impact Flash Cross -->
-                                    <rect x="55" y="24" width="10" height="72" fill="#ffffff"></rect>
-                                    <rect x="24" y="55" width="72" height="10" fill="#ffffff"></rect>
-                                    <rect x="46" y="46" width="28" height="28" fill="#08080a"></rect>
-                                    <rect x="52" y="52" width="16" height="16" fill="#ffffff"></rect>
-                                    <rect x="56" y="56" width="8" height="8" fill="#08080a"></rect>
-
-                                    <!-- 4 Detailed Fractured Cube Quadrants Flying Outward -->
-                                    <!-- Top-Left Broken Bevel Corner -->
-                                    <rect x="20" y="20" width="20" height="20" fill="#ffffff"></rect>
-                                    <rect x="22" y="22" width="16" height="16" fill="#08080a"></rect>
-                                    <rect x="24" y="24" width="12" height="3" fill="#cccccc"></rect>
-                                    <rect x="24" y="27" width="3" height="9" fill="#888892"></rect>
-
-                                    <!-- Top-Right Broken Visor Fragment -->
-                                    <rect x="80" y="18" width="22" height="20" fill="#ffffff"></rect>
-                                    <rect x="82" y="20" width="18" height="16" fill="#08080a"></rect>
-                                    <rect x="85" y="24" width="10" height="6" fill="#ffffff"></rect>
-                                    <rect x="90" y="25" width="4" height="4" fill="#08080a"></rect>
-
-                                    <!-- Bottom-Left Broken Vent Fragment -->
-                                    <rect x="18" y="80" width="20" height="20" fill="#dcdce4"></rect>
-                                    <rect x="20" y="82" width="16" height="16" fill="#121216"></rect>
-                                    <rect x="23" y="88" width="4" height="4" fill="#888892"></rect>
-                                    <rect x="29" y="88" width="4" height="4" fill="#ffffff"></rect>
-
-                                    <!-- Bottom-Right Broken Core Corner -->
-                                    <rect x="80" y="80" width="20" height="20" fill="#ffffff"></rect>
-                                    <rect x="82" y="82" width="16" height="16" fill="#08080a"></rect>
-                                    <rect x="86" y="86" width="8" height="8" fill="#44444e"></rect>
-
-                                    <!-- High-Density Radial Pixel Shrapnel & Sparks -->
-                                    <rect x="8" y="28" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="32" y="6" width="5" height="5" fill="#b0b0ba"></rect>
-                                    <rect x="82" y="6" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="106" y="28" width="5" height="5" fill="#cccccc"></rect>
-                                    <rect x="108" y="84" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="84" y="108" width="5" height="5" fill="#9999a4"></rect>
-                                    <rect x="28" y="108" width="6" height="6" fill="#ffffff"></rect>
-                                    <rect x="6" y="84" width="5" height="5" fill="#b8b8c2"></rect>
-                                </g>
-                            </svg>`,
-
-  OBSTACLE_JUNK_BOTTOM: `<svg id="svg-obstacle-junk-bottom" class="pixel-svg h-64 w-auto" viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
-                                <!-- LEVEL 1 (BASE): Detailed Pitched-Roof House with Chimney, Shingles, Door & Parlor Window -->
-                                <!-- Brick Chimney -->
-                                <rect x="82" y="126" width="16" height="28" fill="#ffffff"></rect>
-                                <rect x="84" y="128" width="12" height="24" fill="#18181c"></rect>
-                                <rect x="80" y="122" width="20" height="4" fill="#ffffff"></rect>
-                                <!-- Pitched Roof with Shingle Courses -->
-                                <polygon points="6,154 60,114 114,154" fill="#ffffff"></polygon>
-                                <polygon points="10,154 60,117 110,154" fill="#0a0a0c"></polygon>
-                                <rect x="38" y="128" width="44" height="2" fill="#3a3a42"></rect>
-                                <rect x="28" y="136" width="64" height="2" fill="#3a3a42"></rect>
-                                <rect x="18" y="144" width="84" height="2" fill="#3a3a42"></rect>
-                                <!-- Circular Attic Vent Window -->
-                                <rect x="54" y="128" width="12" height="12" fill="#ffffff"></rect>
-                                <rect x="56" y="130" width="8" height="8" fill="#686874"></rect>
-                                <rect x="59" y="130" width="2" height="8" fill="#0a0a0c"></rect>
-                                <rect x="56" y="133" width="8" height="2" fill="#0a0a0c"></rect>
-
-                                <!-- House Clapboard Siding Body -->
-                                <rect x="12" y="154" width="96" height="66" fill="#ffffff"></rect>
-                                <rect x="14" y="156" width="92" height="64" fill="#09090b"></rect>
-                                <!-- Horizontal Siding Clapboard Lines -->
-                                <rect x="16" y="162" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="170" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="178" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="186" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="194" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="202" width="88" height="1" fill="#2d2d34"></rect>
-                                <rect x="16" y="210" width="88" height="1" fill="#2d2d34"></rect>
-
-                                <!-- Detailed Parlor Window with Shutters, Sill & Flowerbox -->
-                                <rect x="20" y="164" width="38" height="36" fill="#ffffff"></rect>
-                                <rect x="22" y="166" width="34" height="32" fill="#0a0a0c"></rect>
-                                <rect x="24" y="168" width="14" height="13" fill="#dcdce4"></rect>
-                                <rect x="40" y="168" width="14" height="13" fill="#dcdce4"></rect>
-                                <rect x="24" y="183" width="14" height="13" fill="#888894"></rect>
-                                <rect x="40" y="183" width="14" height="13" fill="#888894"></rect>
-                                <rect x="18" y="200" width="42" height="4" fill="#ffffff"></rect>
-
-                                <!-- Detailed Panel Front Door with Transom & Doorknob -->
-                                <rect x="68" y="164" width="28" height="56" fill="#ffffff"></rect>
-                                <rect x="70" y="166" width="24" height="54" fill="#0d0d10"></rect>
-                                <!-- Transom Glass Above Door -->
-                                <rect x="72" y="168" width="20" height="6" fill="#b8b8c4"></rect>
-                                <!-- 4 Recessed Door Panels -->
-                                <rect x="73" y="178" width="7" height="14" fill="#32323a"></rect>
-                                <rect x="84" y="178" width="7" height="14" fill="#32323a"></rect>
-                                <rect x="73" y="196" width="7" height="16" fill="#32323a"></rect>
-                                <rect x="84" y="196" width="7" height="16" fill="#32323a"></rect>
-                                <!-- Brass Pixel Doorknob -->
-                                <rect x="88" y="193" width="3" height="3" fill="#ffffff"></rect>
-
-                                <!-- LEVEL 2: Executive Office Desk Balanced on House Roof -->
-                                <rect x="14" y="88" width="92" height="8" fill="#ffffff"></rect>
-                                <rect x="16" y="90" width="88" height="4" fill="#08080a"></rect>
-                                <!-- Left Desk Leg & Foot Brace -->
-                                <rect x="20" y="96" width="8" height="34" fill="#ffffff"></rect>
-                                <rect x="22" y="96" width="4" height="32" fill="#08080a"></rect>
-                                <!-- Center Kneehole Drawer with Pull Handle -->
-                                <rect x="28" y="96" width="36" height="10" fill="#ffffff"></rect>
-                                <rect x="30" y="96" width="32" height="8" fill="#16161c"></rect>
-                                <rect x="43" y="99" width="6" height="2" fill="#ffffff"></rect>
-                                <!-- Right 3-Drawer Filing Cabinet Pedestal -->
-                                <rect x="64" y="96" width="34" height="34" fill="#ffffff"></rect>
-                                <rect x="66" y="96" width="30" height="32" fill="#08080a"></rect>
-                                <rect x="68" y="98" width="26" height="8" fill="#2c2c34"></rect>
-                                <rect x="78" y="101" width="6" height="2" fill="#ffffff"></rect>
-                                <rect x="68" y="108" width="26" height="8" fill="#2c2c34"></rect>
-                                <rect x="78" y="111" width="6" height="2" fill="#ffffff"></rect>
-                                <rect x="68" y="118" width="26" height="8" fill="#2c2c34"></rect>
-                                <rect x="78" y="121" width="6" height="2" fill="#ffffff"></rect>
-
-                                <!--LEVEL 3: Multi-Pane Casement Window Frame & Desk Lamp on Desk -->
-                                <!-- Architect Desk Lamp on Right -->
-                                <rect x="80" y="84" width="14" height="4" fill="#ffffff"></rect>
-                                <rect x="86" y="66" width="3" height="18" fill="#ffffff"></rect>
-                                <polygon points="74,66 94,66 90,58 78,58" fill="#ffffff"></polygon>
-                                <polygon points="76,64 92,64 89,60 79,60" fill="#08080a"></polygon>
-
-                                <!-- Window Casement Frame on Left-Center -->
-                                <rect x="24" y="46" width="48" height="42" fill="#ffffff"></rect>
-                                <rect x="26" y="48" width="44" height="38" fill="#08080a"></rect>
-                                <rect x="29" y="51" width="17" height="15" fill="#c8c8d2"></rect>
-                                <rect x="50" y="51" width="17" height="15" fill="#888894"></rect>
-                                <rect x="29" y="68" width="17" height="15" fill="#686874"></rect>
-                                <rect x="50" y="68" width="17" height="15" fill="#d8d8e2"></rect>
-                                <!-- Cracked Glass Detail in Top-Left Pane -->
-                                <rect x="33" y="54" width="2" height="6" fill="#08080a"></rect>
-                                <rect x="35" y="58" width="4" height="2" fill="#08080a"></rect>
-
-                                <!-- LEVEL 4 (CROWN): Spindle-Back Wooden Dining Chair on Top -->
-                                <!-- Chair Front & Back Legs + Stretcher Bar -->
-                                <rect x="34" y="30" width="6" height="16" fill="#ffffff"></rect>
-                                <rect x="36" y="30" width="2" height="16" fill="#08080a"></rect>
-                                <rect x="56" y="30" width="6" height="16" fill="#ffffff"></rect>
-                                <rect x="58" y="30" width="2" height="16" fill="#08080a"></rect>
-                                <rect x="40" y="37" width="16" height="2" fill="#cccccc"></rect>
-                                <!-- Molded Saddle Seat -->
-                                <rect x="30" y="23" width="36" height="7" fill="#ffffff"></rect>
-                                <rect x="32" y="25" width="32" height="3" fill="#08080a"></rect>
-                                <!-- Chair Backrest Posts, 4 Turned Spindles & Crest Rail -->
-                                <rect x="32" y="2" width="6" height="21" fill="#ffffff"></rect>
-                                <rect x="34" y="4" width="2" height="19" fill="#08080a"></rect>
-                                <rect x="58" y="2" width="6" height="21" fill="#ffffff"></rect>
-                                <rect x="60" y="4" width="2" height="19" fill="#08080a"></rect>
-                                <rect x="40" y="6" width="2" height="17" fill="#cccccc"></rect>
-                                <rect x="45" y="6" width="2" height="17" fill="#ffffff"></rect>
-                                <rect x="50" y="6" width="2" height="17" fill="#cccccc"></rect>
-                                <rect x="54" y="6" width="2" height="17" fill="#ffffff"></rect>
-                                <rect x="30" y="2" width="36" height="5" fill="#ffffff"></rect>
-                                <rect x="32" y="4" width="32" height="2" fill="#08080a"></rect>
-                            </svg>`,
-
-  OBSTACLE_JUNK_TOP: `<svg id="svg-obstacle-junk-top" class="pixel-svg h-64 w-auto" viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
-                                <!-- CEILING ANCHOR: Inverted Two-Window House Story with Clapboard Siding -->
-                                <rect x="12" y="0" width="96" height="62" fill="#ffffff"></rect>
-                                <rect x="14" y="0" width="92" height="60" fill="#09090b"></rect>
-                                <!-- Clapboard Lines -->
-                                <rect x="16" y="8" width="88" height="1" fill="#2e2e36"></rect>
-                                <rect x="16" y="16" width="88" height="1" fill="#2e2e36"></rect>
-                                <rect x="16" y="24" width="88" height="1" fill="#2e2e36"></rect>
-                                <rect x="16" y="32" width="88" height="1" fill="#2e2e36"></rect>
-                                <rect x="16" y="40" width="88" height="1" fill="#2e2e36"></rect>
-                                <rect x="16" y="48" width="88" height="1" fill="#2e2e36"></rect>
-                                <!-- Twin Detailed Sash Windows -->
-                                <rect x="22" y="10" width="30" height="38" fill="#ffffff"></rect>
-                                <rect x="24" y="12" width="26" height="34" fill="#08080a"></rect>
-                                <rect x="26" y="14" width="10" height="14" fill="#d8d8e2"></rect>
-                                <rect x="38" y="14" width="10" height="14" fill="#d8d8e2"></rect>
-                                <rect x="26" y="30" width="10" height="14" fill="#787884"></rect>
-                                <rect x="38" y="30" width="10" height="14" fill="#787884"></rect>
-
-                                <rect x="68" y="10" width="30" height="38" fill="#ffffff"></rect>
-                                <rect x="70" y="12" width="26" height="34" fill="#08080a"></rect>
-                                <rect x="72" y="14" width="10" height="14" fill="#d8d8e2"></rect>
-                                <rect x="84" y="14" width="10" height="14" fill="#d8d8e2"></rect>
-                                <rect x="72" y="30" width="10" height="14" fill="#787884"></rect>
-                                <rect x="84" y="30" width="10" height="14" fill="#787884"></rect>
-
-                                <!-- Inverted Pitched Roof Gable Hanging Down -->
-                                <polygon points="6,62 60,96 114,62" fill="#ffffff"></polygon>
-                                <polygon points="10,62 60,93 110,62" fill="#0d0d10"></polygon>
-
-                                <!-- LEVEL 2: Shuttered Window Casement Hanging Below Roof Peak -->
-                                <rect x="22" y="88" width="76" height="44" fill="#ffffff"></rect>
-                                <rect x="24" y="90" width="72" height="40" fill="#09090b"></rect>
-                                <!-- Left & Right Louvered Shutters -->
-                                <rect x="26" y="92" width="12" height="36" fill="#2c2c34"></rect>
-                                <rect x="28" y="96" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="28" y="102" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="28" y="108" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="28" y="114" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="28" y="120" width="8" height="2" fill="#b8b8c2"></rect>
-
-                                <rect x="82" y="92" width="12" height="36" fill="#2c2c34"></rect>
-                                <rect x="84" y="96" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="84" y="102" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="84" y="108" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="84" y="114" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="84" y="120" width="8" height="2" fill="#b8b8c2"></rect>
-                                <!-- Central Window Panes -->
-                                <rect x="42" y="94" width="16" height="15" fill="#d8d8e2"></rect>
-                                <rect x="62" y="94" width="16" height="15" fill="#9898a4"></rect>
-                                <rect x="42" y="111" width="16" height="15" fill="#787884"></rect>
-                                <rect x="62" y="111" width="16" height="15" fill="#d8d8e2"></rect>
-
-                                <!-- LEVEL 3: Upside-Down Writing Desk with Drawers -->
-                                <rect x="20" y="132" width="8" height="28" fill="#ffffff"></rect>
-                                <rect x="22" y="132" width="4" height="28" fill="#08080a"></rect>
-                                <rect x="68" y="132" width="32" height="28" fill="#ffffff"></rect>
-                                <rect x="70" y="132" width="28" height="28" fill="#08080a"></rect>
-                                <rect x="72" y="135" width="24" height="7" fill="#2e2e36"></rect>
-                                <rect x="81" y="138" width="6" height="2" fill="#ffffff"></rect>
-                                <rect x="72" y="146" width="24" height="7" fill="#2e2e36"></rect>
-                                <rect x="81" y="149" width="6" height="2" fill="#ffffff"></rect>
-                                <!-- Inverted Desktop Surface -->
-                                <rect x="14" y="160" width="92" height="8" fill="#ffffff"></rect>
-                                <rect x="16" y="162" width="88" height="4" fill="#08080a"></rect>
-
-                                <!-- LEVEL 4 (TIP): Dangling Spindle Chair Silhouette -->
-                                <rect x="38" y="168" width="6" height="16" fill="#ffffff"></rect>
-                                <rect x="40" y="168" width="2" height="16" fill="#08080a"></rect>
-                                <rect x="68" y="168" width="6" height="16" fill="#ffffff"></rect>
-                                <rect x="70" y="168" width="2" height="16" fill="#08080a"></rect>
-                                <rect x="44" y="175" width="24" height="2" fill="#cccccc"></rect>
-                                <!-- Chair Seat -->
-                                <rect x="34" y="184" width="44" height="7" fill="#ffffff"></rect>
-                                <rect x="36" y="186" width="40" height="3" fill="#08080a"></rect>
-                                <!-- Chair Backrest Posts & Spindles Pointing Down -->
-                                <rect x="36" y="191" width="6" height="24" fill="#ffffff"></rect>
-                                <rect x="38" y="191" width="2" height="22" fill="#08080a"></rect>
-                                <rect x="70" y="191" width="6" height="24" fill="#ffffff"></rect>
-                                <rect x="72" y="191" width="2" height="22" fill="#08080a"></rect>
-                                <rect x="46" y="191" width="2" height="20" fill="#cccccc"></rect>
-                                <rect x="52" y="191" width="3" height="20" fill="#ffffff"></rect>
-                                <rect x="59" y="191" width="2" height="20" fill="#cccccc"></rect>
-                                <rect x="64" y="191" width="2" height="20" fill="#ffffff"></rect>
-                                <rect x="34" y="211" width="44" height="6" fill="#ffffff"></rect>
-                                <rect x="36" y="213" width="40" height="2" fill="#08080a"></rect>
-                            </svg>`,
-
-  OBSTACLE_CAVE_SHARDS: `<svg id="svg-obstacle-cave-shards" class="pixel-svg h-64 w-auto" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
-                                <!-- LEFT SPIRE: High-Detail Hanging Stalactite Crystal Formation -->
-                                <g transform="translate(4, 0)">
-                                    <!-- Stepped Razor Crystal Silhouette -->
-                                    <polygon points="0,0 76,0 70,38 62,38 56,82 48,82 42,134 38,186 34,134 28,82 20,82 14,38 6,38" fill="#ffffff"></polygon>
-                                    <polygon points="4,0 72,0 67,34 59,34 53,78 45,78 40,130 38,174 36,130 31,78 23,78 17,34 9,34" fill="#09090b"></polygon>
-                                    <!-- Internal Mineral Facet Planes -->
-                                    <polygon points="14,0 38,0 38,166 32,76 20,32" fill="#2c2c34"></polygon>
-                                    <polygon points="38,0 54,0 44,126 38,166" fill="#4e4e5a"></polygon>
-                                    <!-- Razor Specular Ridge Line -->
-                                    <rect x="37" y="10" width="2" height="152" fill="#e4e4ec"></rect>
-                                    <rect x="26" y="16" width="3" height="56" fill="#888894"></rect>
-                                    <rect x="46" y="14" width="3" height="62" fill="#383842"></rect>
-                                    <!-- Secondary Side Crystal Teeth -->
-                                    <polygon points="2,24 20,24 10,88" fill="#ffffff"></polygon>
-                                    <polygon points="5,26 17,26 10,78" fill="#18181e"></polygon>
-                                    <polygon points="56,20 74,20 64,84" fill="#ffffff"></polygon>
-                                    <polygon points="59,22 71,22 64,74" fill="#18181e"></polygon>
-                                    <!-- Floating Shard Splinters -->
-                                    <rect x="16" y="104" width="4" height="12" fill="#ffffff"></rect>
-                                    <rect x="56" y="98" width="4" height="10" fill="#c8c8d4"></rect>
-                                    <rect x="26" y="152" width="3" height="10" fill="#ffffff"></rect>
-                                </g>
-
-                                <!-- RIGHT SPIRE: High-Detail Rising Stalagmite Crystal Formation -->
-                                <g transform="translate(80, 34)">
-                                    <polygon points="38,0 42,52 48,104 56,104 62,148 70,148 76,186 0,186 6,148 14,148 20,104 28,104 34,52" fill="#ffffff"></polygon>
-                                    <polygon points="38,12 40,56 45,108 53,108 59,152 67,152 72,186 4,186 9,152 17,152 23,108 31,108 36,56" fill="#09090b"></polygon>
-                                    <!-- Internal Mineral Facet Planes -->
-                                    <polygon points="38,16 38,186 22,186 32,108" fill="#4e4e5a"></polygon>
-                                    <polygon points="38,16 54,186 38,186" fill="#26262e"></polygon>
-                                    <rect x="37" y="24" width="2" height="152" fill="#e4e4ec"></rect>
-                                    <rect x="28" y="114" width="3" height="60" fill="#888894"></rect>
-                                    <!-- Side Stalagmite Spikes -->
-                                    <polygon points="12,102 2,186 22,186" fill="#ffffff"></polygon>
-                                    <polygon points="12,112 5,186 19,186" fill="#18181e"></polygon>
-                                    <polygon points="64,98 54,186 74,186" fill="#ffffff"></polygon>
-                                    <polygon points="64,108 57,186 71,186" fill="#18181e"></polygon>
-                                    <!-- Floating Shard Splinters -->
-                                    <rect x="20" y="64" width="4" height="12" fill="#ffffff"></rect>
-                                    <rect x="52" y="42" width="3" height="10" fill="#d0d0da"></rect>
-                                </g>
-                            </svg>`,
-
-  OBSTACLE_HYBRID: `<svg id="svg-obstacle-hybrid" class="pixel-svg h-56 w-auto" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Base Jagged Cave Rock & Crushed Desk Foundation -->
-                                <polygon points="8,180 18,132 102,132 112,180" fill="#ffffff"></polygon>
-                                <polygon points="12,180 21,135 99,135 108,180" fill="#09090b"></polygon>
-                                <rect x="26" y="142" width="28" height="32" fill="#2c2c34"></rect>
-                                <rect x="36" y="147" width="8" height="2" fill="#ffffff"></rect>
-                                <rect x="36" y="157" width="8" height="2" fill="#ffffff"></rect>
-                                <rect x="68" y="142" width="22" height="32" fill="#1e1e24"></rect>
-
-                                <!-- Detailed Shuttered Window Frame Impaled by Crystal Spire -->
-                                <rect x="20" y="78" width="80" height="54" fill="#ffffff"></rect>
-                                <rect x="22" y="80" width="76" height="50" fill="#08080a"></rect>
-                                <!-- Left & Right Shutters -->
-                                <rect x="24" y="82" width="12" height="46" fill="#2c2c34"></rect>
-                                <rect x="26" y="88" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="26" y="96" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="26" y="104" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="26" y="112" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="84" y="82" width="12" height="46" fill="#2c2c34"></rect>
-                                <rect x="86" y="88" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="86" y="96" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="86" y="104" width="8" height="2" fill="#b8b8c2"></rect>
-                                <rect x="86" y="112" width="8" height="2" fill="#b8b8c2"></rect>
-                                <!-- Broken Glass Panes -->
-                                <rect x="40" y="84" width="18" height="18" fill="#d4d4de"></rect>
-                                <rect x="62" y="84" width="18" height="18" fill="#787884"></rect>
-                                <rect x="40" y="106" width="18" height="18" fill="#585864"></rect>
-                                <rect x="62" y="106" width="18" height="18" fill="#c8c8d2"></rect>
-
-                                <!-- Razor Cave Shard Piercing Upward Through Window & Chair -->
-                                <polygon points="60,4 68,48 76,78 44,78 52,48" fill="#ffffff"></polygon>
-                                <polygon points="60,12 65,48 72,78 48,78 55,48" fill="#09090b"></polygon>
-                                <polygon points="60,14 60,78 50,78" fill="#4c4c58"></polygon>
-                                <rect x="59" y="16" width="2" height="62" fill="#ffffff"></rect>
-
-                                <!-- Tilted Chair Impaled on Left Shoulder of Shard -->
-                                <rect x="28" y="54" width="28" height="6" fill="#ffffff"></rect>
-                                <rect x="30" y="56" width="24" height="2" fill="#08080a"></rect>
-                                <rect x="30" y="60" width="4" height="18" fill="#ffffff"></rect>
-                                <rect x="48" y="60" width="4" height="18" fill="#ffffff"></rect>
-                                <rect x="28" y="32" width="5" height="22" fill="#ffffff"></rect>
-                                <rect x="36" y="34" width="2" height="20" fill="#cccccc"></rect>
-                                <rect x="41" y="34" width="2" height="20" fill="#ffffff"></rect>
-                                <rect x="28" y="30" width="20" height="4" fill="#ffffff"></rect>
-                            </svg>`,
-
-  BG_JUNK_TOWERS: `<svg id="svg-bg-junk-towers" class="pixel-svg w-full h-56" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-                                <!-- TOWER 1 (LEFT): Detailed Victorian House + Desk + Spindle Chair Silhouette -->
-                                <g fill="#32323a">
-                                    <polygon points="8,92 42,64 76,92" fill="#3a3a44"></polygon>
-                                    <rect x="56" y="66" width="8" height="20"></rect>
-                                    <rect x="14" y="92" width="56" height="88"></rect>
-                                    <!-- Glowing Mist Windows with Mullions -->
-                                    <rect x="22" y="102" width="16" height="24" fill="#6e6e7a"></rect>
-                                    <rect x="29" y="102" width="2" height="24" fill="#32323a"></rect>
-                                    <rect x="22" y="113" width="16" height="2" fill="#32323a"></rect>
-                                    <rect x="46" y="102" width="16" height="24" fill="#6e6e7a"></rect>
-                                    <rect x="53" y="102" width="2" height="24" fill="#32323a"></rect>
-                                    <rect x="46" y="113" width="16" height="2" fill="#32323a"></rect>
-                                    <!-- Stacked Desk on Roof -->
-                                    <rect x="18" y="46" width="48" height="4" fill="#42424e"></rect>
-                                    <rect x="22" y="50" width="4" height="18"></rect>
-                                    <rect x="48" y="50" width="14" height="18"></rect>
-                                    <rect x="50" y="53" width="10" height="4" fill="#585866"></rect>
-                                    <rect x="50" y="59" width="10" height="4" fill="#585866"></rect>
-                                    <!-- Stacked Chair & Lamp on Desk -->
-                                    <rect x="28" y="32" width="20" height="3" fill="#42424e"></rect>
-                                    <rect x="30" y="35" width="3" height="11"></rect>
-                                    <rect x="43" y="35" width="3" height="11"></rect>
-                                    <rect x="28" y="16" width="3" height="16" fill="#42424e"></rect>
-                                    <rect x="33" y="18" width="2" height="14"></rect>
-                                    <rect x="38" y="18" width="2" height="14"></rect>
-                                    <rect x="28" y="14" width="18" height="3" fill="#42424e"></rect>
-                                </g>
-
-                                <!-- TOWER 2 (CENTER): Multi-Pane Window Stack, Bookshelf & Streetlamp -->
-                                <g fill="#28282f">
-                                    <rect x="92" y="78" width="60" height="102"></rect>
-                                    <!-- 6-Pane Window Cutout -->
-                                    <rect x="100" y="86" width="44" height="34" fill="#646470"></rect>
-                                    <rect x="114" y="86" width="2" height="34" fill="#28282f"></rect>
-                                    <rect x="128" y="86" width="2" height="34" fill="#28282f"></rect>
-                                    <rect x="100" y="102" width="44" height="2" fill="#28282f"></rect>
-                                    <!-- Stacked Bookshelf with Books -->
-                                    <rect x="102" y="44" width="40" height="34" fill="#34343e"></rect>
-                                    <rect x="106" y="48" width="32" height="10" fill="#5c5c68"></rect>
-                                    <rect x="108" y="50" width="3" height="8" fill="#28282f"></rect>
-                                    <rect x="114" y="51" width="4" height="7" fill="#28282f"></rect>
-                                    <rect x="122" y="49" width="3" height="9" fill="#28282f"></rect>
-                                    <rect x="106" y="62" width="32" height="10" fill="#5c5c68"></rect>
-                                    <rect x="126" y="64" width="4" height="8" fill="#28282f"></rect>
-                                    <!-- Streetlamp on Top -->
-                                    <rect x="120" y="12" width="4" height="32"></rect>
-                                    <rect x="112" y="12" width="18" height="3" fill="#444450"></rect>
-                                    <polygon points="108,15 120,15 117,22 111,22" fill="#9898a6"></polygon>
-                                </g>
-
-                                <!-- TOWER 3 (RIGHT): Distant Cave Spire + Cabin + TV Antenna -->
-                                <g fill="#363640">
-                                    <polygon points="168,180 180,82 222,82 232,180"></polygon>
-                                    <rect x="176" y="50" width="40" height="32" fill="#3e3e48"></rect>
-                                    <rect x="182" y="56" width="12" height="18" fill="#72727e"></rect>
-                                    <rect x="198" y="56" width="12" height="18" fill="#72727e"></rect>
-                                    <!-- Roof Antenna -->
-                                    <rect x="194" y="18" width="3" height="32"></rect>
-                                    <rect x="180" y="26" width="30" height="2" fill="#50505c"></rect>
-                                    <rect x="184" y="20" width="22" height="2" fill="#50505c"></rect>
-                                </g>
-                            </svg>`,
-
-  HEAVY_SMOKE: `<svg id="svg-heavy-smoke" class="pixel-svg w-full h-56" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Layer 1: Soft Distant Mist Smoke Bank (#8a8a96) -->
-                                <g fill="#8a8a96" class="anim-smoke-billow-slow" opacity="0.7">
-                                    <rect x="0" y="114" width="240" height="66"></rect>
-                                    <rect x="12" y="96" width="64" height="18"></rect>
-                                    <rect x="26" y="84" width="36" height="12"></rect>
-                                    <rect x="82" y="88" width="84" height="26"></rect>
-                                    <rect x="102" y="74" width="44" height="14"></rect>
-                                    <rect x="172" y="94" width="58" height="20"></rect>
-                                </g>
-
-                                <!-- Layer 2: Mid-Gray Volumetric Rolling Smoke (#52525c) -->
-                                <g fill="#52525c" class="anim-smoke-billow">
-                                    <rect x="0" y="132" width="240" height="48"></rect>
-                                    <rect x="18" y="112" width="56" height="20"></rect>
-                                    <rect x="30" y="100" width="32" height="12"></rect>
-                                    <rect x="86" y="104" width="76" height="28"></rect>
-                                    <rect x="104" y="90" width="42" height="14"></rect>
-                                    <rect x="168" y="114" width="60" height="18"></rect>
-                                    <rect x="182" y="102" width="32" height="12"></rect>
-                                </g>
-
-                                <!-- Layer 3: High-Contrast White/Silver Billow Rim Highlights -->
-                                <g class="anim-smoke-billow">
-                                    <rect x="32" y="100" width="28" height="6" fill="#d0d0da"></rect>
-                                    <rect x="38" y="96" width="16" height="4" fill="#ffffff"></rect>
-                                    <rect x="106" y="90" width="38" height="8" fill="#d0d0da"></rect>
-                                    <rect x="114" y="84" width="22" height="6" fill="#ffffff"></rect>
-                                    <rect x="184" y="102" width="28" height="6" fill="#d0d0da"></rect>
-                                    <rect x="190" y="98" width="16" height="4" fill="#ffffff"></rect>
-                                </g>
-
-                                <!-- Layer 4: Deep Charcoal Foreground Smoke Trench (#24242a) -->
-                                <g fill="#24242a" class="anim-smoke-billow">
-                                    <rect x="0" y="152" width="240" height="28"></rect>
-                                    <rect x="14" y="140" width="52" height="12"></rect>
-                                    <rect x="88" y="134" width="70" height="18"></rect>
-                                    <rect x="172" y="142" width="56" height="10"></rect>
-                                </g>
-
-                                <!-- Layer 5: Smooth 60FPS Rising Smoke Plumes & Soot Cubes -->
-                                <g class="anim-smoke-rise">
-                                    <!-- Left Plume Cluster -->
-                                    <rect x="36" y="64" width="26" height="14" fill="#686874"></rect>
-                                    <rect x="40" y="54" width="18" height="10" fill="#a8a8b4"></rect>
-                                    <rect x="44" y="48" width="10" height="6" fill="#e8e8f0"></rect>
-
-                                    <!-- Center Heavy Plume Cluster -->
-                                    <rect x="106" y="48" width="34" height="18" fill="#686874"></rect>
-                                    <rect x="112" y="36" width="22" height="12" fill="#b8b8c4"></rect>
-                                    <rect x="118" y="28" width="12" height="8" fill="#ffffff"></rect>
-
-                                    <!-- Right Plume Cluster -->
-                                    <rect x="184" y="66" width="24" height="12" fill="#5e5e6a"></rect>
-                                    <rect x="188" y="56" width="16" height="10" fill="#a8a8b4"></rect>
-                                    <rect x="192" y="50" width="8" height="6" fill="#ffffff"></rect>
-
-                                    <!-- Fine Rising Soot & Ash Particles -->
-                                    <rect x="24" y="38" width="4" height="4" fill="#d0d0da"></rect>
-                                    <rect x="78" y="26" width="5" height="5" fill="#ffffff"></rect>
-                                    <rect x="156" y="34" width="4" height="4" fill="#b8b8c4"></rect>
-                                    <rect x="212" y="30" width="4" height="4" fill="#e4e4ec"></rect>
-                                </g>
-                            </svg>`
-};
+                <!-- 8. PARALLAX BACKGROUND GRAY JUNK TOWERS -->
+                <symbol id="sprite-bg-towers" viewBox="0 0 240 200">
+                    <!-- Tower 1: Victorian House + Desk + Chair -->
+                    <g fill="#32323b">
+                        <polygon points="8,104 44,72 80,104" fill="#3a3a45"></polygon>
+                        <rect x="58" y="74" width="8" height="24"></rect>
+                        <rect x="14" y="104" width="60" height="96"></rect>
+                        <rect x="22" y="114" width="18" height="26" fill="#72727e"></rect>
+                        <rect x="30" y="114" width="2" height="26" fill="#32323b"></rect>
+                        <rect x="22" y="126" width="18" height="2" fill="#32323b"></rect>
+                        <rect x="48" y="114" width="18" height="26" fill="#72727e"></rect>
+                        <rect x="56" y="114" width="2" height="26" fill="#32323b"></rect>
+                        <rect x="48" y="126" width="18" height="2" fill="#32323b"></rect>
+                        <rect x="18" y="54" width="52" height="4" fill="#444450"></rect>
+                        <rect x="22" y="58" width="4" height="20"></rect>
+                        <rect x="50" y="58" width="16" height="20"></rect>
+                        <rect x="52" y="61" width="12" height="4" fill="#5a5a68"></rect>
+                        <rect x="52" y="68" width="12" height="4" fill="#5a5a68"></rect>
+                        <rect x="28" y="38" width="22" height="3" fill="#444450"></rect>
+                        <rect x="30" y="41" width="3" height="13"></rect>
+                        <rect x="45" y="41" width="3" height="13"></rect>
+                        <rect x="28" y="20" width="3" height="18" fill="#444450"></rect>
+                        <rect x="34" y="22" width="2" height="16"></rect>
+                        <rect x="40" y="22" width="2" height="16"></rect>
+                        <rect x="28" y="18" width="20" height="3" fill="#444450"></rect>
+                    </g>
+                    <!-- Tower 2: Multi-Pane Window Stack + Bookshelf + Streetlamp -->
+                    <g fill="#282830">
+                        <rect x="94" y="90" width="62" height="110"></rect>
+                        <rect x="102" y="98" width="46" height="36" fill="#686874"></rect>
+                        <rect x="116" y="98" width="2" height="36" fill="#282830"></rect>
+                        <rect x="132" y="98" width="2" height="36" fill="#282830"></rect>
+                        <rect x="102" y="115" width="46" height="2" fill="#282830"></rect>
+                        <rect x="104" y="54" width="42" height="36" fill="#34343e"></rect>
+                        <rect x="108" y="58" width="34" height="11" fill="#5c5c68"></rect>
+                        <rect x="110" y="60" width="3" height="9" fill="#282830"></rect>
+                        <rect x="116" y="61" width="4" height="8" fill="#282830"></rect>
+                        <rect x="124" y="59" width="3" height="10" fill="#282830"></rect>
+                        <rect x="108" y="73" width="34" height="11" fill="#5c5c68"></rect>
+                        <rect x="128" y="75" width="4" height="9" fill="#282830"></rect>
+                        <rect x="122" y="18" width="4" height="36"></rect>
+                        <rect x="114" y="18" width="18" height="3" fill="#464652"></rect>
+                        <polygon points="110,21 122,21 119,28 113,28" fill="#9a9aa8"></polygon>
+                    </g>
+                    <!-- Tower 3: Distant Cave Spire + Cabin + TV Antenna -->
+                    <g fill="#363640">
+                        <polygon points="168,200 180,94 224,94 234,200"></polygon>
+                        <rect x="176" y="60" width="42" height="34" fill="#3e3e49"></rect>
+                        <rect x="182" y="66" width="12" height="20" fill="#747480"></rect>
+                        <rect x="200" y="66" width="12" height="20" fill="#747480"></rect>
+                        <rect x="196" y="24" width="3" height="36"></rect>
+                        <rect x="182" y="32" width="30" height="2" fill="#525260"></rect>
+                        <rect x="186" y="26" width="22" height="2" fill="#525260"></rect>
+                    </g>
+                </symbol>
+            </svg>
