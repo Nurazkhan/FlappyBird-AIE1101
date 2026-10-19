@@ -119,23 +119,37 @@
                     <div id="comboBadge" class="hidden mt-1 px-2 py-0.5 bg-white text-black font-pixel text-[10px] rounded-sm shadow-[2px_2px_0_#000]">CLEAN PASS +1</div>
                 </div>
 
-                <div id="startOverlay" class="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center transition-opacity">
-                    <div class="max-w-md w-full bg-neutral-950/95 border-2 border-white p-6 rounded-lg shadow-[8px_8px_0px_#27272a]">
-                        <div class="inline-block px-2.5 py-0.5 bg-white text-black font-pixel text-[10px] mb-2 rounded-sm">MONOCHROME PIXEL EDITION</div>
-                        <h2 class="font-pixel text-2xl sm:text-3xl text-white tracking-wide mb-2">FLAPPY PIXEL</h2>
-                        <p class="text-xs text-neutral-300 leading-relaxed mb-5">
-                            Pilot the <strong class="text-white">Cubic Pixel</strong> through towering <strong class="text-white">House, Desk, Window &amp; Chair Shadows</strong> and razor-sharp <strong class="text-white">Cave Shards</strong> amidst heavy billowing smoke.
-                        </p>
-                        <div class="flex flex-wrap justify-center gap-3">
-                            <button onclick="triggerFlapAction()" class="pixel-btn px-6 py-3 rounded font-pixel text-xs sm:text-sm font-bold">
-                                PRESS SPACE OR CLICK TO LAUNCH
+                <div id="startOverlay" class="absolute inset-0 z-20 bg-[#09090b]/75 backdrop-blur-[2px] flex items-center justify-center p-5 sm:p-8 transition-opacity">
+                    <section aria-labelledby="menuTitle" class="w-full max-w-lg border-2 border-white bg-neutral-950/95 p-4 shadow-[8px_8px_0px_#27272a] sm:p-6">
+                        <div class="flex items-center justify-between border-b border-neutral-700 pb-3 text-[10px] font-pixel tracking-wider">
+                            <span class="bg-white px-2 py-1 text-black">SYSTEM READY</span>
+                            <span class="text-neutral-400">BUILD M1.0</span>
+                        </div>
+
+                        <div class="py-6 sm:py-8">
+                            <p class="mb-2 text-[10px] font-pixel tracking-[0.22em] text-neutral-400">MONOCHROME PIXEL EDITION</p>
+                            <h2 id="menuTitle" class="font-pixel text-3xl leading-none tracking-wide text-white sm:text-4xl">FLAPPY<br>PIXEL</h2>
+                            <p class="mt-4 max-w-sm text-xs leading-relaxed text-neutral-300">
+                                Guide the Cubic Pixel through the industrial shadow trench. One clean route at a time.
+                            </p>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-[1.35fr_0.65fr]">
+                            <button type="button" onclick="triggerFlapAction()" class="pixel-btn min-h-14 px-5 py-3 text-left font-pixel text-xs font-bold sm:text-sm">
+                                <span class="block text-[10px] text-neutral-600">01 // FLIGHT MODE</span>
+                                START GAME
+                            </button>
+                            <button type="button" disabled aria-disabled="true" title="Shop coming soon" class="min-h-14 cursor-not-allowed border-2 border-neutral-700 bg-neutral-900 px-5 py-3 text-left font-pixel text-xs text-neutral-500 shadow-[4px_4px_0_#09090b] sm:text-sm">
+                                <span class="block text-[10px] text-neutral-600">02 // LOCKED</span>
+                                SHOP
                             </button>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
-                            <span>Controls: [SPACE] / [W] / [UP] / [TAP]</span>
-                            <span>60FPS Particle Engine</span>
+
+                        <div class="mt-5 flex flex-wrap gap-x-4 gap-y-1 border-t border-neutral-800 pt-3 text-[10px] text-neutral-400">
+                            <span>START: [SPACE] / [CLICK]</span>
+                            <span>FLAP: [W] / [UP] / [TAP]</span>
                         </div>
-                    </div>
+                    </section>
                 </div>
 
                 <div id="gameOverOverlay" class="hidden absolute inset-0 bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center">
@@ -156,6 +170,9 @@
                         <div class="flex flex-wrap justify-center gap-3">
                             <button onclick="restartGame()" class="pixel-btn px-6 py-2.5 rounded font-pixel text-xs sm:text-sm font-bold">
                                 PLAY AGAIN [SPACE]
+                            </button>
+                            <button onclick="returnToMainMenu()" class="pixel-btn-dark px-5 py-2.5 rounded font-pixel text-xs sm:text-sm">
+                                MAIN MENU
                             </button>
                         </div>
                     </div>

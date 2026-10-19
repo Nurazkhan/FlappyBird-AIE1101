@@ -545,6 +545,19 @@
             applyHeroFlapImpulse();
         }
 
+        function returnToMainMenu() {
+            resetGameEntities();
+            gameState = 'START';
+            lastFrameTime = performance.now();
+
+            const startEl = document.getElementById('startOverlay');
+            const overEl = document.getElementById('gameOverOverlay');
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (startEl) startEl.classList.remove('hidden');
+            if (overEl) overEl.classList.add('hidden');
+            if (pauseBtn) pauseBtn.textContent = '⏸ PAUSE [P]';
+        }
+
         function togglePause() {
             const pauseBtn = document.getElementById('pauseBtn');
             if (gameState === 'PLAYING') {
