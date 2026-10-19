@@ -117,6 +117,9 @@
                 <div class="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
                     <div id="liveScoreDisplay" class="font-pixel text-4xl sm:text-5xl text-white drop-shadow-[0_4px_0_#000000] tracking-wider">0</div>
                     <div id="comboBadge" class="hidden mt-1 px-2 py-0.5 bg-white text-black font-pixel text-[10px] rounded-sm shadow-[2px_2px_0_#000]">CLEAN PASS +1</div>
+                    <div id="abilityHud" class="mt-2 border border-neutral-500 bg-neutral-950/85 px-2 py-1 text-center font-pixel text-[9px] tracking-wide text-neutral-200">
+                        CUBE-01 // BASELINE
+                    </div>
                 </div>
 
                 <div id="startOverlay" class="absolute inset-0 z-20 bg-[#09090b]/75 backdrop-blur-[2px] flex items-center justify-center p-5 sm:p-8 transition-opacity">
@@ -132,6 +135,7 @@
                             <p class="mt-4 max-w-sm text-xs leading-relaxed text-neutral-300">
                                 Guide the Cubic Pixel through the industrial shadow trench. One clean route at a time.
                             </p>
+                            <p class="mt-3 text-[10px] font-pixel text-neutral-500">PILOT: <span id="selectedPilotMenu" class="text-white">CUBE-01</span></p>
                         </div>
 
                         <div class="grid gap-3 sm:grid-cols-[1.35fr_0.65fr]">
@@ -139,8 +143,8 @@
                                 <span class="block text-[10px] text-neutral-600">01 // FLIGHT MODE</span>
                                 START GAME
                             </button>
-                            <button type="button" disabled aria-disabled="true" title="Shop coming soon" class="min-h-14 cursor-not-allowed border-2 border-neutral-700 bg-neutral-900 px-5 py-3 text-left font-pixel text-xs text-neutral-500 shadow-[4px_4px_0_#09090b] sm:text-sm">
-                                <span class="block text-[10px] text-neutral-600">02 // LOCKED</span>
+                            <button type="button" onclick="openShop()" class="pixel-btn-dark min-h-14 px-5 py-3 text-left font-pixel text-xs sm:text-sm">
+                                <span class="block text-[10px] text-neutral-400">02 // PILOT HANGAR</span>
                                 SHOP
                             </button>
                         </div>
@@ -149,6 +153,21 @@
                             <span>START: [SPACE] / [CLICK]</span>
                             <span>FLAP: [W] / [UP] / [TAP]</span>
                         </div>
+                    </section>
+                </div>
+
+                <div id="shopOverlay" class="hidden absolute inset-0 z-30 overflow-y-auto bg-[#09090b]/90 p-4 backdrop-blur-[2px] sm:p-6">
+                    <section aria-labelledby="shopTitle" class="mx-auto w-full max-w-4xl border-2 border-neutral-200 bg-neutral-950 shadow-[8px_8px_0px_#27272a]">
+                        <header class="flex items-start justify-between gap-4 border-b border-neutral-700 p-4 sm:p-5">
+                            <div>
+                                <p class="font-pixel text-[10px] tracking-[0.2em] text-neutral-400">PILOT HANGAR</p>
+                                <h2 id="shopTitle" class="mt-1 font-pixel text-xl text-white sm:text-2xl">SELECT A CUBE</h2>
+                                <p class="mt-2 text-xs text-neutral-400">All pilots are available. Their automatic ability activates during a run.</p>
+                            </div>
+                            <button type="button" onclick="closeShop()" class="pixel-btn-dark px-3 py-2 font-pixel text-[10px]">BACK</button>
+                        </header>
+                        <div id="characterShopGrid" class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 sm:p-5"></div>
+                        <footer id="shopSelectionDetail" class="border-t border-neutral-700 bg-neutral-900/70 p-4 text-xs text-neutral-300 sm:p-5"></footer>
                     </section>
                 </div>
 

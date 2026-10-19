@@ -130,6 +130,18 @@
          * 2. PIXEL-LOCKED SVG <symbol> RASTERIZER (Fixes 300x150 Viewport Offset)
          ***********************************************************************/
         const SPRITE_CACHE = {};
+        const CHARACTER_ROSTER_FILE = './flappy_pixel_9_character_svg_roster_ability_animations.html';
+        const CHARACTER_ROSTER = [
+            { id: 'cube01', spriteId: 'svg-char-01', name: 'CUBE-01', title: 'THE ORIGIN', ability: 'BASELINE ARCADE SKILL', description: 'No automatic ability. A pure handling test.', color: '#e4e4e7' },
+            { id: 'volt', spriteId: 'svg-char-02', name: 'VOLT-CUBE', title: 'THUNDER', ability: 'PHASE BLINK // EVERY 3RD JUMP', description: 'Teleports forward through the trench every third flap.', color: '#facc15' },
+            { id: 'nimbus', spriteId: 'svg-char-03', name: 'NIMBUS', title: 'CLOUD', ability: 'MIST FORM // EVERY 5TH JUMP', description: 'Phases through obstacles for two seconds.', color: '#7dd3fc' },
+            { id: 'aegis', spriteId: 'svg-char-04', name: 'AEGIS', title: 'IRONCLAD', ability: 'ABLATIVE ARMOR // 1-HIT SHIELD', description: 'Blocks one crash and recharges after five passes.', color: '#fb923c' },
+            { id: 'prism', spriteId: 'svg-char-05', name: 'PRISM', title: 'GLASS', ability: 'SHARD RESONANCE // EVERY 4TH OBSTACLE', description: 'Widens every fourth obstacle gap by forty-five percent.', color: '#e879f9' },
+            { id: 'chrono', spriteId: 'svg-char-06', name: 'CHRONO', title: 'GLITCH', ability: 'TIME DILATION // DANGER SLOW-MO', description: 'Slows the world near danger; recharges in six jumps.', color: '#34d399' },
+            { id: 'cinder', spriteId: 'svg-char-07', name: 'CINDER', title: 'PHOENIX', ability: 'THERMAL UPDRAFT + ASH REBIRTH', description: 'Bounces off the floor and revives from one fatal crash.', color: '#f97316' },
+            { id: 'grav0', spriteId: 'svg-char-08', name: 'GRAV-0', title: 'VOID', ability: 'FEATHER-FALL // APEX HOVER', description: 'Hovers at each jump apex and falls more slowly.', color: '#a78bfa' },
+            { id: 'echo', spriteId: 'svg-char-09', name: 'ECHO', title: 'PHANTOM', ability: 'SHADOW DECOY // EVERY 6TH JUMP', description: 'Creates a double-score decoy that blocks one crash.', color: '#2dd4bf' }
+        ];
 
         /**
          * Extracts a <symbol id="..." viewBox="0 0 W H"> from an SVG document
@@ -202,6 +214,21 @@
             });
 
             await Promise.all(promises);
+            await preloadCharacterRosterSprites();
+        }
+
+        async function preloadCharacterRosterSprites() {
+            try {
+                const response = await fetch(CHARACTER_ROSTER_FILE);
+                if (!response.ok) return;
+                const rosterDoc = new DOMParser().parseFromString(await response.text(), 'text/html');
+                await Promise.all(CHARACTER_ROSTER.map(async (character) => {
+                    const node = rosterDoc.getElementById(character.spriteId);
+                    SPRITE_CACHE[`character-${character.id}`] = await rasterizeSymbolNode(node);
+                }));
+            } catch (err) {
+                console.warn('Character roster sprites could not be loaded:', err);
+            }
         }
 
         /***********************************************************************
@@ -251,6 +278,54 @@
             trailTimer: 0,
             alive: true
         };
+
+        let selectedCharacterId = 'cube01';
+        let jumpCount = 0;
+        let passCount = 0;
+        let obstacleCount = 0;
+        let phaseTimer = 0;
+        let chronoTimer = 0;
+        let gravHoverTimer = 0;
+        let gravHoverArmed = false;
+        let echoTimer = 0;
+        let echoDodgeReady = false;
+        let aegisShieldReady = true;
+        let aegisRechargePasses = 0;
+        let chronoReady = true;
+        let chronoRechargeJumps = 0;
+        let cinderReviveReady = true;
+        let abilityFlashTimer = 0;
+        let abilityFlashText = '';
+
+        function getActiveCharacter() {
+            return CHARACTER_ROSTER.find((character) => character.id === selectedCharacterId) || CHARACTER_ROSTER[0];
+        }
+
+        function resetCharacterRunState() {
+            jumpCount = 0;
+            passCount = 0;
+            obstacleCount = 0;
+            phaseTimer = 0;
+            chronoTimer = 0;
+            gravHoverTimer = 0;
+            gravHoverArmed = false;
+            echoTimer = 0;
+            echoDodgeReady = false;
+            aegisShieldReady = true;
+            aegisRechargePasses = 0;
+            chronoReady = true;
+            chronoRechargeJumps = 0;
+            cinderReviveReady = true;
+            abilityFlashTimer = 0;
+            abilityFlashText = '';
+            updateCharacterUI();
+        }
+
+        function announceAbility(text, duration = 0.9) {
+            abilityFlashText = text;
+            abilityFlashTimer = duration;
+            updateCharacterUI();
+        }
 
         // Dynamic Arrays for Obstacles, Parallax, Smoke & Particles
         let obstacles = [];
@@ -437,8 +512,16 @@
             const gap = preset.gapSize;
             const minTop = 74;
             const maxTop = GAME_HEIGHT - gap - 104;
-            const gapTop = minTop + Math.random() * (maxTop - minTop);
-            const gapBottom = gapTop + gap;
+            let gapTop = minTop + Math.random() * (maxTop - minTop);
+            let gapBottom = gapTop + gap;
+            obstacleCount += 1;
+            const prismResonance = selectedCharacterId === 'prism' && obstacleCount % 4 === 0;
+            if (prismResonance) {
+                const widening = gap * 0.225;
+                gapTop = Math.max(28, gapTop - widening);
+                gapBottom = Math.min(GAME_HEIGHT - 28, gapBottom + widening);
+                announceAbility('SHARD RESONANCE', 0.8);
+            }
 
             let style = 'junk';
             if (obstacleThemeMode === 'junk') {
@@ -458,6 +541,7 @@
                 gapTop: gapTop,
                 gapBottom: gapBottom,
                 style: style,
+                prismResonance: prismResonance,
                 passed: false,
                 splinterOffset: Math.random() * Math.PI * 2
             });
@@ -487,6 +571,7 @@
             shockwaves = [];
             shatteredFragments = [];
             score = 0;
+            resetCharacterRunState();
             updateScoreUI();
         }
 
@@ -524,6 +609,32 @@
 
             spawnFlapBurstParticles();
             playPixelSound('flap');
+            activateFlapAbility();
+        }
+
+        function activateFlapAbility() {
+            jumpCount += 1;
+
+            if (selectedCharacterId === 'volt' && jumpCount % 3 === 0) {
+                obstacles.forEach((obstacle) => { obstacle.x -= 112; });
+                announceAbility('PHASE BLINK', 0.65);
+            } else if (selectedCharacterId === 'nimbus' && jumpCount % 5 === 0) {
+                phaseTimer = 2;
+                announceAbility('MIST FORM // 2.0S', 2);
+            } else if (selectedCharacterId === 'chrono' && !chronoReady) {
+                chronoRechargeJumps += 1;
+                if (chronoRechargeJumps >= 6) {
+                    chronoReady = true;
+                    chronoRechargeJumps = 0;
+                    announceAbility('TIME CORE READY', 0.8);
+                }
+            } else if (selectedCharacterId === 'grav0') {
+                gravHoverArmed = true;
+            } else if (selectedCharacterId === 'echo' && jumpCount % 6 === 0) {
+                echoTimer = 2.5;
+                echoDodgeReady = true;
+                announceAbility('SHADOW DECOY // 2X SCORE', 2.5);
+            }
         }
 
         function startGame() {
@@ -593,11 +704,121 @@
             if (bestEl) bestEl.textContent = bestScore;
         }
 
+        function updateCharacterUI() {
+            const character = getActiveCharacter();
+            const menuEl = document.getElementById('selectedPilotMenu');
+            const abilityEl = document.getElementById('abilityHud');
+            if (menuEl) menuEl.textContent = character.name;
+            if (abilityEl) {
+                const liveStatus = abilityFlashTimer > 0 ? abilityFlashText : character.ability;
+                abilityEl.textContent = `${character.name} // ${liveStatus}`;
+                abilityEl.style.borderColor = character.color;
+            }
+        }
+
+        function drawShopSpriteThumbnails() {
+            CHARACTER_ROSTER.forEach((character) => {
+                const thumb = document.getElementById(`shopSprite-${character.id}`);
+                const sprite = SPRITE_CACHE[`character-${character.id}`];
+                if (!thumb || !sprite) return;
+                const thumbCtx = thumb.getContext('2d');
+                thumbCtx.imageSmoothingEnabled = false;
+                thumbCtx.clearRect(0, 0, thumb.width, thumb.height);
+                thumbCtx.drawImage(sprite, 8, 8, thumb.width - 16, thumb.height - 16);
+            });
+        }
+
+        function renderShop() {
+            const grid = document.getElementById('characterShopGrid');
+            const detail = document.getElementById('shopSelectionDetail');
+            if (!grid || !detail) return;
+
+            grid.innerHTML = CHARACTER_ROSTER.map((character, index) => {
+                const selected = character.id === selectedCharacterId;
+                return `<button type="button" onclick="selectCharacter('${character.id}')" class="border-2 bg-neutral-900 p-2 text-left transition-transform active:translate-y-px ${selected ? 'border-white' : 'border-neutral-700 hover:border-neutral-400'}" aria-pressed="${selected}">
+                    <div class="flex items-start justify-between gap-2">
+                        <span class="font-pixel text-[9px]" style="color:${character.color}">0${index + 1}</span>
+                        <span class="font-pixel text-[8px] text-neutral-500">${selected ? 'EQUIPPED' : 'SELECT'}</span>
+                    </div>
+                    <canvas id="shopSprite-${character.id}" width="88" height="88" class="mx-auto my-1 block h-16 w-16 sm:h-20 sm:w-20"></canvas>
+                    <span class="block font-pixel text-[10px] text-white sm:text-xs">${character.name}</span>
+                    <span class="mt-1 block text-[9px] leading-snug text-neutral-400">${character.title}</span>
+                </button>`;
+            }).join('');
+
+            const active = getActiveCharacter();
+            detail.innerHTML = `<span class="font-pixel text-[10px]" style="color:${active.color}">${active.name} // ${active.title}</span><p class="mt-1 font-pixel text-[10px] text-white">${active.ability}</p><p class="mt-1 text-[11px] text-neutral-400">${active.description}</p>`;
+            drawShopSpriteThumbnails();
+        }
+
+        function openShop() {
+            const shop = document.getElementById('shopOverlay');
+            if (shop) shop.classList.remove('hidden');
+            renderShop();
+        }
+
+        function closeShop() {
+            const shop = document.getElementById('shopOverlay');
+            if (shop) shop.classList.add('hidden');
+        }
+
+        function selectCharacter(characterId) {
+            if (!CHARACTER_ROSTER.some((character) => character.id === characterId)) return;
+            selectedCharacterId = characterId;
+            try {
+                localStorage.setItem('flappy_pixel_character', selectedCharacterId);
+            } catch (e) {}
+            resetCharacterRunState();
+            renderShop();
+        }
+
         /***********************************************************************
          * 7. 60FPS PHYSICS UPDATE & COLLISION DETECTION
          ***********************************************************************/
-        function triggerGameOver(reasonText) {
+        function avertCrash(obstacle) {
+            if (phaseTimer > 0 && obstacle) return true;
+
+            if (selectedCharacterId === 'aegis' && aegisShieldReady) {
+                aegisShieldReady = false;
+                const obstacleIndex = obstacles.indexOf(obstacle);
+                if (obstacleIndex >= 0) obstacles.splice(obstacleIndex, 1);
+                hero.vy = -280;
+                announceAbility('ABLATIVE ARMOR SHATTERED', 1.1);
+                playPixelSound('score');
+                return true;
+            }
+
+            if (selectedCharacterId === 'echo' && echoDodgeReady) {
+                echoDodgeReady = false;
+                echoTimer = 0;
+                if (obstacle) {
+                    hero.y = Math.max(12, Math.min(GAME_HEIGHT - hero.height - 28, (obstacle.gapTop + obstacle.gapBottom) / 2 - hero.height / 2));
+                    const obstacleIndex = obstacles.indexOf(obstacle);
+                    if (obstacleIndex >= 0) obstacles.splice(obstacleIndex, 1);
+                }
+                hero.vy = -220;
+                announceAbility('DECOY SWAP // CRASH AVOIDED', 1.1);
+                return true;
+            }
+
+            if (selectedCharacterId === 'cinder' && cinderReviveReady) {
+                cinderReviveReady = false;
+                hero.y = GAME_HEIGHT * 0.42;
+                hero.vy = -440;
+                if (obstacle) {
+                    const obstacleIndex = obstacles.indexOf(obstacle);
+                    if (obstacleIndex >= 0) obstacles.splice(obstacleIndex, 1);
+                }
+                announceAbility('ASH REBIRTH // ONE REVIVE USED', 1.3);
+                return true;
+            }
+
+            return false;
+        }
+
+        function triggerGameOver(reasonText, obstacle = null) {
             if (!hero.alive) return;
+            if (avertCrash(obstacle)) return;
             hero.alive = false;
             gameState = 'GAMEOVER';
             playPixelSound('collision');
@@ -630,7 +851,8 @@
 
         function updateGame(dt) {
             const preset = DIFFICULTY_PRESETS[currentDifficulty];
-            const scrollSpeed = gameState === 'PLAYING' ? preset.speed : (gameState === 'START' ? 110 : 40);
+            const chronoMultiplier = chronoTimer > 0 ? 0.6 : 1;
+            const scrollSpeed = (gameState === 'PLAYING' ? preset.speed : (gameState === 'START' ? 110 : 40)) * chronoMultiplier;
 
             // 1. Update Sky Ash Motes
             for (let i = 0; i < skyAshMotes.length; i++) {
@@ -703,6 +925,14 @@
 
             if (screenShakeTime > 0) screenShakeTime = Math.max(0, screenShakeTime - dt);
             if (impactFlashAlpha > 0) impactFlashAlpha = Math.max(0, impactFlashAlpha - dt * 3.8);
+            if (phaseTimer > 0) phaseTimer = Math.max(0, phaseTimer - dt);
+            if (chronoTimer > 0) chronoTimer = Math.max(0, chronoTimer - dt);
+            if (gravHoverTimer > 0) gravHoverTimer = Math.max(0, gravHoverTimer - dt);
+            if (echoTimer > 0) echoTimer = Math.max(0, echoTimer - dt);
+            if (abilityFlashTimer > 0) {
+                abilityFlashTimer = Math.max(0, abilityFlashTimer - dt);
+                if (abilityFlashTimer === 0) updateCharacterUI();
+            }
 
             // Idle Bobbing on Start Screen
             if (gameState === 'START') {
@@ -718,7 +948,15 @@
             if (gameState !== 'PLAYING') return;
 
             // 6. Update Hero Physics (Smooth 60FPS Gravity, Squash & Stretch)
-            hero.vy += preset.gravity * dt;
+            let gravityMultiplier = chronoTimer > 0 ? 0.6 : 1;
+            if (selectedCharacterId === 'grav0') gravityMultiplier *= gravHoverTimer > 0 ? 0 : 0.65;
+            hero.vy += preset.gravity * gravityMultiplier * dt;
+            if (selectedCharacterId === 'grav0' && gravHoverArmed && hero.vy >= 0) {
+                gravHoverArmed = false;
+                gravHoverTimer = 0.65;
+                hero.vy = 0;
+                announceAbility('APEX HOVER // 0.65S', 0.65);
+            }
             hero.y += hero.vy * dt;
 
             hero.scaleX += (1.0 - hero.scaleX) * 14 * dt;
@@ -751,11 +989,21 @@
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const ob = obstacles[i];
-                ob.x -= preset.speed * dt;
+                ob.x -= preset.speed * chronoMultiplier * dt;
 
                 if (!ob.passed && ob.x + ob.width < hero.x) {
                     ob.passed = true;
-                    score += 1;
+                    passCount += 1;
+                    const scoreGain = echoTimer > 0 ? 2 : 1;
+                    score += scoreGain;
+                    if (selectedCharacterId === 'aegis' && !aegisShieldReady) {
+                        aegisRechargePasses += 1;
+                        if (aegisRechargePasses >= 5) {
+                            aegisRechargePasses = 0;
+                            aegisShieldReady = true;
+                            announceAbility('ABLATIVE ARMOR RESTORED', 1);
+                        }
+                    }
                     updateScoreUI();
                     playPixelSound('score');
 
@@ -770,19 +1018,28 @@
                 const obLeft = ob.x + 14;
                 const obRight = ob.x + ob.width - 14;
 
+                if (selectedCharacterId === 'chrono' && chronoReady && chronoTimer <= 0 &&
+                    ob.x + ob.width > hero.x - 10 && ob.x < hero.x + 180 &&
+                    (hero.y < ob.gapTop + 34 || hero.y + hero.height > ob.gapBottom - 34)) {
+                    chronoReady = false;
+                    chronoRechargeJumps = 0;
+                    chronoTimer = 1.5;
+                    announceAbility('TIME DILATION // 1.5S', 1.5);
+                }
+
                 if (hx2 > obLeft && hx1 < obRight) {
                     if (hy1 < ob.gapTop - 4) {
                         const msg = ob.style === 'shards'
                             ? 'Shattered against a hanging Mountain Cave Stalactite Shard.'
                             : 'Collided with an inverted Ceiling Junk Shadow Tower (House/Window/Chair).';
-                        triggerGameOver(msg);
+                        triggerGameOver(msg, ob);
                         return;
                     }
                     if (hy2 > ob.gapBottom + 4) {
                         const msg = ob.style === 'shards'
                             ? 'Impaled on a rising Crystalline Cave Stalagmite Shard.'
                             : 'Crashed into a stacked Real-Object Shadow Tower (House/Desk/Window/Chair).';
-                        triggerGameOver(msg);
+                        triggerGameOver(msg, ob);
                         return;
                     }
                 }
@@ -794,7 +1051,12 @@
 
             if (hero.y + hero.height > GAME_HEIGHT - 22) {
                 hero.y = GAME_HEIGHT - 22 - hero.height;
-                triggerGameOver('Consumed by the dense industrial pixel smoke trench below.');
+                if (selectedCharacterId === 'cinder') {
+                    hero.vy = -430;
+                    announceAbility('THERMAL UPDRAFT', 0.7);
+                } else {
+                    triggerGameOver('Consumed by the dense industrial pixel smoke trench below.');
+                }
             } else if (hero.y < -12) {
                 hero.y = -12;
                 triggerGameOver('Struck the upper cavern ceiling shadow boundary.');
@@ -928,7 +1190,49 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(x + 8, topH - 18 + hoverOffset, 4, 6);
                 ctx.fillRect(x + w - 12, botY + 12 - hoverOffset, 4, 6);
+
+                if (ob.prismResonance) {
+                    ctx.strokeStyle = '#e879f9';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x + 4, topH - 8, w - 8, 8);
+                    ctx.strokeRect(x + 4, botY, w - 8, 8);
+                }
             }
+        }
+
+        function drawActiveAbilityEffect() {
+            const cx = Math.round(hero.x + hero.width / 2);
+            const cy = Math.round(hero.y + hero.height / 2);
+            const character = getActiveCharacter();
+            const active = phaseTimer > 0 || chronoTimer > 0 || gravHoverTimer > 0 || echoTimer > 0 ||
+                (selectedCharacterId === 'aegis' && aegisShieldReady);
+            if (!active) return;
+
+            ctx.save();
+            ctx.globalAlpha = phaseTimer > 0 ? 0.42 : 0.8;
+            ctx.strokeStyle = character.color;
+            ctx.lineWidth = 3;
+
+            if (selectedCharacterId === 'aegis' && aegisShieldReady) {
+                ctx.strokeRect(cx - 38, cy - 38, 76, 76);
+                ctx.strokeRect(cx - 34, cy - 34, 68, 68);
+            } else if (selectedCharacterId === 'echo' && echoTimer > 0) {
+                ctx.strokeRect(cx - 58, cy - 24, 40, 40);
+                ctx.fillStyle = character.color;
+                ctx.globalAlpha = 0.22;
+                ctx.fillRect(cx - 56, cy - 22, 36, 36);
+            } else if (selectedCharacterId === 'chrono' && chronoTimer > 0) {
+                ctx.strokeRect(cx - 46, cy - 46, 92, 92);
+                ctx.strokeRect(cx - 40, cy - 40, 80, 80);
+            } else if (selectedCharacterId === 'grav0' && gravHoverTimer > 0) {
+                ctx.fillStyle = character.color;
+                ctx.fillRect(cx - 50, cy + 35, 100, 3);
+                ctx.fillRect(cx - 36, cy + 41, 72, 2);
+            } else if (selectedCharacterId === 'nimbus' && phaseTimer > 0) {
+                ctx.strokeRect(cx - 42, cy - 42, 84, 84);
+                ctx.strokeRect(cx - 34, cy - 34, 68, 68);
+            }
+            ctx.restore();
         }
 
         function drawHeroAndParticles() {
@@ -963,7 +1267,9 @@
             }
 
             if (hero.alive) {
-                const sprite = hero.flapAnimTimer > 0 ? SPRITE_CACHE.heroFlap : SPRITE_CACHE.heroIdle;
+                drawActiveAbilityEffect();
+                const characterSprite = SPRITE_CACHE[`character-${selectedCharacterId}`];
+                const sprite = characterSprite || (hero.flapAnimTimer > 0 ? SPRITE_CACHE.heroFlap : SPRITE_CACHE.heroIdle);
                 ctx.save();
                 const cx = Math.round(hero.x + hero.width / 2);
                 const cy = Math.round(hero.y + hero.height / 2);
@@ -971,8 +1277,11 @@
                 ctx.rotate(hero.rotation);
                 ctx.scale(hero.scaleX, hero.scaleY);
 
+                if (phaseTimer > 0) ctx.globalAlpha = 0.5;
+
                 if (sprite) {
-                    ctx.drawImage(sprite, -28, -28, 56, 56);
+                    const size = characterSprite ? 72 : 56;
+                    ctx.drawImage(sprite, -size / 2, -size / 2, size, size);
                 } else {
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(-22, -22, 44, 44);
@@ -1080,11 +1389,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     try {
         const savedBest = localStorage.getItem('flappy_pixel_best');
         if (savedBest) bestScore = parseInt(savedBest, 10) || 0;
+        const savedCharacter = localStorage.getItem('flappy_pixel_character');
+        if (CHARACTER_ROSTER.some((character) => character.id === savedCharacter)) {
+            selectedCharacterId = savedCharacter;
+        }
     } catch (e) {}
 
     updateScoreUI();
+    updateCharacterUI();
     initEnvironment();
     await preloadAllSvgSprites();
+    renderShop();
 
     lastFrameTime = performance.now();
     requestAnimationFrame(gameLoop);
