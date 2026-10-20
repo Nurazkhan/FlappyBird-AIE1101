@@ -1,0 +1,16 @@
+{
+  "name": "flappy-pixel",
+  "version": "1.0.0",
+  "description": "Flappy Pixel arcade game with Vercel serverless auth and leaderboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^18.0.8",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  }
+}

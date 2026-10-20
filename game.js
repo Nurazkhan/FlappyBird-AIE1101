@@ -248,6 +248,484 @@
         }
 
         /***********************************************************************
+         * 1.7. PILOT AUTHENTICATION & VERCEL LEADERBOARD CLIENT
+         ***********************************************************************/
+        let currentPilotUser = null;
+        let pilotAuthToken = null;
+        let activeAuthTab = 'login';
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function isAuthModalOpen() {
+            const el = document.getElementById('authOverlay');
+            return el && !el.classList.contains('hidden');
+        }
+
+        function isLeaderboardModalOpen() {
+            const el = document.getElementById('leaderboardOverlay');
+            return el && !el.classList.contains('hidden');
+        }
+
+        async function initPilotAuth() {
+            try {
+                const savedToken = localStorage.getItem('flappy_pixel_jwt_token');
+                if (!savedToken) {
+                    updatePilotAuthUI();
+                    return;
+                }
+
+                pilotAuthToken = savedToken;
+                const response = await fetch('/api/auth?action=me', {
+                    headers: { 'Authorization': `Bearer ${savedToken}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.user) {
+                        currentPilotUser = data.user;
+                        if (data.user.bestScore && data.user.bestScore > bestScore) {
+                            bestScore = data.user.bestScore;
+                            try {
+                                localStorage.setItem('flappy_pixel_best', String(bestScore));
+                            } catch (e) {}
+                            updateScoreUI();
+                        }
+                    } else {
+                        pilotAuthToken = null;
+                        localStorage.removeItem('flappy_pixel_jwt_token');
+                    }
+                } else {
+                    pilotAuthToken = null;
+                    localStorage.removeItem('flappy_pixel_jwt_token');
+                }
+            } catch (err) {
+                console.warn('[Auth] Could not restore pilot session:', err.message);
+            }
+            updatePilotAuthUI();
+        }
+
+        function updatePilotAuthUI() {
+            const navAuthContainer = document.getElementById('navAuthContainer');
+            const menuAuthStatusText = document.getElementById('menuAuthStatusText');
+
+            if (currentPilotUser) {
+                const safeName = escapeHtml(currentPilotUser.username);
+                if (navAuthContainer) {
+                    navAuthContainer.innerHTML = `
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-1 bg-neutral-800 border border-neutral-700 rounded text-[11px] font-pixel text-yellow-300">
+                                @${safeName}
+                            </span>
+                            <button onclick="logoutPilot()" class="pixel-btn-dark px-2 py-1 rounded text-[10px] font-pixel text-neutral-400 hover:text-white" title="Logout">
+                                LOGOUT
+                            </button>
+                        </div>
+                    `;
+                }
+                if (menuAuthStatusText) {
+                    menuAuthStatusText.innerHTML = `
+                        PILOT: <span class="text-yellow-300 font-bold">@${safeName}</span> 
+                        <span class="text-neutral-500">(BEST: ${currentPilotUser.bestScore || bestScore})</span>
+                    `;
+                }
+            } else {
+                if (navAuthContainer) {
+                    navAuthContainer.innerHTML = `
+                        <button id="navLoginBtn" onclick="openAuthModal('login')" class="pixel-btn px-3 py-1.5 rounded text-xs font-pixel font-bold flex items-center gap-1.5">
+                            <span>PILOT LOGIN</span>
+                        </button>
+                    `;
+                }
+                if (menuAuthStatusText) {
+                    menuAuthStatusText.innerHTML = `
+                        PILOT: <span class="text-white">GUEST</span> 
+                        <button type="button" onclick="openAuthModal('login')" class="text-yellow-300 underline ml-1 font-pixel hover:text-white">LOGIN</button>
+                    `;
+                }
+            }
+        }
+
+        function openAuthModal(tab = 'login') {
+            const overlay = document.getElementById('authOverlay');
+            if (overlay) overlay.classList.remove('hidden');
+            switchAuthTab(tab);
+            const userIn = document.getElementById('authUsernameInput');
+            if (userIn) {
+                userIn.value = '';
+                userIn.focus();
+            }
+            const passIn = document.getElementById('authPasswordInput');
+            if (passIn) passIn.value = '';
+            setAuthAlert('', false);
+        }
+
+        function closeAuthModal() {
+            const overlay = document.getElementById('authOverlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        function switchAuthTab(tab) {
+            activeAuthTab = tab;
+            const tabLogin = document.getElementById('authTabLogin');
+            const tabRegister = document.getElementById('authTabRegister');
+            const title = document.getElementById('authModalTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            if (tab === 'login') {
+                if (tabLogin) { tabLogin.className = 'pixel-btn py-2 font-pixel text-xs font-bold text-center'; }
+                if (tabRegister) { tabRegister.className = 'pixel-btn-dark py-2 font-pixel text-xs text-center'; }
+                if (title) title.textContent = 'PILOT LOGIN';
+                if (submitBtn) submitBtn.textContent = 'LOGIN PILOT';
+            } else {
+                if (tabLogin) { tabLogin.className = 'pixel-btn-dark py-2 font-pixel text-xs text-center'; }
+                if (tabRegister) { tabRegister.className = 'pixel-btn py-2 font-pixel text-xs font-bold text-center'; }
+                if (title) title.textContent = 'NEW PILOT REGISTRATION';
+                if (submitBtn) submitBtn.textContent = 'REGISTER PILOT';
+            }
+            setAuthAlert('', false);
+        }
+
+        function setAuthAlert(msg, isSuccess = false) {
+            const box = document.getElementById('authAlertBox');
+            if (!box) return;
+            if (!msg) {
+                box.classList.add('hidden');
+                box.textContent = '';
+                return;
+            }
+            box.classList.remove('hidden');
+            box.textContent = msg;
+            if (isSuccess) {
+                box.className = 'p-2 text-xs font-pixel rounded border text-center bg-emerald-950/80 border-emerald-500 text-emerald-300';
+            } else {
+                box.className = 'p-2 text-xs font-pixel rounded border text-center bg-red-950/80 border-red-500 text-red-300';
+            }
+        }
+
+        async function handleAuthSubmit(event) {
+            if (event) event.preventDefault();
+
+            const usernameIn = document.getElementById('authUsernameInput');
+            const passwordIn = document.getElementById('authPasswordInput');
+            const submitBtn = document.getElementById('authSubmitBtn');
+
+            const username = usernameIn ? usernameIn.value.trim() : '';
+            const password = passwordIn ? passwordIn.value : '';
+
+            if (!username || !password) {
+                setAuthAlert('Please fill in both callsign and security key.', false);
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'CONNECTING...';
+            }
+
+            try {
+                const response = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: activeAuthTab,
+                        username,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    setAuthAlert(data.error || 'Authentication failed. Please verify credentials.', false);
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = activeAuthTab === 'login' ? 'LOGIN PILOT' : 'REGISTER PILOT';
+                    }
+                    return;
+                }
+
+                // Authentication succeeded!
+                pilotAuthToken = data.token;
+                currentPilotUser = data.user;
+                try {
+                    localStorage.setItem('flappy_pixel_jwt_token', data.token);
+                } catch (e) {}
+
+                if (data.user.bestScore && data.user.bestScore > bestScore) {
+                    bestScore = data.user.bestScore;
+                    try {
+                        localStorage.setItem('flappy_pixel_best', String(bestScore));
+                    } catch (e) {}
+                    updateScoreUI();
+                }
+
+                updatePilotAuthUI();
+                setAuthAlert('Welcome aboard, Pilot @' + data.user.username + '!', true);
+
+                // If Game Over overlay is visible and we have a score, submit it now!
+                if (gameState === 'GAMEOVER' && score > 0) {
+                    submitGameScoreToLeaderboard(score, selectedCharacterId);
+                }
+
+                setTimeout(() => {
+                    closeAuthModal();
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = activeAuthTab === 'login' ? 'LOGIN PILOT' : 'REGISTER PILOT';
+                    }
+                }, 500);
+
+            } catch (err) {
+                setAuthAlert('Network error: ' + err.message, false);
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = activeAuthTab === 'login' ? 'LOGIN PILOT' : 'REGISTER PILOT';
+                }
+            }
+        }
+
+        function logoutPilot() {
+            currentPilotUser = null;
+            pilotAuthToken = null;
+            try {
+                localStorage.removeItem('flappy_pixel_jwt_token');
+            } catch (e) {}
+            updatePilotAuthUI();
+            if (gameState === 'GAMEOVER') {
+                updateGameOverLeaderboardStatus();
+            }
+        }
+
+        function openLeaderboardModal() {
+            const overlay = document.getElementById('leaderboardOverlay');
+            if (overlay) overlay.classList.remove('hidden');
+            loadLeaderboardData();
+        }
+
+        function closeLeaderboardModal() {
+            const overlay = document.getElementById('leaderboardOverlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        async function loadLeaderboardData() {
+            const tableBody = document.getElementById('leaderboardTableBody');
+            const loadingText = document.getElementById('leaderboardLoadingText');
+            const lbUserUsername = document.getElementById('lbUserUsername');
+            const lbUserRank = document.getElementById('lbUserRank');
+            const lbUserBest = document.getElementById('lbUserBest');
+
+            if (loadingText) {
+                loadingText.classList.remove('hidden');
+                loadingText.textContent = 'FETCHING TELEMETRY FROM VERCEL...';
+            }
+            if (tableBody) tableBody.innerHTML = '';
+
+            // Update user personal banner
+            if (currentPilotUser) {
+                if (lbUserUsername) lbUserUsername.textContent = '@' + currentPilotUser.username;
+                if (lbUserRank) lbUserRank.textContent = currentPilotUser.rank ? '#' + currentPilotUser.rank : '--';
+                if (lbUserBest) lbUserBest.textContent = currentPilotUser.bestScore || bestScore;
+            } else {
+                if (lbUserUsername) lbUserUsername.innerHTML = 'GUEST <button type="button" onclick="closeLeaderboardModal(); openAuthModal(\'login\');" class="text-yellow-300 underline font-pixel ml-1">[LOGIN]</button>';
+                if (lbUserRank) lbUserRank.textContent = '--';
+                if (lbUserBest) lbUserBest.textContent = bestScore;
+            }
+
+            try {
+                const headers = {};
+                if (pilotAuthToken) {
+                    headers['Authorization'] = `Bearer ${pilotAuthToken}`;
+                }
+
+                const response = await fetch('/api/leaderboard?limit=50', { headers });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch leaderboard: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                if (!data.success || !Array.isArray(data.leaderboard)) {
+                    throw new Error('Malformed leaderboard payload');
+                }
+
+                if (loadingText) loadingText.classList.add('hidden');
+
+                if (data.currentUser) {
+                    currentPilotUser = {
+                        ...currentPilotUser,
+                        ...data.currentUser
+                    };
+                    if (lbUserRank) lbUserRank.textContent = data.currentUser.rank ? '#' + data.currentUser.rank : '--';
+                    if (lbUserBest) lbUserBest.textContent = data.currentUser.bestScore || bestScore;
+                }
+
+                if (data.leaderboard.length === 0) {
+                    if (tableBody) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-neutral-500 font-pixel text-xs">
+                                    NO RECORDED SCORES YET. BE THE FIRST PILOT TO MAKE HISTORY!
+                                </td>
+                            </tr>
+                        `;
+                    }
+                    return;
+                }
+
+                if (tableBody) {
+                    let rowsHtml = '';
+                    data.leaderboard.forEach((entry, idx) => {
+                        const rank = entry.rank || (idx + 1);
+                        let rankBadge = `${rank}`;
+                        let rowClass = 'hover:bg-neutral-800/40 transition-colors';
+
+                        if (rank === 1) {
+                            rankBadge = '<span class="text-yellow-400 font-bold">🥇 1</span>';
+                            rowClass += ' bg-yellow-950/20';
+                        } else if (rank === 2) {
+                            rankBadge = '<span class="text-neutral-300 font-bold">🥈 2</span>';
+                            rowClass += ' bg-neutral-800/30';
+                        } else if (rank === 3) {
+                            rankBadge = '<span class="text-amber-600 font-bold">🥉 3</span>';
+                            rowClass += ' bg-amber-950/20';
+                        }
+
+                        const isCurrent = currentPilotUser && currentPilotUser.username.toLowerCase() === entry.username.toLowerCase();
+                        if (isCurrent) {
+                            rowClass += ' border-l-2 border-emerald-400 bg-emerald-950/25';
+                        }
+
+                        // Character info
+                        const charDef = CHARACTER_ROSTER.find(c => c.id === entry.characterId) || CHARACTER_ROSTER[0];
+                        const dateFormatted = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : '--';
+
+                        rowsHtml += `
+                            <tr class="${rowClass}">
+                                <td class="py-2.5 px-3 font-mono font-bold">${rankBadge}</td>
+                                <td class="py-2.5 px-3">
+                                    <span class="${isCurrent ? 'text-emerald-300 font-bold' : 'text-white'}">
+                                        @${escapeHtml(entry.username)}
+                                    </span>
+                                    ${isCurrent ? '<span class="text-[9px] bg-emerald-400 text-black px-1 rounded ml-1 font-bold">YOU</span>' : ''}
+                                </td>
+                                <td class="py-2.5 px-3">
+                                    <span class="text-[10px]" style="color: ${charDef.color}">
+                                        ${charDef.name}
+                                    </span>
+                                </td>
+                                <td class="py-2.5 px-3 text-right font-bold text-white font-mono text-sm sm:text-base">
+                                    ${entry.score}
+                                </td>
+                                <td class="py-2.5 px-3 text-right text-neutral-400 text-[10px] hidden sm:table-cell font-mono">
+                                    ${dateFormatted}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tableBody.innerHTML = rowsHtml;
+                }
+
+            } catch (err) {
+                if (loadingText) {
+                    loadingText.classList.remove('hidden');
+                    loadingText.textContent = 'LEADERBOARD OFFLINE: ' + err.message;
+                }
+            }
+        }
+
+        async function submitGameScoreToLeaderboard(runScore, characterId) {
+            const statusEl = document.getElementById('gameOverLeaderboardStatus');
+            if (!statusEl) return;
+
+            if (!currentPilotUser || !pilotAuthToken) {
+                statusEl.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-neutral-400">PLAYING AS GUEST</span>
+                        <button onclick="openAuthModal('login')" class="pixel-btn px-2.5 py-1 text-[10px] font-bold text-black">
+                            LOGIN TO POST SCORE
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            statusEl.innerHTML = `<span class="text-amber-400 animate-pulse">TRANSMITTING SCORE TO VERCEL LEADERBOARD...</span>`;
+
+            try {
+                const response = await fetch('/api/leaderboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${pilotAuthToken}`
+                    },
+                    body: JSON.stringify({
+                        score: runScore,
+                        characterId: characterId || 'cube01'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server rejected score: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    currentPilotUser.bestScore = data.score;
+                    currentPilotUser.rank = data.rank;
+                    updatePilotAuthUI();
+
+                    if (data.isNewBest) {
+                        statusEl.innerHTML = `
+                            <span class="text-emerald-400 font-bold">
+                                🚀 NEW HIGH SCORE: ${data.score}! GLOBAL RANK: #${data.rank}
+                            </span>
+                        `;
+                    } else {
+                        statusEl.innerHTML = `
+                            <span class="text-neutral-300">
+                                PILOT @${escapeHtml(currentPilotUser.username)} // BEST: ${data.score} (RANK: #${data.rank})
+                            </span>
+                        `;
+                    }
+                }
+            } catch (err) {
+                statusEl.innerHTML = `
+                    <span class="text-neutral-400">
+                        LEADERBOARD SYNC PENDING (${err.message})
+                    </span>
+                `;
+            }
+        }
+
+        function updateGameOverLeaderboardStatus() {
+            const statusEl = document.getElementById('gameOverLeaderboardStatus');
+            if (!statusEl) return;
+            if (currentPilotUser) {
+                statusEl.innerHTML = `
+                    <span class="text-neutral-300">
+                        PILOT: @${escapeHtml(currentPilotUser.username)} (BEST: ${currentPilotUser.bestScore || 0})
+                    </span>
+                `;
+            } else {
+                statusEl.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-neutral-400">PLAYING AS GUEST</span>
+                        <button onclick="openAuthModal('login')" class="pixel-btn px-2.5 py-1 text-[10px] font-bold text-black">
+                            LOGIN TO POST SCORE
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        /***********************************************************************
          * 2. PIXEL-LOCKED SVG <symbol> RASTERIZER (Fixes 300x150 Viewport Offset)
          ***********************************************************************/
         const SPRITE_CACHE = {};
@@ -1045,6 +1523,10 @@
                 return;
             }
 
+            if (isAuthModalOpen() || isLeaderboardModalOpen()) {
+                return;
+            }
+
             // During Cinder's shatter/rewind cutscene, ignore flap until revived
             if (cinderReviveSequence.active && cinderReviveSequence.phase !== 'explode') {
                 return;
@@ -1137,6 +1619,8 @@
         }
 
         function restartGame() {
+            closeAuthModal();
+            closeLeaderboardModal();
             resetGameEntities();
             gameState = 'PLAYING';
             const startEl = document.getElementById('startOverlay');
@@ -1156,6 +1640,9 @@
             const pauseBtn = document.getElementById('pauseBtn');
             if (startEl) startEl.classList.remove('hidden');
             if (overEl) overEl.classList.add('hidden');
+            closeAuthModal();
+            closeLeaderboardModal();
+            updatePilotAuthUI();
             if (pauseBtn) pauseBtn.textContent = '⏸ PAUSE [P]';
         }
 
@@ -1370,6 +1857,9 @@
             if (finalScoreEl) finalScoreEl.textContent = score;
             if (finalBestEl) finalBestEl.textContent = bestScore;
             if (crashReasonEl) crashReasonEl.textContent = reasonText;
+
+            // Transmit and update leaderboard status
+            submitGameScoreToLeaderboard(score, selectedCharacterId);
 
             gameOverOverlayTimer = setTimeout(() => {
                 gameOverOverlayTimer = null;
@@ -2153,12 +2643,41 @@
         }
 
         window.addEventListener('keydown', (e) => {
-            if (storyIntroActive) {
-                if (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape') {
+            // Ignore game keys if typing in an input
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                return;
+            }
+
+            if (e.code === 'Escape') {
+                if (isAuthModalOpen()) {
+                    e.preventDefault();
+                    closeAuthModal();
+                    return;
+                }
+                if (isLeaderboardModalOpen()) {
+                    e.preventDefault();
+                    closeLeaderboardModal();
+                    return;
+                }
+                if (storyIntroActive) {
                     e.preventDefault();
                     exitStoryIntro();
                     return;
                 }
+            }
+
+            if (storyIntroActive) {
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    e.preventDefault();
+                    exitStoryIntro();
+                    return;
+                }
+            }
+
+            if (gameState === 'START' && (e.code === 'KeyB' || e.key === 'b' || e.key === 'B')) {
+                e.preventDefault();
+                openLeaderboardModal();
+                return;
             }
 
             if (gameState === 'START' && (e.code === 'KeyL' || e.key === 'l' || e.key === 'L')) {
@@ -2201,6 +2720,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     updateScoreUI();
     updateCharacterUI();
     initEnvironment();
+
+    // Initialize Pilot Authentication & Session
+    await initPilotAuth();
 
     // First load check: play the story intro explaining the lore
     const isFirstTime = !localStorage.getItem('flappy_pixel_story_seen');
