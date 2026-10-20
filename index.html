@@ -117,9 +117,7 @@
         /* 1. MOBILE OVERLAY SYSTEM: Full-Screen Modal Sheets */
         @media (max-width: 820px), (max-height: 550px) {
             #canvasContainer #startOverlay:not(.hidden),
-            #canvasContainer #shopOverlay:not(.hidden),
             #canvasContainer #authOverlay:not(.hidden),
-            #canvasContainer #leaderboardOverlay:not(.hidden),
             #canvasContainer #gameOverOverlay:not(.hidden) {
                 position: fixed !important;
                 inset: 0 !important;
@@ -132,11 +130,45 @@
                 -webkit-backdrop-filter: blur(10px) !important;
                 overflow-y: auto !important;
                 -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+                overscroll-behavior-y: contain !important;
                 padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)) !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 border-radius: 0 !important;
+            }
+
+            /* Scrollable multi-card modals (Shop & Leaderboard) start at top so header and exit buttons are NEVER cut off */
+            #canvasContainer #shopOverlay:not(.hidden),
+            #canvasContainer #leaderboardOverlay:not(.hidden) {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                z-index: 99999 !important;
+                background: rgba(9, 9, 12, 0.98) !important;
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+                overscroll-behavior-y: contain !important;
+                padding: max(12px, env(safe-area-inset-top) + 8px) max(10px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom) + 20px) max(10px, env(safe-area-inset-left)) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                border-radius: 0 !important;
+            }
+
+            #shopOverlay section,
+            #leaderboardOverlay section {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-top: 0 !important;
+                touch-action: pan-y !important;
             }
         }
 
@@ -149,7 +181,7 @@
                 height: 100dvh !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                touch-action: none !important;
+                touch-action: manipulation !important;
                 background: #000000 !important;
             }
             header {
@@ -505,30 +537,46 @@
                     </section>
                 </div>
 
-                <div id="shopOverlay" class="hidden absolute inset-0 z-30 overflow-y-auto bg-[#09090b]/90 p-4 backdrop-blur-[2px] sm:p-6">
-                    <section aria-labelledby="shopTitle" class="mx-auto w-full max-w-4xl border-2 border-neutral-200 bg-neutral-950 shadow-[8px_8px_0px_#27272a]">
-                        <header class="flex items-start justify-between gap-4 border-b border-neutral-700 p-4 sm:p-5">
+                <div id="shopOverlay" onclick="if (event.target === this) closeShop(event)" class="hidden absolute inset-0 z-30 overflow-y-auto bg-[#09090b]/95 p-2 sm:p-6 backdrop-blur-md">
+                    <!-- Floating Quick Close Circle Button for Mobile -->
+                    <button type="button" onclick="closeShop(event)" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-pixel text-sm sm:text-base font-bold flex items-center justify-center border-2 border-white shadow-[0_4px_14px_rgba(0,0,0,0.85)] cursor-pointer" title="Close Shop (Esc)" aria-label="Close Shop">
+                        ✕
+                    </button>
+
+                    <section aria-labelledby="shopTitle" class="mx-auto w-full max-w-4xl border-2 border-neutral-200 bg-neutral-950 shadow-[8px_8px_0px_#27272a] relative my-auto sm:my-0">
+                        <header class="sticky top-0 z-20 flex items-center justify-between gap-3 border-b-2 border-neutral-700 bg-neutral-950/95 backdrop-blur-md p-3 sm:p-5">
                             <div>
                                 <p class="font-pixel text-[10px] tracking-[0.2em] text-neutral-400">PILOT HANGAR</p>
-                                <h2 id="shopTitle" class="mt-1 font-pixel text-xl text-white sm:text-2xl">SELECT A CUBE</h2>
-                                <p class="mt-2 text-xs text-neutral-400">All pilots are available. Their automatic ability activates during a run.</p>
+                                <h2 id="shopTitle" class="mt-0.5 font-pixel text-lg sm:text-2xl text-white">SELECT A CUBE</h2>
+                                <p class="text-[10px] sm:text-xs text-neutral-400">Tap any cube to equip & launch. All pilots unlocked.</p>
                             </div>
-                            <button type="button" onclick="closeShop()" class="pixel-btn-dark px-3 py-2 font-pixel text-[10px]">BACK</button>
+                            <button type="button" onclick="closeShop(event)" class="pixel-btn-dark px-3 py-1.5 sm:px-4 sm:py-2.5 font-pixel text-xs sm:text-sm font-bold border-2 border-white text-white bg-neutral-850 hover:bg-neutral-750 active:scale-95 flex items-center gap-1.5 shadow">
+                                <span class="text-red-400 font-bold">✕</span> <span>EXIT</span>
+                            </button>
                         </header>
-                        <div id="characterShopGrid" class="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 sm:p-5"></div>
-                        <footer id="shopSelectionDetail" class="border-t border-neutral-700 bg-neutral-900/70 p-4 text-xs text-neutral-300 sm:p-5"></footer>
+                        <div id="characterShopGrid" class="grid grid-cols-2 gap-2.5 sm:gap-3 p-3 sm:p-5"></div>
+                        <footer id="shopSelectionDetail" class="border-t border-neutral-700 bg-neutral-900/70 p-3.5 text-xs text-neutral-300 sm:p-5"></footer>
+                        <!-- Bottom Exit Action Bar -->
+                        <div class="border-t-2 border-neutral-800 bg-neutral-950 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                            <span class="text-[10px] sm:text-xs font-pixel text-neutral-400 text-center sm:text-left">
+                                💡 SELECTING ANY PILOT EQUIPS THEM AND CLOSES SHOP
+                            </span>
+                            <button type="button" onclick="closeShop(event)" class="w-full sm:w-auto pixel-btn px-6 py-2.5 font-pixel text-xs sm:text-sm font-bold flex items-center justify-center gap-2">
+                                <span>✕ CLOSE HANGAR</span>
+                            </button>
+                        </div>
                     </section>
                 </div>
 
                 <!-- Auth Modal Overlay -->
-                <div id="authOverlay" class="hidden absolute inset-0 z-40 bg-[#09090b]/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
-                    <section aria-labelledby="authModalTitle" class="w-full max-w-md bg-neutral-950 border-2 border-white p-5 sm:p-6 shadow-[8px_8px_0px_#27272a] rounded">
+                <div id="authOverlay" onclick="if (event.target === this) closeAuthModal(event)" class="hidden absolute inset-0 z-40 bg-[#09090b]/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+                    <section aria-labelledby="authModalTitle" class="w-full max-w-md bg-neutral-950 border-2 border-white p-5 sm:p-6 shadow-[8px_8px_0px_#27272a] rounded relative my-auto sm:my-0">
                         <header class="flex items-center justify-between border-b border-neutral-700 pb-3 mb-4">
                             <div>
                                 <span class="font-pixel text-[10px] text-neutral-400 tracking-wider">PILOT IDENTITY SYSTEM</span>
                                 <h2 id="authModalTitle" class="font-pixel text-xl text-white">PILOT LOGIN</h2>
                             </div>
-                            <button type="button" onclick="closeAuthModal()" class="pixel-btn-dark px-2.5 py-1 font-pixel text-xs">✕</button>
+                            <button type="button" onclick="closeAuthModal(event)" class="pixel-btn-dark px-2.5 py-1 font-pixel text-xs">✕</button>
                         </header>
 
                         <div class="grid grid-cols-2 gap-2 mb-4">
@@ -543,12 +591,12 @@
                         <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
                             <div>
                                 <label for="authUsernameInput" class="block font-pixel text-[10px] text-neutral-400 mb-1">CALLSIGN (USERNAME)</label>
-                                <input id="authUsernameInput" type="text" maxlength="20" required autocomplete="username"  class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
+                                <input id="authUsernameInput" type="text" maxlength="20" required autocomplete="username" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
                                 <p class="text-[9px] text-neutral-500 mt-1 font-pixel">3-20 chars (letters, numbers, _)</p>
                             </div>
                             <div>
                                 <label for="authPasswordInput" class="block font-pixel text-[10px] text-neutral-400 mb-1">SECURITY KEY (PASSWORD)</label>
-                                <input id="authPasswordInput" type="password" minlength="6" required autocomplete="current-password"  class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
+                                <input id="authPasswordInput" type="password" minlength="6" required autocomplete="current-password" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
                                 <p class="text-[9px] text-neutral-500 mt-1 font-pixel">Min 6 characters</p>
                             </div>
 
@@ -562,21 +610,28 @@
                 </div>
 
                 <!-- Leaderboard Modal Overlay -->
-                <div id="leaderboardOverlay" class="hidden absolute inset-0 z-40 bg-[#09090b]/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-                    <section aria-labelledby="leaderboardTitle" class="w-full max-w-3xl bg-neutral-950 border-2 border-white p-4 sm:p-6 shadow-[8px_8px_0px_#27272a] rounded flex flex-col max-h-[92vh]">
-                        <header class="flex items-center justify-between border-b border-neutral-700 pb-3 mb-4">
+                <div id="leaderboardOverlay" onclick="if (event.target === this) closeLeaderboardModal(event)" class="hidden absolute inset-0 z-40 bg-[#09090b]/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+                    <!-- Floating Quick Close Circle Button for Mobile -->
+                    <button type="button" onclick="closeLeaderboardModal(event)" class="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-pixel text-sm sm:text-base font-bold flex items-center justify-center border-2 border-white shadow-[0_4px_14px_rgba(0,0,0,0.85)] cursor-pointer" title="Close Leaderboard (Esc)" aria-label="Close Leaderboard">
+                        ✕
+                    </button>
+
+                    <section aria-labelledby="leaderboardTitle" class="w-full max-w-3xl bg-neutral-950 border-2 border-white p-3.5 sm:p-6 shadow-[8px_8px_0px_#27272a] rounded flex flex-col max-h-[92vh] relative my-auto sm:my-0">
+                        <header class="flex items-center justify-between border-b border-neutral-700 pb-3 mb-3 gap-2">
                             <div>
-                                <span class="font-pixel text-[10px] text-yellow-400 tracking-wider">🏆 GLOBAL ARCHIVE // TOP SCORES</span>
-                                <h2 id="leaderboardTitle" class="font-pixel text-xl sm:text-2xl text-white">PILOT LEADERBOARD</h2>
+                                <span class="font-pixel text-[9px] sm:text-[10px] text-yellow-400 tracking-wider">🏆 GLOBAL ARCHIVE // TOP SCORES</span>
+                                <h2 id="leaderboardTitle" class="font-pixel text-lg sm:text-2xl text-white">PILOT LEADERBOARD</h2>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="loadLeaderboardData()" class="pixel-btn-dark px-3 py-1 font-pixel text-[10px]">↻ REFRESH</button>
-                                <button type="button" onclick="closeLeaderboardModal()" class="pixel-btn-dark px-3 py-1 font-pixel text-[10px]">✕ CLOSE</button>
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <button type="button" onclick="loadLeaderboardData()" class="pixel-btn-dark px-2.5 py-1.5 font-pixel text-[10px] sm:text-xs">↻ REFRESH</button>
+                                <button type="button" onclick="closeLeaderboardModal(event)" class="pixel-btn-dark px-3 py-1.5 sm:px-4 sm:py-2 font-pixel text-xs sm:text-sm font-bold border-2 border-white text-white bg-neutral-850 hover:bg-neutral-750 active:scale-95 flex items-center gap-1 shadow">
+                                    <span class="text-red-400 font-bold">✕</span> <span>CLOSE</span>
+                                </button>
                             </div>
                         </header>
 
                         <!-- Personal Rank Card -->
-                        <div id="leaderboardUserBanner" class="mb-3.5 p-3 bg-neutral-900 border border-neutral-700 rounded flex flex-wrap items-center justify-between gap-2 font-pixel text-xs">
+                        <div id="leaderboardUserBanner" class="mb-3 p-2.5 sm:p-3 bg-neutral-900 border border-neutral-700 rounded flex flex-wrap items-center justify-between gap-2 font-pixel text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="text-neutral-400">YOUR PILOT:</span>
                                 <span id="lbUserUsername" class="text-white font-bold">GUEST</span>
@@ -594,7 +649,7 @@
                         </div>
 
                         <!-- Leaderboard Table Container -->
-                        <div class="flex-1 overflow-y-auto pr-1 border border-neutral-800 rounded bg-neutral-900/40">
+                        <div class="flex-1 overflow-y-auto pr-1 border border-neutral-800 rounded bg-neutral-900/40" style="touch-action: pan-y; -webkit-overflow-scrolling: touch; min-height: 180px; max-height: 50vh;">
                             <table class="w-full text-left font-pixel text-xs">
                                 <thead class="sticky top-0 bg-neutral-900 border-b border-neutral-700 text-neutral-400 text-[10px]">
                                     <tr>
@@ -613,6 +668,16 @@
                                 CONNECTING TO VERCEL LEADERBOARD...
                             </div>
                         </div>
+
+                        <!-- Bottom Exit Action Bar for Mobile -->
+                        <footer class="mt-3 pt-3 border-t border-neutral-800 flex flex-col sm:flex-row gap-2 items-center justify-between">
+                            <span class="text-[9px] sm:text-[10px] font-pixel text-neutral-400 text-center sm:text-left">
+                                POWERED BY VERCEL POSTGRES // REAL-TIME GLOBAL RANKS
+                            </span>
+                            <button type="button" onclick="closeLeaderboardModal(event)" class="w-full sm:w-auto pixel-btn px-6 py-2.5 font-pixel text-xs sm:text-sm font-bold text-center flex items-center justify-center gap-1.5">
+                                <span>✕</span> <span>CLOSE LEADERBOARD</span>
+                            </button>
+                        </footer>
                     </section>
                 </div>
 

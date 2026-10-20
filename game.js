@@ -1996,7 +1996,11 @@
                 localStorage.setItem('flappy_pixel_character', selectedCharacterId);
             } catch (e) {}
             resetCharacterRunState();
+            updateCharacterUI();
+            playPixelSound('score');
+            triggerHaptic(20);
             renderShop();
+            closeShop();
         }
 
         /***********************************************************************
@@ -2880,6 +2884,11 @@
             }
 
             if (e.code === 'Escape') {
+                if (isShopOpen()) {
+                    e.preventDefault();
+                    closeShop();
+                    return;
+                }
                 if (isAuthModalOpen()) {
                     e.preventDefault();
                     closeAuthModal();
@@ -2970,12 +2979,25 @@
             });
         }
 
-        // 3. Prevent mobile pull-to-refresh & pinch zoom gestures on game area
+        // 3. Prevent mobile pull-to-refresh & pinch zoom gestures on game area only
         document.addEventListener('touchmove', (e) => {
+            // Allow natural touch scrolling inside any modal sheets, cards, tables, and dialogs
+            if (e.target.closest('#shopOverlay, #leaderboardOverlay, #authOverlay, #startOverlay, #gameOverOverlay, section, form, table, tbody, button, input, textarea, select')) {
+                return;
+            }
             if (e.target.closest('#gameCanvas, #canvasContainer')) {
                 e.preventDefault();
             }
         }, { passive: false });
+
+        // Global Window Modal Controller API
+        window.openShop = openShop;
+        window.closeShop = closeShop;
+        window.selectCharacter = selectCharacter;
+        window.openLeaderboardModal = openLeaderboardModal;
+        window.closeLeaderboardModal = closeLeaderboardModal;
+        window.openAuthModal = openAuthModal;
+        window.closeAuthModal = closeAuthModal;
 
         // 4. Handle device orientation change & window resize seamlessly
         window.addEventListener('resize', () => {
