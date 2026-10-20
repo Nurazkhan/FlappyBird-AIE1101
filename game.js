@@ -965,39 +965,6 @@
         let GAME_HEIGHT = 540;
         let isPortraitMode = false;
 
-        function getHeroDefaultX() {
-            return isPortraitMode ? 130 : 220;
-        }
-
-        function updateGameResolution() {
-            const isPortrait = window.innerWidth <= 820 && window.innerHeight > window.innerWidth;
-            const prevH = GAME_HEIGHT;
-
-            if (isPortrait) {
-                isPortraitMode = true;
-                GAME_WIDTH = 540;
-                const aspect = window.innerHeight / Math.max(1, window.innerWidth);
-                GAME_HEIGHT = Math.max(800, Math.min(1300, Math.round(540 * aspect)));
-            } else {
-                isPortraitMode = false;
-                GAME_WIDTH = 960;
-                GAME_HEIGHT = 540;
-            }
-
-            if (canvas.width !== GAME_WIDTH || canvas.height !== GAME_HEIGHT) {
-                canvas.width = GAME_WIDTH;
-                canvas.height = GAME_HEIGHT;
-                if (gameState === 'START') {
-                    hero.x = getHeroDefaultX();
-                    hero.y = GAME_HEIGHT * 0.42;
-                } else if (prevH > 0 && GAME_HEIGHT > 0) {
-                    hero.x = getHeroDefaultX();
-                    hero.y = Math.max(20, Math.min(GAME_HEIGHT - 60, (hero.y / prevH) * GAME_HEIGHT));
-                }
-            }
-        }
-        updateGameResolution();
-
         const DIFFICULTY_PRESETS = {
             chill: { speed: 245, gravity: 1180, jumpImpulse: -395, gapSize: 176, spawnInterval: 1.85 },
             normal: { speed: 300, gravity: 1380, jumpImpulse: -435, gapSize: 154, spawnInterval: 1.52 },
@@ -1034,6 +1001,41 @@
             trailTimer: 0,
             alive: true
         };
+
+        function getHeroDefaultX() {
+            return isPortraitMode ? 130 : 220;
+        }
+
+        function updateGameResolution() {
+            const isPortrait = window.innerWidth <= 820 && window.innerHeight > window.innerWidth;
+            const prevH = GAME_HEIGHT;
+
+            if (isPortrait) {
+                isPortraitMode = true;
+                GAME_WIDTH = 540;
+                const aspect = window.innerHeight / Math.max(1, window.innerWidth);
+                GAME_HEIGHT = Math.max(800, Math.min(1300, Math.round(540 * aspect)));
+            } else {
+                isPortraitMode = false;
+                GAME_WIDTH = 960;
+                GAME_HEIGHT = 540;
+            }
+
+            if (canvas.width !== GAME_WIDTH || canvas.height !== GAME_HEIGHT) {
+                canvas.width = GAME_WIDTH;
+                canvas.height = GAME_HEIGHT;
+            }
+            if (typeof hero !== 'undefined' && hero) {
+                if (typeof gameState !== 'undefined' && gameState === 'START') {
+                    hero.x = getHeroDefaultX();
+                    hero.y = GAME_HEIGHT * 0.42;
+                } else if (prevH > 0 && GAME_HEIGHT > 0) {
+                    hero.x = getHeroDefaultX();
+                    hero.y = Math.max(20, Math.min(GAME_HEIGHT - 60, (hero.y / prevH) * GAME_HEIGHT));
+                }
+            }
+        }
+        updateGameResolution();
 
         let selectedCharacterId = 'cube01';
         let jumpCount = 0;
