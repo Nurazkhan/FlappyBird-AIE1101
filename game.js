@@ -152,7 +152,19 @@
             }
         }
 
+        function triggerHaptic(duration = 14) {
+            try {
+                if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                    navigator.vibrate(duration);
+                }
+            } catch (e) {}
+        }
+
         function playPixelSound(type) {
+            if (type === 'collision') triggerHaptic(42);
+            else if (type === 'voltBlink' || type === 'echoPhase') triggerHaptic(20);
+            else if (type === 'cinderExplosion') triggerHaptic(50);
+
             if (!soundEnabled) return;
             try {
                 const context = ensureAudioContext();
@@ -174,12 +186,17 @@
             }
         }
 
-        function toggleSound() {
+        function toggleSound(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             soundEnabled = !soundEnabled;
             if (soundEnabled) unlockAudio();
             const icon = document.getElementById('soundIcon');
             if (icon) {
                 icon.textContent = soundEnabled ? 'SFX: ON' : 'SFX: MUTED';
+            }
+            const floatingIcon = document.getElementById('floatingSoundIcon');
+            if (floatingIcon) {
+                floatingIcon.textContent = soundEnabled ? 'SFX: ON' : 'SFX: MUTED';
             }
         }
 
@@ -353,21 +370,26 @@
             }
         }
 
-        function openAuthModal(tab = 'login') {
+        function openAuthModal(tab = 'login', e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (gameState === 'PLAYING') {
+                gameState = 'PAUSED';
+            }
             const overlay = document.getElementById('authOverlay');
             if (overlay) overlay.classList.remove('hidden');
             switchAuthTab(tab);
             const userIn = document.getElementById('authUsernameInput');
             if (userIn) {
                 userIn.value = '';
-                userIn.focus();
+                setTimeout(() => userIn.focus(), 80);
             }
             const passIn = document.getElementById('authPasswordInput');
             if (passIn) passIn.value = '';
             setAuthAlert('', false);
         }
 
-        function closeAuthModal() {
+        function closeAuthModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             const overlay = document.getElementById('authOverlay');
             if (overlay) overlay.classList.add('hidden');
         }
@@ -504,13 +526,18 @@
             }
         }
 
-        function openLeaderboardModal() {
+        function openLeaderboardModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (gameState === 'PLAYING') {
+                gameState = 'PAUSED';
+            }
             const overlay = document.getElementById('leaderboardOverlay');
             if (overlay) overlay.classList.remove('hidden');
             loadLeaderboardData();
         }
 
-        function closeLeaderboardModal() {
+        function closeLeaderboardModal(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             const overlay = document.getElementById('leaderboardOverlay');
             if (overlay) overlay.classList.add('hidden');
         }
@@ -740,11 +767,15 @@
 
         function updateFullscreenButtons(isFs) {
             const navFsIcon = document.getElementById('navFsIcon');
+            const floatingFsIcon = document.getElementById('floatingFsIcon');
             const bottomFsBtn = document.getElementById('bottomFsBtn');
             const floatingBtn = document.getElementById('floatingExitFsBtn');
 
             if (navFsIcon) {
                 navFsIcon.textContent = isFs ? '🗗' : '⛶';
+            }
+            if (floatingFsIcon) {
+                floatingFsIcon.textContent = isFs ? '🗗' : '⛶';
             }
             if (bottomFsBtn) {
                 bottomFsBtn.innerHTML = isFs ? '🗗 WINDOW' : '⛶ FULLSCREEN [F]';
@@ -758,7 +789,8 @@
             }
         }
 
-        function toggleFullscreen() {
+        function toggleFullscreen(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             if (isFullscreenActive()) {
                 exitGameFullscreen();
             } else {
@@ -929,10 +961,42 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        const GAME_WIDTH = 960;
-        const GAME_HEIGHT = 540;
-        canvas.width = GAME_WIDTH;
-        canvas.height = GAME_HEIGHT;
+        let GAME_WIDTH = 960;
+        let GAME_HEIGHT = 540;
+        let isPortraitMode = false;
+
+        function getHeroDefaultX() {
+            return isPortraitMode ? 130 : 220;
+        }
+
+        function updateGameResolution() {
+            const isPortrait = window.innerWidth <= 820 && window.innerHeight > window.innerWidth;
+            const prevH = GAME_HEIGHT;
+
+            if (isPortrait) {
+                isPortraitMode = true;
+                GAME_WIDTH = 540;
+                const aspect = window.innerHeight / Math.max(1, window.innerWidth);
+                GAME_HEIGHT = Math.max(800, Math.min(1300, Math.round(540 * aspect)));
+            } else {
+                isPortraitMode = false;
+                GAME_WIDTH = 960;
+                GAME_HEIGHT = 540;
+            }
+
+            if (canvas.width !== GAME_WIDTH || canvas.height !== GAME_HEIGHT) {
+                canvas.width = GAME_WIDTH;
+                canvas.height = GAME_HEIGHT;
+                if (gameState === 'START') {
+                    hero.x = getHeroDefaultX();
+                    hero.y = GAME_HEIGHT * 0.42;
+                } else if (prevH > 0 && GAME_HEIGHT > 0) {
+                    hero.x = getHeroDefaultX();
+                    hero.y = Math.max(20, Math.min(GAME_HEIGHT - 60, (hero.y / prevH) * GAME_HEIGHT));
+                }
+            }
+        }
+        updateGameResolution();
 
         const DIFFICULTY_PRESETS = {
             chill: { speed: 245, gravity: 1180, jumpImpulse: -395, gapSize: 176, spawnInterval: 1.85 },
@@ -959,7 +1023,7 @@
         // Hero Cubic Pixel State
         const hero = {
             x: 220,
-            y: GAME_HEIGHT / 2 - 20,
+            y: 250,
             width: 44,
             height: 44,
             vy: 0,
@@ -1466,7 +1530,7 @@
                     hero.alive = true;
                     hero.x = cinderReviveSequence.deathX;
                     hero.y = Math.max(40, Math.min(GAME_HEIGHT - 120, cinderReviveSequence.deathY));
-                    hero.vy = -430;
+                    hero.vy = isPortraitMode ? -545 : -430;
                     cinderAuraTimer = 1.3;
                     announceAbility('PHOENIX REBIRTH // OBSTACLE DESTROYED!', 1.4);
                 }
@@ -1539,9 +1603,9 @@
          ***********************************************************************/
         function spawnObstaclePair() {
             const preset = DIFFICULTY_PRESETS[currentDifficulty];
-            const gap = preset.gapSize;
-            const minTop = 74;
-            const maxTop = GAME_HEIGHT - gap - 104;
+            const gap = isPortraitMode ? preset.gapSize + 16 : preset.gapSize;
+            const minTop = isPortraitMode ? 100 : 74;
+            const maxTop = GAME_HEIGHT - gap - (isPortraitMode ? 120 : 104);
             let gapTop = minTop + Math.random() * (maxTop - minTop);
             let gapBottom = gapTop + gap;
             obstacleCount += 1;
@@ -1586,8 +1650,8 @@
                 clearTimeout(gameOverOverlayTimer);
                 gameOverOverlayTimer = null;
             }
-            hero.x = 220;
-            hero.y = GAME_HEIGHT * 0.44;
+            hero.x = getHeroDefaultX();
+            hero.y = GAME_HEIGHT * 0.42;
             hero.vy = 0;
             hero.rotation = 0;
             hero.scaleX = 1;
@@ -1605,6 +1669,11 @@
             updateScoreUI();
         }
 
+        function isShopOpen() {
+            const shop = document.getElementById('shopOverlay');
+            return shop && !shop.classList.contains('hidden');
+        }
+
         function triggerFlapAction(e) {
             if (e && e.type === 'touchstart') {
                 e.preventDefault();
@@ -1615,7 +1684,12 @@
                 return;
             }
 
-            if (isAuthModalOpen() || isLeaderboardModalOpen()) {
+            if (gameState === 'PAUSED') {
+                togglePause();
+                return;
+            }
+
+            if (isAuthModalOpen() || isLeaderboardModalOpen() || isShopOpen()) {
                 return;
             }
 
@@ -1624,9 +1698,9 @@
                 return;
             }
 
-            // Request the audio unlock inside the actual input event. Browsers will
-            // otherwise keep Web Audio suspended even though the game is running.
+            // Request the audio unlock inside the actual input event.
             if (soundEnabled) unlockAudio();
+            triggerHaptic(12);
 
             const flapBtn = document.getElementById('flapControlBtn');
             if (flapBtn) {
@@ -1647,6 +1721,15 @@
         function applyHeroFlapImpulse() {
             const preset = DIFFICULTY_PRESETS[currentDifficulty];
             let impulse = preset.jumpImpulse;
+
+            // In mobile vertical (portrait) mode, screen is much taller (~960-1200px vs 540px),
+            // so scale jump impulse for comfortable, classic Flappy Bird vertical lift.
+            if (isPortraitMode) {
+                impulse *= 1.18; // Increases vertical climb from ~68px to ~112px per flap
+            } else if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
+                impulse *= 1.10; // Snappy mobile touch boost
+            }
+
             // Chrono: In slowed motion, decrease the jump height for tight, controlled micro-hops
             if (selectedCharacterId === 'chrono' && chronoTimer > 0) {
                 impulse *= 0.65;
@@ -1664,7 +1747,7 @@
         function activateFlapAbility() {
             jumpCount += 1;
 
-            if (selectedCharacterId === 'volt' && jumpCount % 3 === 0) {
+            if (selectedCharacterId === 'volt' && jumpCount % 4 === 0) {
                 voltDashTimer = voltDashDuration;
                 voltTrailTimer = 0.65;
                 phaseTimer = Math.max(phaseTimer, 0.22);
@@ -1710,7 +1793,8 @@
             if (overEl) overEl.classList.add('hidden');
         }
 
-        function restartGame() {
+        function restartGame(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             closeAuthModal();
             closeLeaderboardModal();
             resetGameEntities();
@@ -1722,7 +1806,8 @@
             applyHeroFlapImpulse();
         }
 
-        function returnToMainMenu() {
+        function returnToMainMenu(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             resetGameEntities();
             gameState = 'START';
             lastFrameTime = performance.now();
@@ -1730,23 +1815,44 @@
             const startEl = document.getElementById('startOverlay');
             const overEl = document.getElementById('gameOverOverlay');
             const pauseBtn = document.getElementById('pauseBtn');
+            const mobilePauseIcon = document.getElementById('mobilePauseIcon');
+            const mobilePauseText = document.getElementById('mobilePauseText');
+            const floatingPauseIcon = document.getElementById('floatingPauseIcon');
+
             if (startEl) startEl.classList.remove('hidden');
             if (overEl) overEl.classList.add('hidden');
             closeAuthModal();
             closeLeaderboardModal();
             updatePilotAuthUI();
             if (pauseBtn) pauseBtn.textContent = '⏸ PAUSE [P]';
+            if (mobilePauseIcon) mobilePauseIcon.textContent = '⏸';
+            if (mobilePauseText) mobilePauseText.textContent = 'PAUSE';
+            if (floatingPauseIcon) floatingPauseIcon.textContent = '⏸';
         }
 
-        function togglePause() {
+        function togglePause(e) {
+            if (e) {
+                if (e.stopPropagation) e.stopPropagation();
+                if (e.preventDefault) e.preventDefault();
+            }
             const pauseBtn = document.getElementById('pauseBtn');
+            const mobilePauseIcon = document.getElementById('mobilePauseIcon');
+            const mobilePauseText = document.getElementById('mobilePauseText');
+            const floatingPauseIcon = document.getElementById('floatingPauseIcon');
+
             if (gameState === 'PLAYING') {
                 gameState = 'PAUSED';
                 if (pauseBtn) pauseBtn.textContent = '▶ RESUME [P]';
+                if (mobilePauseIcon) mobilePauseIcon.textContent = '▶';
+                if (mobilePauseText) mobilePauseText.textContent = 'RESUME';
+                if (floatingPauseIcon) floatingPauseIcon.textContent = '▶';
             } else if (gameState === 'PAUSED') {
                 gameState = 'PLAYING';
                 lastFrameTime = performance.now();
                 if (pauseBtn) pauseBtn.textContent = '⏸ PAUSE [P]';
+                if (mobilePauseIcon) mobilePauseIcon.textContent = '⏸';
+                if (mobilePauseText) mobilePauseText.textContent = 'PAUSE';
+                if (floatingPauseIcon) floatingPauseIcon.textContent = '⏸';
             }
         }
 
@@ -1827,17 +1933,17 @@
 
             grid.innerHTML = CHARACTER_ROSTER.map((character, index) => {
                 const selected = character.id === selectedCharacterId;
-                return `<button type="button" onclick="selectCharacter('${character.id}')" class="group relative border-2 bg-neutral-900 p-3 sm:p-4 text-left transition-all active:translate-y-px ${selected ? 'border-white bg-neutral-800/90 shadow-[0_0_16px_rgba(255,255,255,0.2)]' : 'border-neutral-700 hover:border-neutral-400 hover:bg-neutral-850'}" aria-pressed="${selected}">
-                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                return `<button type="button" onclick="selectCharacter('${character.id}')" class="group relative border-2 bg-neutral-900 p-2.5 sm:p-4 text-left transition-all active:translate-y-px ${selected ? 'border-white bg-neutral-800/90 shadow-[0_0_16px_rgba(255,255,255,0.2)]' : 'border-neutral-700 hover:border-neutral-400 hover:bg-neutral-850'}" aria-pressed="${selected}">
+                    <div class="flex items-start justify-between gap-1.5 mb-1">
                         <span class="font-pixel text-[10px] font-bold" style="color:${character.color}">0${index + 1}</span>
                         <span class="font-pixel text-[8px] px-1.5 py-0.5 rounded-sm ${selected ? 'bg-white text-black font-bold' : 'text-neutral-400 bg-neutral-950/80 border border-neutral-800'}">${selected ? 'EQUIPPED' : 'SELECT'}</span>
                     </div>
                     <!-- Large Sprite Canvas Display -->
-                    <div class="relative py-2 flex items-center justify-center bg-neutral-950/70 rounded-md border border-neutral-800/80 my-2">
-                        <canvas id="shopSprite-${character.id}" width="160" height="160" class="block h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 drop-shadow-[0_4px_8px_rgba(0,0,0,0.65)] transition-transform group-hover:scale-105"></canvas>
+                    <div class="relative py-1.5 flex items-center justify-center bg-neutral-950/70 rounded-md border border-neutral-800/80 my-1.5">
+                        <canvas id="shopSprite-${character.id}" width="160" height="160" class="block h-20 w-20 sm:h-28 sm:w-28 md:h-32 md:w-32 drop-shadow-[0_4px_8px_rgba(0,0,0,0.65)] transition-transform group-hover:scale-105"></canvas>
                     </div>
-                    <span class="block font-pixel text-xs sm:text-sm text-white font-bold tracking-wide">${character.name}</span>
-                    <span class="mt-0.5 block font-pixel text-[9px] leading-snug" style="color:${character.color}">${character.title}</span>
+                    <span class="block font-pixel text-xs sm:text-sm text-white font-bold tracking-wide truncate">${character.name}</span>
+                    <span class="mt-0.5 block font-pixel text-[9px] leading-snug truncate" style="color:${character.color}">${character.title}</span>
                 </button>`;
             }).join('');
 
@@ -1865,13 +1971,18 @@
             drawShopSpriteThumbnails();
         }
 
-        function openShop() {
+        function openShop(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (gameState === 'PLAYING') {
+                gameState = 'PAUSED';
+            }
             const shop = document.getElementById('shopOverlay');
             if (shop) shop.classList.remove('hidden');
             renderShop();
         }
 
-        function closeShop() {
+        function closeShop(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
             const shop = document.getElementById('shopOverlay');
             if (shop) shop.classList.add('hidden');
         }
@@ -1963,6 +2074,8 @@
         }
 
         function updateGame(dt) {
+            if (gameState === 'PAUSED') return;
+
             if (cinderReviveSequence.active) {
                 updateCinderReviveSequence(dt);
                 return;
@@ -2145,7 +2258,8 @@
 
             // Idle Bobbing on Start Screen
             if (gameState === 'START') {
-                hero.y = GAME_HEIGHT * 0.44 + Math.sin(performance.now() * 0.0045) * 9;
+                hero.x = getHeroDefaultX();
+                hero.y = GAME_HEIGHT * 0.42 + Math.sin(performance.now() * 0.0045) * 9;
                 hero.trailTimer += dt;
                 if (hero.trailTimer >= 0.045) {
                     hero.trailTimer = 0;
@@ -2266,7 +2380,7 @@
             if (hero.y + hero.height > GAME_HEIGHT - 22) {
                 hero.y = GAME_HEIGHT - 22 - hero.height;
                 if (selectedCharacterId === 'cinder') {
-                    hero.vy = -430;
+                    hero.vy = isPortraitMode ? -545 : -430;
                     announceAbility('THERMAL UPDRAFT', 0.7);
                 } else {
                     triggerGameOver('Consumed by the dense industrial pixel smoke trench below.');
@@ -2321,6 +2435,10 @@
                 ctx.globalAlpha = layer.alpha;
                 for (let x = -layer.scrollX; x < GAME_WIDTH + drawW; x += drawW) {
                     ctx.drawImage(bgImg, Math.round(x), Math.round(yPos), drawW, drawH);
+                }
+                if (yPos + drawH < GAME_HEIGHT) {
+                    ctx.fillStyle = i === 0 ? '#43434c' : '#2d2d35';
+                    ctx.fillRect(0, yPos + drawH - 2, GAME_WIDTH, GAME_HEIGHT - (yPos + drawH) + 2);
                 }
                 ctx.restore();
             }
@@ -2705,6 +2823,25 @@
 
             drawVolumetricSmoke(true);
 
+            // Render Pause Overlay HUD when paused
+            if (gameState === 'PAUSED') {
+                ctx.save();
+                ctx.fillStyle = 'rgba(9, 9, 12, 0.76)';
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '700 36px Silkscreen, monospace';
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = 10;
+                ctx.fillText('PAUSED', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 18);
+                ctx.font = '14px Silkscreen, monospace';
+                ctx.fillStyle = '#facc15';
+                ctx.shadowBlur = 6;
+                ctx.fillText('TAP SCREEN OR PRESS P TO RESUME', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 26);
+                ctx.restore();
+            }
+
             ctx.restore();
         }
 
@@ -2799,6 +2936,7 @@
             }
         });
 
+        // 1. Direct canvas input
         canvas.addEventListener('mousedown', (e) => {
             e.preventDefault();
             triggerFlapAction(e);
@@ -2809,8 +2947,49 @@
             triggerFlapAction(e);
         }, { passive: false });
 
+        // 2. Full-screen Container touch input (tapping anywhere on the phone screen flaps)
+        const canvasContainerEl = document.getElementById('canvasContainer');
+        if (canvasContainerEl) {
+            canvasContainerEl.addEventListener('touchstart', (e) => {
+                // If touching an interactive UI modal or action button, let it process naturally
+                if (e.target.closest('#startOverlay, #shopOverlay, #authOverlay, #leaderboardOverlay, #gameOverOverlay, #gameFloatingControls, button, input, a')) {
+                    return;
+                }
+                e.preventDefault();
+                triggerFlapAction(e);
+            }, { passive: false });
+
+            canvasContainerEl.addEventListener('mousedown', (e) => {
+                if (e.target.closest('#startOverlay, #shopOverlay, #authOverlay, #leaderboardOverlay, #gameOverOverlay, #gameFloatingControls, button, input, a')) {
+                    return;
+                }
+                e.preventDefault();
+                triggerFlapAction(e);
+            });
+        }
+
+        // 3. Prevent mobile pull-to-refresh & pinch zoom gestures on game area
+        document.addEventListener('touchmove', (e) => {
+            if (e.target.closest('#gameCanvas, #canvasContainer')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 4. Handle device orientation change & window resize seamlessly
+        window.addEventListener('resize', () => {
+            updateGameResolution();
+            updateFullscreenButtons(isFullscreenActive());
+        });
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                updateGameResolution();
+                updateFullscreenButtons(isFullscreenActive());
+            }, 80);
+        });
+
 // Boot the game once the window and ./assets.svg sprites are loaded
 window.addEventListener('DOMContentLoaded', async () => {
+    updateGameResolution();
     try {
         const savedBest = localStorage.getItem('flappy_pixel_best');
         if (savedBest) bestScore = parseInt(savedBest, 10) || 0;

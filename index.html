@@ -99,8 +99,235 @@
             object-fit: contain !important;
             margin: auto !important;
         }
-        body.is-fullscreen #floatingExitFsBtn {
+        body.is-fullscreen #gameFloatingControls {
             display: flex !important;
+        }
+
+        /* -------------------------------------------------------------
+           MOBILE & RESPONSIVE ADAPTATION (PORTRAIT & LANDSCAPE)
+        ------------------------------------------------------------- */
+        
+        /* Prevent browser elastic bounce / pull-to-refresh on mobile gaming */
+        html, body {
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 1. MOBILE OVERLAY SYSTEM: Full-Screen Modal Sheets */
+        @media (max-width: 820px), (max-height: 550px) {
+            #canvasContainer #startOverlay:not(.hidden),
+            #canvasContainer #shopOverlay:not(.hidden),
+            #canvasContainer #authOverlay:not(.hidden),
+            #canvasContainer #leaderboardOverlay:not(.hidden),
+            #canvasContainer #gameOverOverlay:not(.hidden) {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                z-index: 99999 !important;
+                background: rgba(9, 9, 12, 0.96) !important;
+                backdrop-filter: blur(10px) !important;
+                -webkit-backdrop-filter: blur(10px) !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 0 !important;
+            }
+        }
+
+        /* 2. MOBILE VERTICAL (PORTRAIT): FULLY VERTICAL FULLSCREEN FLAPPY GAME */
+        @media (max-width: 820px) and (orientation: portrait) {
+            html, body {
+                overflow: hidden !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                touch-action: none !important;
+                background: #000000 !important;
+            }
+            header {
+                display: none !important;
+            }
+            .credits-bar {
+                display: none !important;
+            }
+            main {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: none !important;
+                z-index: 10 !important;
+            }
+            main > section {
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: #000000 !important;
+            }
+            #canvasContainer {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                max-width: none !important;
+                max-height: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                aspect-ratio: auto !important;
+                background: #000000 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                z-index: 10 !important;
+            }
+            #gameCanvas {
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                max-width: none !important;
+                max-height: none !important;
+                object-fit: fill !important;
+                display: block !important;
+                margin: 0 !important;
+                border: none !important;
+            }
+            #gameFloatingControls {
+                display: flex !important;
+                top: max(10px, env(safe-area-inset-top) + 6px) !important;
+                right: max(10px, env(safe-area-inset-right) + 6px) !important;
+            }
+            #liveScoreDisplayContainer {
+                top: max(16px, env(safe-area-inset-top) + 8px) !important;
+            }
+        }
+
+        /* 3. MOBILE LANDSCAPE THEATER MODE: Full Edge-to-Edge 16:9 Landscape Canvas */
+        #gameFloatingControls {
+            display: none;
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            html, body {
+                overflow: hidden !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                touch-action: none !important;
+                background: #000000 !important;
+            }
+            header {
+                display: none !important;
+            }
+            .credits-bar {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: none !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+            }
+            main > section {
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                background: #000000 !important;
+            }
+            #canvasContainer {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                max-width: none !important;
+                max-height: none !important;
+                background: #000000 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                aspect-ratio: auto !important;
+                z-index: 10;
+            }
+            #gameCanvas {
+                height: 100vh !important;
+                height: 100dvh !important;
+                width: auto !important;
+                max-width: 100vw !important;
+                aspect-ratio: 16 / 9 !important;
+                object-fit: contain !important;
+                margin: auto !important;
+            }
+            #gameFloatingControls {
+                display: flex !important;
+                top: max(8px, env(safe-area-inset-top) + 4px) !important;
+                right: max(8px, env(safe-area-inset-right) + 4px) !important;
+            }
+
+            /* Fit modal dialogues neatly inside short landscape viewports */
+            #startOverlay section {
+                max-height: 94dvh !important;
+                padding: 8px 14px !important;
+                border-width: 2px !important;
+            }
+            #startOverlay h2#menuTitle {
+                font-size: 1.6rem !important;
+                line-height: 1 !important;
+            }
+            #startOverlay .py-4, #startOverlay .sm\:py-6 {
+                padding-top: 4px !important;
+                padding-bottom: 4px !important;
+            }
+            #startOverlay .grid-cols-2 {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+            #startOverlay .min-h-14 {
+                min-height: 40px !important;
+                padding: 4px 6px !important;
+            }
+            #shopOverlay section {
+                max-height: 94dvh !important;
+            }
+            #shopOverlay #characterShopGrid {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                padding: 8px !important;
+            }
+            #leaderboardOverlay section {
+                max-height: 94dvh !important;
+                padding: 8px 12px !important;
+            }
+            #authOverlay section {
+                max-height: 94dvh !important;
+                padding: 10px 14px !important;
+            }
+            #gameOverOverlay > div {
+                max-height: 94dvh !important;
+                padding: 10px 14px !important;
+            }
         }
         :root {
             --bg-void: #18181c;
@@ -167,9 +394,9 @@
 <body class="min-h-screen flex flex-col selection:bg-white selection:text-black">
 
     <header class="border-b border-neutral-700 bg-neutral-900/95 sticky top-0 z-40 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-            <div class="flex items-center gap-2 sm:gap-3">
-                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-white p-0.5 flex items-center justify-center shadow-[2px_2px_0px_#52525b] sm:shadow-[3px_3px_0px_#52525b] rounded-sm">
+        <div class="max-w-6xl mx-auto px-2.5 sm:px-4 py-2 sm:py-3 flex flex-nowrap items-center justify-between gap-1.5 sm:gap-3 overflow-x-auto no-scrollbar">
+            <div class="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+                <div class="w-7 h-7 sm:w-9 sm:h-9 bg-white p-0.5 flex items-center justify-center shadow-[2px_2px_0px_#52525b] sm:shadow-[3px_3px_0px_#52525b] rounded-sm">
                     <div class="w-full h-full bg-black flex items-center justify-center p-1">
                         <div class="w-full h-full border border-neutral-400 flex items-center justify-end pr-0.5">
                             <div class="w-2 h-1.5 bg-white"></div>
@@ -177,22 +404,22 @@
                     </div>
                 </div>
                 <div>
-                    <h1 class="font-pixel text-sm sm:text-base md:text-lg text-white tracking-wider truncate">FLAPPY PIXEL<span class="hidden sm:inline"> // MILESTONE 1</span></h1>
+                    <h1 class="font-pixel text-xs sm:text-base md:text-lg text-white tracking-wider truncate">FLAPPY PIXEL<span class="hidden sm:inline"> // MILESTONE 1</span></h1>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5 sm:gap-2">
-                <button id="navLeaderboardBtn" onclick="openLeaderboardModal()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 text-yellow-300 border-yellow-500/50 hover:border-yellow-400 whitespace-nowrap">
+            <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <button id="navLeaderboardBtn" onclick="openLeaderboardModal(event)" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[10px] sm:text-xs font-pixel flex items-center gap-1 text-yellow-300 border-yellow-500/50 hover:border-yellow-400 whitespace-nowrap">
                     <span>🏆 <span class="hidden sm:inline">LEADERBOARD</span><span class="sm:hidden">RANKS</span></span>
                 </button>
                 <div id="navAuthContainer">
-                    <button id="navLoginBtn" onclick="openAuthModal('login')" class="pixel-btn px-2.5 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel font-bold flex items-center gap-1 whitespace-nowrap">
+                    <button id="navLoginBtn" onclick="openAuthModal('login', event)" class="pixel-btn px-2 sm:px-3 py-1.5 rounded text-[10px] sm:text-xs font-pixel font-bold flex items-center gap-1 whitespace-nowrap">
                         <span class="hidden sm:inline">PILOT </span><span>LOGIN</span>
                     </button>
                 </div>
-                <button id="navFullscreenBtn" onclick="toggleFullscreen()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 text-neutral-300 hover:text-white whitespace-nowrap" title="Toggle Fullscreen (F)">
+                <button id="navFullscreenBtn" onclick="toggleFullscreen(event)" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[10px] sm:text-xs font-pixel flex items-center gap-1 text-neutral-300 hover:text-white whitespace-nowrap" title="Toggle Fullscreen (F)">
                     <span id="navFsIcon">⛶</span><span class="hidden sm:inline"> FULL</span>
                 </button>
-                <button id="soundToggleBtn" onclick="toggleSound()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 whitespace-nowrap">
+                <button id="soundToggleBtn" onclick="toggleSound(event)" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[10px] sm:text-xs font-pixel flex items-center gap-1 whitespace-nowrap">
                     <span id="soundIcon">SFX: ON</span>
                 </button>
             </div>
@@ -207,12 +434,26 @@
             <div id="canvasContainer" class="relative w-full aspect-[16/9] max-h-[580px] bg-[#585862] overflow-hidden select-none">
                 <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-                <!-- Floating Exit Fullscreen Button (Visible in Fullscreen Mode) -->
-                <button id="floatingExitFsBtn" onclick="toggleFullscreen()" class="hidden absolute top-3 right-3 z-30 pixel-btn-dark px-2.5 py-1.5 text-[10px] font-pixel bg-neutral-950/90 text-white rounded shadow-lg border border-neutral-600 flex items-center gap-1 hover:bg-neutral-800 active:scale-95 transition-transform" title="Exit Fullscreen (ESC or F)">
-                    <span>🗗 EXIT FULLSCREEN</span>
-                </button>
+                <!-- Floating Action Controls (Visible in Mobile Full-screen & Desktop Fullscreen) -->
+                <div id="gameFloatingControls" class="hidden absolute top-2 right-2 sm:top-3 sm:right-3 z-30 items-center gap-1.5 pointer-events-auto">
+                    <button type="button" onclick="togglePause(event)" class="pixel-btn-dark px-2 py-1 sm:px-2.5 sm:py-1.5 text-[10px] sm:text-[11px] font-pixel bg-neutral-950/90 text-white rounded shadow border border-neutral-600 flex items-center gap-1 hover:bg-neutral-800 active:scale-95" title="Pause Game (P)">
+                        <span id="floatingPauseIcon">⏸</span>
+                    </button>
+                    <button type="button" onclick="toggleSound(event)" class="pixel-btn-dark px-2 py-1 sm:px-2.5 sm:py-1.5 text-[10px] sm:text-[11px] font-pixel bg-neutral-950/90 text-white rounded shadow border border-neutral-600 flex items-center gap-1 hover:bg-neutral-800 active:scale-95" title="Toggle Sound">
+                        <span id="floatingSoundIcon">SFX: ON</span>
+                    </button>
+                    <button type="button" onclick="openShop(event)" class="pixel-btn-dark px-2 py-1 text-[10px] font-pixel bg-neutral-950/90 text-white rounded shadow border border-neutral-600 flex items-center gap-1 hover:bg-neutral-800 active:scale-95 sm:hidden" title="Pilots">
+                        <span>🚀</span>
+                    </button>
+                    <button type="button" onclick="openLeaderboardModal(event)" class="pixel-btn-dark px-2 py-1 text-[10px] font-pixel bg-neutral-950/90 text-yellow-300 border-yellow-500/50 rounded shadow flex items-center gap-1 hover:bg-neutral-800 active:scale-95 sm:hidden" title="Ranks">
+                        <span>🏆</span>
+                    </button>
+                    <button type="button" onclick="toggleFullscreen(event)" class="hidden sm:flex pixel-btn-dark px-2 py-1 sm:px-2.5 sm:py-1.5 text-[10px] sm:text-[11px] font-pixel bg-neutral-950/90 text-white rounded shadow border border-neutral-600 items-center gap-1 hover:bg-neutral-800 active:scale-95" title="Toggle Fullscreen (F)">
+                        <span id="floatingFsIcon">⛶</span><span class="hidden sm:inline"> FULL</span>
+                    </button>
+                </div>
 
-                <div class="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                <div id="liveScoreDisplayContainer" class="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
                     <div id="liveScoreDisplay" class="font-pixel text-4xl sm:text-5xl text-white drop-shadow-[0_4px_0_#000000] tracking-wider">0</div>
                     <div id="comboBadge" class="hidden mt-1 px-2 py-0.5 bg-white text-black font-pixel text-[10px] rounded-sm shadow-[2px_2px_0_#000]">CLEAN PASS +1</div>
                     <div id="abilityHud" class="mt-2 border border-neutral-500 bg-neutral-950/85 px-2 py-1 text-center font-pixel text-[9px] tracking-wide text-neutral-200">
@@ -238,15 +479,14 @@
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <button type="button" onclick="triggerFlapAction()" class="pixel-btn min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs font-bold flex flex-col justify-between">
-
+                            <button type="button" onclick="triggerFlapAction(event)" class="pixel-btn min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs font-bold flex flex-col justify-between">
                                 <span>START GAME</span>
                             </button>
-                            <button type="button" onclick="openShop()" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs flex flex-col justify-between">
+                            <button type="button" onclick="openShop(event)" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs flex flex-col justify-between">
                                 <span>SHOP</span>
                             </button>
-                            <button type="button" onclick="openLeaderboardModal()" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400 overflow-hidden flex flex-col justify-between">
-                                <span class="block font-pixel text-[10px] sm:text-[11px] tracking-tight leading-tight">LEADERBOARD</span>
+                            <button type="button" onclick="openLeaderboardModal(event)" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-center sm:text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400 overflow-hidden flex flex-col justify-between">
+                                <span class="block font-pixel text-[10px] sm:text-[11px] tracking-tight leading-tight truncate">LEADERBOARD</span>
                             </button>
                             <button type="button" onclick="playStoryIntro(true)" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs flex flex-col justify-between">
                                 <span>STORY LOG</span>
@@ -254,11 +494,12 @@
                         </div>
 
                         <div class="mt-4 sm:mt-5 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-neutral-800 pt-3 text-xs sm:text-sm font-pixel text-neutral-400">
-                            <span>START: [SPACE] / [CLICK]</span>
-                            <span>FLAP: [W] / [UP] / [TAP]</span>
-                            <span>RANKS: [B]</span>
-                            <span>FULL: [F]</span>
-                            <span>LORE: [L]</span>
+                            <span class="hidden sm:inline">START: [SPACE] / [CLICK]</span>
+                            <span class="hidden sm:inline">FLAP: [W] / [UP] / [TAP]</span>
+                            <span class="sm:hidden text-yellow-300 font-bold">TOUCH: TAP TO FLAP</span>
+                            <span class="hidden sm:inline">RANKS: [B]</span>
+                            <span class="hidden sm:inline">FULL: [F]</span>
+                            <span class="hidden sm:inline">LORE: [L]</span>
                         </div>
                     </section>
                 </div>
@@ -403,7 +644,6 @@
                     </div>
                 </div>
             </div>
-
             
         </section>
     </main>
@@ -411,7 +651,7 @@
     <!-- Full-Screen Black Story Intro Overlay -->
     <div id="storyIntroOverlay" onclick="handleStoryOverlayClick(event)" class="hidden fixed inset-0 z-50 bg-black text-white flex flex-col items-center justify-center p-6 select-none overflow-hidden transition-opacity duration-500">
         <!-- Masked Viewport for Vertical Text Crawl -->
-        <div class="story-scroll-container w-full max-w-2xl h-[70vh] relative overflow-hidden flex flex-col items-center justify-start pointer-events-none">
+        <div class="story-scroll-container w-full max-w-2xl h-[58dvh] sm:h-[68dvh] relative overflow-hidden flex flex-col items-center justify-start pointer-events-none">
             <div id="storyCrawlTrack" class="story-crawl w-full flex flex-col items-center text-center space-y-7 sm:space-y-9 px-4">
                 <p class="text-neutral-500 text-xs sm:text-sm font-pixel tracking-[0.25em] uppercase">
                     // FLAPPY PIXEL
@@ -440,14 +680,14 @@
         </div>
         
         <!-- Large Skip Button in Bottom Center -->
-        <div class="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20">
+        <div class="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-20">
             <button id="storySkipBtn" type="button" onclick="exitStoryIntro()" class="pixel-btn px-8 py-3.5 sm:px-12 sm:py-4 font-pixel text-sm sm:text-base font-bold shadow-[0_6px_0_#52525b] hover:bg-neutral-200 active:translate-y-1">
                 SKIP [SPACE]
             </button>
         </div>
         
     </div>
-  <p class="text-neutral-400 p-3">by Nurazkhan for AIE1101 course Milestone 1 project</p>
+  <p class="text-neutral-400 p-3 credits-bar">by Nurazkhan for AIE1101 course Milestone 1 project</p>
     <!-- Loads /Milestone1/game.js which fetches /Milestone1/assets.svg -->
     <script src="game.js"></script>
 </body>
