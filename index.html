@@ -118,8 +118,8 @@
                     </div>
                 </div>
                 <div>
+                  
                     <h1 class="font-pixel text-base sm:text-lg text-white tracking-wider">FLAPPY PIXEL // MILESTONE 1</h1>
-                    <p class="text-[11px] text-neutral-300">60FPS High-Detail Monochrome Arcade • Junk Shadow Towers &amp; Cave Shards</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -140,31 +140,7 @@
 
     <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-1 flex flex-col justify-center">
         <section class="bg-neutral-900 border-2 border-neutral-700 rounded-xl overflow-hidden shadow-2xl">
-            <div class="px-4 py-2.5 bg-neutral-950 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-3">
-                    <span class="px-2 py-0.5 text-[10px] font-pixel bg-white text-black rounded-sm">LIVE CANVAS</span>
-                    <span class="text-xs text-neutral-300">Obstacle Mode:</span>
-                    <select id="obstacleThemeSelect" onchange="changeObstacleMode(this.value)" class="bg-neutral-800 text-white text-xs font-pixel px-2.5 py-1 rounded border border-neutral-600 focus:outline-none">
-                        <option value="mixed">ALL (JUNK TOWERS + CAVE SHARDS)</option>
-                        <option value="junk">REAL-OBJECT JUNK SHADOWS ONLY</option>
-                        <option value="shards">MOUNTAIN CAVE SHARDS ONLY</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-4 text-xs font-pixel">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-neutral-400">FPS:</span>
-                        <span id="fpsCounter" class="text-white">60</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-neutral-400">PARTICLES:</span>
-                        <span id="particleCounter" class="text-white">0</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-neutral-400">BEST:</span>
-                        <span id="bestScoreHud" class="text-white">0</span>
-                    </div>
-                </div>
-            </div>
+           
 
             <!-- Centered 16:9 Stage Container Locked to 960x540 Logical Coordinates -->
             <div id="canvasContainer" class="relative w-full aspect-[16/9] min-h-[340px] max-h-[580px] bg-[#585862] overflow-hidden select-none">
@@ -181,37 +157,30 @@
                 <div id="startOverlay" class="absolute inset-0 z-20 bg-[#09090b]/75 backdrop-blur-[2px] flex items-center justify-center p-5 sm:p-8 transition-opacity">
                     <section aria-labelledby="menuTitle" class="w-full max-w-lg border-2 border-white bg-neutral-950/95 p-4 shadow-[8px_8px_0px_#27272a] sm:p-6">
                         <div class="flex items-center justify-between border-b border-neutral-700 pb-3 text-[10px] font-pixel tracking-wider">
-                            <span class="bg-white px-2 py-1 text-black">SYSTEM READY</span>
                             <span class="text-neutral-400">BUILD M1.0</span>
                         </div>
 
                         <div class="py-6 sm:py-8">
-                            <p class="mb-2 text-[10px] font-pixel tracking-[0.22em] text-neutral-400">MONOCHROME PIXEL EDITION</p>
                             <h2 id="menuTitle" class="font-pixel text-3xl leading-none tracking-wide text-white sm:text-4xl">FLAPPY<br>PIXEL</h2>
-                            <p class="mt-4 max-w-sm text-xs leading-relaxed text-neutral-300">
-                                Guide the Cubic Pixel through the industrial shadow trench. One clean route at a time.
-                            </p>
+                           
                             <div class="mt-3 flex flex-wrap items-center justify-between text-[10px] font-pixel text-neutral-500 gap-2">
                                 <p>VESSEL: <span id="selectedPilotMenu" class="text-white">CUBE-01</span></p>
+                                <p>Best: <span id="bestScoreHud" class="text-white" ></span></p>
                                 <p id="menuAuthStatusText" class="text-neutral-400">PILOT: <span class="text-white">GUEST</span> <button type="button" onclick="openAuthModal('login')" class="text-yellow-300 underline ml-1 font-pixel hover:text-white">LOGIN</button></p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <button type="button" onclick="triggerFlapAction()" class="pixel-btn min-h-14 px-3 py-3 text-left font-pixel text-xs font-bold">
-                                <span class="block text-[9px] text-neutral-600">01 // FLIGHT</span>
                                 START GAME
                             </button>
                             <button type="button" onclick="openShop()" class="pixel-btn-dark min-h-14 px-3 py-3 text-left font-pixel text-xs">
-                                <span class="block text-[9px] text-neutral-400">02 // HANGAR</span>
                                 SHOP
                             </button>
-                            <button type="button" onclick="openLeaderboardModal()" class="pixel-btn-dark min-h-14 px-3 py-3 text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400">
-                                <span class="block text-[9px] text-yellow-400">03 // RANKS</span>
+                            <button type="button" onclick="openLeaderboardModal()" class="pixel-btn-dark min-h-12 px-3 py-3 text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400">
                                 LEADERBOARD
                             </button>
                             <button type="button" onclick="playStoryIntro(true)" class="pixel-btn-dark min-h-14 px-3 py-3 text-left font-pixel text-xs">
-                                <span class="block text-[9px] text-neutral-400">04 // ARCHIVE</span>
                                 STORY LOG
                             </button>
                         </div>
@@ -263,12 +232,12 @@
                         <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
                             <div>
                                 <label for="authUsernameInput" class="block font-pixel text-[10px] text-neutral-400 mb-1">CALLSIGN (USERNAME)</label>
-                                <input id="authUsernameInput" type="text" maxlength="20" required autocomplete="username" placeholder="e.g. CYBER_ACE" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
+                                <input id="authUsernameInput" type="text" maxlength="20" required autocomplete="username"  class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
                                 <p class="text-[9px] text-neutral-500 mt-1 font-pixel">3-20 chars (letters, numbers, _)</p>
                             </div>
                             <div>
                                 <label for="authPasswordInput" class="block font-pixel text-[10px] text-neutral-400 mb-1">SECURITY KEY (PASSWORD)</label>
-                                <input id="authPasswordInput" type="password" minlength="6" required autocomplete="current-password" placeholder="••••••••" class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
+                                <input id="authPasswordInput" type="password" minlength="6" required autocomplete="current-password"  class="w-full bg-neutral-900 border border-neutral-700 px-3 py-2 font-pixel text-sm text-white focus:outline-none focus:border-white rounded">
                                 <p class="text-[9px] text-neutral-500 mt-1 font-pixel">Min 6 characters</p>
                             </div>
 
@@ -366,21 +335,7 @@
                 </div>
             </div>
 
-            <div class="px-4 py-3.5 bg-neutral-950 border-t border-neutral-800 flex flex-wrap items-center justify-center sm:justify-between gap-3">
-                <div class="flex flex-wrap items-center justify-center gap-2.5">
-                    <button id="flapControlBtn" onmousedown="triggerFlapAction(event)" ontouchstart="triggerFlapAction(event)" class="pixel-btn px-5 py-2.5 rounded font-pixel text-xs font-bold flex items-center gap-2">
-                        <span>▲ FLAP / THRUST [SPACE]</span>
-                    </button>
-                    <button onclick="restartGame()" class="pixel-btn-dark px-4 py-2.5 rounded font-pixel text-xs">↻ RESTART</button>
-                    <button id="pauseBtn" onclick="togglePause()" class="pixel-btn-dark px-4 py-2.5 rounded font-pixel text-xs">⏸ PAUSE [P]</button>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-neutral-400 font-pixel">SPEED:</span>
-                    <button onclick="setDifficulty('chill')" id="diff-chill" class="pixel-btn-dark px-2.5 py-1.5 rounded font-pixel text-[11px]">CHILL</button>
-                    <button onclick="setDifficulty('normal')" id="diff-normal" class="pixel-btn px-2.5 py-1.5 rounded font-pixel text-[11px]">NORMAL</button>
-                    <button onclick="setDifficulty('intense')" id="diff-intense" class="pixel-btn-dark px-2.5 py-1.5 rounded font-pixel text-[11px]">INTENSE</button>
-                </div>
-            </div>
+            
         </section>
     </main>
 
@@ -414,15 +369,16 @@
                 </p>
             </div>
         </div>
-
+        
         <!-- Large Skip Button in Bottom Center -->
         <div class="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20">
             <button id="storySkipBtn" type="button" onclick="exitStoryIntro()" class="pixel-btn px-8 py-3.5 sm:px-12 sm:py-4 font-pixel text-sm sm:text-base font-bold shadow-[0_6px_0_#52525b] hover:bg-neutral-200 active:translate-y-1">
                 SKIP [SPACE]
             </button>
         </div>
+        
     </div>
-
+  <p class="text-neutral-400 p-3">by Nurazkhan for AIE1101 course Milestone 1 project</p>
     <!-- Loads /Milestone1/game.js which fetches /Milestone1/assets.svg -->
     <script src="game.js"></script>
 </body>

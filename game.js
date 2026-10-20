@@ -2152,15 +2152,15 @@
                 if (hx2 > obLeft && hx1 < obRight) {
                     if (hy1 < ob.gapTop - 4) {
                         const msg = ob.style === 'shards'
-                            ? 'Shattered against a hanging Mountain Cave Stalactite Shard.'
-                            : 'Collided with an inverted Ceiling Junk Shadow Tower (House/Window/Chair).';
+                            ? ''
+                            : '';
                         triggerGameOver(msg, ob);
                         return;
                     }
                     if (hy2 > ob.gapBottom + 4) {
                         const msg = ob.style === 'shards'
-                            ? 'Impaled on a rising Crystalline Cave Stalagmite Shard.'
-                            : 'Crashed into a stacked Real-Object Shadow Tower (House/Desk/Window/Chair).';
+                            ? ''
+                            : '';
                         triggerGameOver(msg, ob);
                         return;
                     }
