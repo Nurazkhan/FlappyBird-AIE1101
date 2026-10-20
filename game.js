@@ -726,6 +726,98 @@
         }
 
         /***********************************************************************
+         * 1.8. FULLSCREEN CONTROLLER & RESPONSIVE SCALING (Desktop & Mobile)
+         ***********************************************************************/
+        function isFullscreenActive() {
+            return !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement ||
+                document.body.classList.contains('is-fullscreen')
+            );
+        }
+
+        function updateFullscreenButtons(isFs) {
+            const navFsIcon = document.getElementById('navFsIcon');
+            const bottomFsBtn = document.getElementById('bottomFsBtn');
+            const floatingBtn = document.getElementById('floatingExitFsBtn');
+
+            if (navFsIcon) {
+                navFsIcon.textContent = isFs ? '🗗' : '⛶';
+            }
+            if (bottomFsBtn) {
+                bottomFsBtn.innerHTML = isFs ? '🗗 WINDOW' : '⛶ FULLSCREEN [F]';
+            }
+            if (floatingBtn) {
+                if (isFs) {
+                    floatingBtn.classList.remove('hidden');
+                } else {
+                    floatingBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleFullscreen() {
+            if (isFullscreenActive()) {
+                exitGameFullscreen();
+            } else {
+                enterGameFullscreen();
+            }
+        }
+
+        function enterGameFullscreen() {
+            const container = document.getElementById('canvasContainer');
+            document.body.classList.add('is-fullscreen');
+            updateFullscreenButtons(true);
+
+            try {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen().catch(() => {});
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            } catch (e) {}
+        }
+
+        function exitGameFullscreen() {
+            document.body.classList.remove('is-fullscreen');
+            updateFullscreenButtons(false);
+
+            try {
+                if (document.exitFullscreen && document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen && document.webkitFullscreenElement) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen && document.mozFullScreenElement) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen && document.msFullscreenElement) {
+                    document.msExitFullscreen();
+                }
+            } catch (e) {}
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            const isFs = isFullscreenActive();
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('is-fullscreen');
+            }
+            updateFullscreenButtons(isFs);
+        });
+
+        document.addEventListener('webkitfullscreenchange', () => {
+            const isFs = isFullscreenActive();
+            if (!document.webkitFullscreenElement) {
+                document.body.classList.remove('is-fullscreen');
+            }
+            updateFullscreenButtons(isFs);
+        });
+
+        /***********************************************************************
          * 2. PIXEL-LOCKED SVG <symbol> RASTERIZER (Fixes 300x150 Viewport Offset)
          ***********************************************************************/
         const SPRITE_CACHE = {};
@@ -2664,6 +2756,11 @@
                     exitStoryIntro();
                     return;
                 }
+                if (isFullscreenActive()) {
+                    e.preventDefault();
+                    exitGameFullscreen();
+                    return;
+                }
             }
 
             if (storyIntroActive) {
@@ -2672,6 +2769,12 @@
                     exitStoryIntro();
                     return;
                 }
+            }
+
+            if (e.code === 'KeyF' || e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+                return;
             }
 
             if (gameState === 'START' && (e.code === 'KeyB' || e.key === 'b' || e.key === 'B')) {

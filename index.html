@@ -43,6 +43,65 @@
         .story-crawl-active {
             animation: storyCrawlAnim 16s linear forwards;
         }
+
+        /* Responsive Fullscreen Mode (Desktop & Mobile) */
+        body.is-fullscreen {
+            overflow: hidden !important;
+            touch-action: none;
+        }
+        body.is-fullscreen header,
+        body.is-fullscreen main > section > div:last-child {
+            display: none !important;
+        }
+        body.is-fullscreen main {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+        }
+        body.is-fullscreen main > section {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            background: #000000 !important;
+        }
+        body.is-fullscreen #canvasContainer {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            max-width: none !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            z-index: 99999 !important;
+            background: #000000 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        body.is-fullscreen #gameCanvas {
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            max-height: 100dvh !important;
+            width: 100% !important;
+            height: 100% !important;
+            aspect-ratio: 16 / 9 !important;
+            object-fit: contain !important;
+            margin: auto !important;
+        }
+        body.is-fullscreen #floatingExitFsBtn {
+            display: flex !important;
+        }
         :root {
             --bg-void: #18181c;
             --bg-panel: #242429;
@@ -108,9 +167,9 @@
 <body class="min-h-screen flex flex-col selection:bg-white selection:text-black">
 
     <header class="border-b border-neutral-700 bg-neutral-900/95 sticky top-0 z-40 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-white p-0.5 flex items-center justify-center shadow-[3px_3px_0px_#52525b] rounded-sm">
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-white p-0.5 flex items-center justify-center shadow-[2px_2px_0px_#52525b] sm:shadow-[3px_3px_0px_#52525b] rounded-sm">
                     <div class="w-full h-full bg-black flex items-center justify-center p-1">
                         <div class="w-full h-full border border-neutral-400 flex items-center justify-end pr-0.5">
                             <div class="w-2 h-1.5 bg-white"></div>
@@ -118,20 +177,22 @@
                     </div>
                 </div>
                 <div>
-                  
-                    <h1 class="font-pixel text-base sm:text-lg text-white tracking-wider">FLAPPY PIXEL // MILESTONE 1</h1>
+                    <h1 class="font-pixel text-sm sm:text-base md:text-lg text-white tracking-wider truncate">FLAPPY PIXEL<span class="hidden sm:inline"> // MILESTONE 1</span></h1>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="navLeaderboardBtn" onclick="openLeaderboardModal()" class="pixel-btn-dark px-3 py-1.5 rounded text-xs font-pixel flex items-center gap-1.5 text-yellow-300 border-yellow-500/50 hover:border-yellow-400">
-                    <span>🏆 LEADERBOARD</span>
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <button id="navLeaderboardBtn" onclick="openLeaderboardModal()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 text-yellow-300 border-yellow-500/50 hover:border-yellow-400 whitespace-nowrap">
+                    <span>🏆 <span class="hidden sm:inline">LEADERBOARD</span><span class="sm:hidden">RANKS</span></span>
                 </button>
                 <div id="navAuthContainer">
-                    <button id="navLoginBtn" onclick="openAuthModal('login')" class="pixel-btn px-3 py-1.5 rounded text-xs font-pixel font-bold flex items-center gap-1.5">
-                        <span>PILOT LOGIN</span>
+                    <button id="navLoginBtn" onclick="openAuthModal('login')" class="pixel-btn px-2.5 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel font-bold flex items-center gap-1 whitespace-nowrap">
+                        <span class="hidden sm:inline">PILOT </span><span>LOGIN</span>
                     </button>
                 </div>
-                <button id="soundToggleBtn" onclick="toggleSound()" class="pixel-btn-dark px-3 py-1.5 rounded text-xs font-pixel flex items-center gap-1.5">
+                <button id="navFullscreenBtn" onclick="toggleFullscreen()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 text-neutral-300 hover:text-white whitespace-nowrap" title="Toggle Fullscreen (F)">
+                    <span id="navFsIcon">⛶</span><span class="hidden sm:inline"> FULL</span>
+                </button>
+                <button id="soundToggleBtn" onclick="toggleSound()" class="pixel-btn-dark px-2 sm:px-3 py-1.5 rounded text-[11px] sm:text-xs font-pixel flex items-center gap-1 whitespace-nowrap">
                     <span id="soundIcon">SFX: ON</span>
                 </button>
             </div>
@@ -143,8 +204,13 @@
            
 
             <!-- Centered 16:9 Stage Container Locked to 960x540 Logical Coordinates -->
-            <div id="canvasContainer" class="relative w-full aspect-[16/9] min-h-[340px] max-h-[580px] bg-[#585862] overflow-hidden select-none">
+            <div id="canvasContainer" class="relative w-full aspect-[16/9] max-h-[580px] bg-[#585862] overflow-hidden select-none">
                 <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+                <!-- Floating Exit Fullscreen Button (Visible in Fullscreen Mode) -->
+                <button id="floatingExitFsBtn" onclick="toggleFullscreen()" class="hidden absolute top-3 right-3 z-30 pixel-btn-dark px-2.5 py-1.5 text-[10px] font-pixel bg-neutral-950/90 text-white rounded shadow-lg border border-neutral-600 flex items-center gap-1 hover:bg-neutral-800 active:scale-95 transition-transform" title="Exit Fullscreen (ESC or F)">
+                    <span>🗗 EXIT FULLSCREEN</span>
+                </button>
 
                 <div class="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
                     <div id="liveScoreDisplay" class="font-pixel text-4xl sm:text-5xl text-white drop-shadow-[0_4px_0_#000000] tracking-wider">0</div>
@@ -154,41 +220,44 @@
                     </div>
                 </div>
 
-                <div id="startOverlay" class="absolute inset-0 z-20 bg-[#09090b]/75 backdrop-blur-[2px] flex items-center justify-center p-5 sm:p-8 transition-opacity">
-                    <section aria-labelledby="menuTitle" class="w-full max-w-lg border-2 border-white bg-neutral-950/95 p-4 shadow-[8px_8px_0px_#27272a] sm:p-6">
-                        <div class="flex items-center justify-between border-b border-neutral-700 pb-3 text-[10px] font-pixel tracking-wider">
+                <div id="startOverlay" class="absolute inset-0 z-20 bg-[#09090b]/75 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-6 transition-opacity">
+                    <section aria-labelledby="menuTitle" class="w-full max-w-lg border-2 border-white bg-neutral-950/95 p-4 sm:p-6 shadow-[8px_8px_0px_#27272a] max-h-[95vh] overflow-y-auto">
+                        <div class="flex items-center justify-between border-b border-neutral-700 pb-3 text-xs sm:text-sm font-pixel tracking-wider">
+                            <span class="bg-white text-black px-2 py-0.5 font-bold">SYSTEM READY</span>
                             <span class="text-neutral-400">BUILD M1.0</span>
                         </div>
 
-                        <div class="py-6 sm:py-8">
-                            <h2 id="menuTitle" class="font-pixel text-3xl leading-none tracking-wide text-white sm:text-4xl">FLAPPY<br>PIXEL</h2>
+                        <div class="py-4 sm:py-6">
+                            <h2 id="menuTitle" class="font-pixel text-4xl sm:text-5xl leading-none tracking-wide text-white">FLAPPY<br>PIXEL</h2>
                            
-                            <div class="mt-3 flex flex-wrap items-center justify-between text-[10px] font-pixel text-neutral-500 gap-2">
-                                <p>VESSEL: <span id="selectedPilotMenu" class="text-white">CUBE-01</span></p>
-                                <p>Best: <span id="bestScoreHud" class="text-white" ></span></p>
-                                <p id="menuAuthStatusText" class="text-neutral-400">PILOT: <span class="text-white">GUEST</span> <button type="button" onclick="openAuthModal('login')" class="text-yellow-300 underline ml-1 font-pixel hover:text-white">LOGIN</button></p>
+                            <div class="mt-4 flex flex-wrap items-center justify-between text-xs sm:text-sm font-pixel text-neutral-400 gap-2">
+                                <p>VESSEL: <span id="selectedPilotMenu" class="text-white font-bold">CUBE-01</span></p>
+                                <p>BEST: <span id="bestScoreHud" class="text-yellow-400 font-bold">0</span></p>
+                                <p id="menuAuthStatusText" class="text-neutral-400">PILOT: <span class="text-white font-bold">GUEST</span> <button type="button" onclick="openAuthModal('login')" class="text-yellow-300 underline ml-1 font-pixel hover:text-white">LOGIN</button></p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <button type="button" onclick="triggerFlapAction()" class="pixel-btn min-h-14 px-3 py-3 text-left font-pixel text-xs font-bold">
-                                START GAME
+                            <button type="button" onclick="triggerFlapAction()" class="pixel-btn min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs font-bold flex flex-col justify-between">
+
+                                <span>START GAME</span>
                             </button>
-                            <button type="button" onclick="openShop()" class="pixel-btn-dark min-h-14 px-3 py-3 text-left font-pixel text-xs">
-                                SHOP
+                            <button type="button" onclick="openShop()" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs flex flex-col justify-between">
+                                <span>SHOP</span>
                             </button>
-                            <button type="button" onclick="openLeaderboardModal()" class="pixel-btn-dark min-h-12 px-3 py-3 text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400">
-                                LEADERBOARD
+                            <button type="button" onclick="openLeaderboardModal()" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs border-yellow-500/40 text-yellow-200 hover:border-yellow-400 overflow-hidden flex flex-col justify-between">
+                                <span class="block font-pixel text-[10px] sm:text-[11px] tracking-tight leading-tight">LEADERBOARD</span>
                             </button>
-                            <button type="button" onclick="playStoryIntro(true)" class="pixel-btn-dark min-h-14 px-3 py-3 text-left font-pixel text-xs">
-                                STORY LOG
+                            <button type="button" onclick="playStoryIntro(true)" class="pixel-btn-dark min-h-14 px-2 sm:px-3 py-2.5 sm:py-3 text-left font-pixel text-xs flex flex-col justify-between">
+                                <span>STORY LOG</span>
                             </button>
                         </div>
 
-                        <div class="mt-5 flex flex-wrap gap-x-4 gap-y-1 border-t border-neutral-800 pt-3 text-[10px] text-neutral-400">
+                        <div class="mt-4 sm:mt-5 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-neutral-800 pt-3 text-xs sm:text-sm font-pixel text-neutral-400">
                             <span>START: [SPACE] / [CLICK]</span>
                             <span>FLAP: [W] / [UP] / [TAP]</span>
                             <span>RANKS: [B]</span>
+                            <span>FULL: [F]</span>
                             <span>LORE: [L]</span>
                         </div>
                     </section>
