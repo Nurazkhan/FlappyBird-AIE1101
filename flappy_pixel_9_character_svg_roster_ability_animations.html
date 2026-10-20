@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Pixel — 9 Character SVG Sprites & Automatic Ability Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #141418;
+            --bg-panel: #1f1f26;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            color: #f4f4f6;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        .font-pixel {
+            font-family: 'Silkscreen', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        /* Crisp pixel rendering for all character SVGs */
+        svg.pixel-svg {
+            shape-rendering: crispEdges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Lighter Slate Pixel Stage so dark & colored sprites pop clearly */
+        .pixel-stage {
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(180deg, #52525c 0%, #3e3e47 60%, #2c2c34 100%);
+            background-size: 6px 6px, 6px 6px, 100% 100%;
+        }
+
+        /* ==========================================
+           60FPS PIXEL CHARACTER & ABILITY KEYFRAMES
+           ========================================== */
+        @keyframes charFloat {
+            0%, 100% { transform: translate3d(0, 0px, 0); }
+            50% { transform: translate3d(0, -7px, 0); }
+        }
+
+        @keyframes particleDriftLeft {
+            0% { transform: translate3d(0px, 0px, 0); opacity: 0.95; }
+            50% { transform: translate3d(-12px, -3px, 0); opacity: 0.45; }
+            100% { transform: translate3d(0px, 0px, 0); opacity: 0.95; }
+        }
+
+        /* 2. VOLT-CUBE: Phase Blink Teleport */
+        @keyframes voltBlink {
+            0%, 55%, 100% { transform: translate3d(-16px, 0, 0); opacity: 1; }
+            60% { transform: translate3d(-16px, -6px, 0) scaleY(1.25); opacity: 0.3; }
+            65%, 90% { transform: translate3d(18px, -4px, 0); opacity: 1; }
+            95% { transform: translate3d(0px, 0, 0); opacity: 0.4; }
+        }
+        @keyframes voltArcFlash {
+            0%, 52%, 100% { opacity: 0.15; }
+            58%, 72% { opacity: 1; }
+        }
+
+        /* 3. NIMBUS: Mist Form Transparency */
+        @keyframes nimbusMistPhase {
+            0%, 35%, 100% { opacity: 1; transform: translate3d(0, 0px, 0); }
+            50%, 80% { opacity: 0.32; transform: translate3d(0, -6px, 0); }
+        }
+
+        /* 4. AEGIS: Rotating Ablative Shield */
+        @keyframes aegisShieldPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.06); opacity: 0.65; }
+        }
+
+        /* 5. PRISM: Shard Resonance Laser Beam */
+        @keyframes prismLaserFire {
+            0%, 45%, 100% { transform: scaleX(0); opacity: 0; }
+            55%, 80% { transform: scaleX(1); opacity: 1; }
+            88% { transform: scaleX(1.1); opacity: 0.2; }
+        }
+
+        /* 6. CHRONO: Glitch Jitter & Time Dilation Ring */
+        @keyframes chronoGlitch {
+            0%, 70%, 100% { transform: translate3d(0, 0, 0); }
+            74% { transform: translate3d(-3px, 2px, 0); }
+            78% { transform: translate3d(3px, -2px, 0); }
+            82% { transform: translate3d(-2px, -1px, 0); }
+        }
+        @keyframes chronoRing {
+            0%, 100% { transform: scale(0.92); opacity: 0.35; }
+            50% { transform: scale(1.08); opacity: 0.9; }
+        }
+
+        /* 7. CINDER: Phoenix Flame Wing Flap & Updraft */
+        @keyframes cinderWingFlare {
+            0%, 100% { transform: scaleY(0.88) translate3d(0, 2px, 0); }
+            50% { transform: scaleY(1.14) translate3d(0, -5px, 0); }
+        }
+        @keyframes emberRise {
+            0% { transform: translate3d(0, 8px, 0); opacity: 0.95; }
+            100% { transform: translate3d(-6px, -18px, 0); opacity: 0.1; }
+        }
+
+        /* 8. GRAV-0: Zero-G Apex Hover & Orbital Ring */
+        @keyframes gravHover {
+            0%, 100% { transform: translate3d(0, -3px, 0); }
+            50% { transform: translate3d(0, -3px, 0); }
+        }
+        @keyframes gravOrbit {
+            0%, 100% { transform: translate3d(-6px, -2px, 0); }
+            50% { transform: translate3d(6px, 2px, 0); }
+        }
+
+        /* 9. ECHO: Twin Hologram Clone Dash */
+        @keyframes echoCloneProject {
+            0%, 40%, 100% { transform: translate3d(-14px, 2px, 0); opacity: 0.55; }
+            55%, 85% { transform: translate3d(24px, -4px, 0); opacity: 0.95; }
+        }
+
+        .anim-float { animation: charFloat 2.1s ease-in-out infinite; }
+        .anim-drift { animation: particleDriftLeft 1.4s ease-in-out infinite; }
+        .anim-volt-body { animation: voltBlink 2.4s steps(1, end) infinite; }
+        .anim-volt-arc { animation: voltArcFlash 2.4s ease-in-out infinite; }
+        .anim-nimbus { animation: nimbusMistPhase 3.0s ease-in-out infinite; }
+        .anim-aegis-shield { animation: aegisShieldPulse 1.8s ease-in-out infinite; transform-origin: 60px 60px; }
+        .anim-prism-beam { animation: prismLaserFire 2.5s ease-out infinite; transform-origin: 76px 56px; }
+        .anim-chrono-body { animation: chronoGlitch 2.0s infinite; }
+        .anim-chrono-ring { animation: chronoRing 2.2s ease-in-out infinite; transform-origin: 60px 60px; }
+        .anim-cinder-wings { animation: cinderWingFlare 0.9s ease-in-out infinite; transform-origin: 60px 60px; }
+        .anim-ember { animation: emberRise 1.3s linear infinite; }
+        .anim-grav-orbit { animation: gravOrbit 1.6s ease-in-out infinite; }
+        .anim-echo-clone { animation: echoCloneProject 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+
+        /* Mode Toggle Classes */
+        body.mode-idle-only .ability-fx-layer {
+            opacity: 0.15 !important;
+            animation: none !important;
+        }
+        body. paused-anims * {
+            animation-play-state: paused !important;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #141418; }
+        ::-webkit-scrollbar-thumb { background: #52525b; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-white selection:text-black">
+
+    <!-- Sticky Header -->
+    <header class="border-b border-neutral-800 bg-neutral-950/95 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-amber-400 p-0.5 flex items-center justify-center shadow-[3px_3px_0px_#000] border border-black">
+                    <div class="w-full h-full bg-neutral-950 flex items-center justify-center">
+                        <div class="w-4 h-3 bg-amber-300"></div>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-pixel text-base sm:text-lg text-white tracking-wider">FLAPPY PIXEL // 9-CHARACTER SVG STUDIO</h1>
+                    <p class="text-[11px] text-neutral-400">Unique Color-Accented Pixel Art • Automatic Ability Animations • Standalone &amp; Master SVG Exports</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <button id="modeToggleBtn" onclick="toggleAbilityMode()" class="px-3 py-1.5 text-xs font-pixel bg-emerald-400 text-black font-bold rounded border border-black shadow-[2px_2px_0px_#000] hover:bg-emerald-300 transition">
+                    MODE: IDLE + AUTO ABILITY FX
+                </button>
+                <button id="pauseAnimBtn" onclick="togglePauseAnims()" class="px-3 py-1.5 text-xs font-pixel bg-neutral-800 text-neutral-200 rounded border border-neutral-600 hover:bg-neutral-700 transition">
+                    60FPS: RUNNING
+                </button>
+                <button onclick="downloadMasterCharactersSvg()" class="px-3.5 py-1.5 text-xs font-pixel bg-white text-black font-bold rounded border border-black shadow-[3px_3px_0px_#52525b] hover:bg-neutral-200 transition">
+                    ⬇ DOWNLOAD characters.svg
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-white text-black font-pixel text-xs px-4 py-3 border-2 border-black shadow-[4px_4px_0px_#52525b] rounded items-center gap-2">
+        <span id="toastText">[OK] COPIED TO CLIPBOARD</span>
+    </div>
+
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-10 flex-1">
+
+        <!-- CHARACTER ROSTER GRID (9 CARDS) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- =================================================================
+                 1. CUBE-01 // THE ORIGIN (MONOCHROME STARTER)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-white text-black rounded-sm">#01 STARTER</span>
+                                <span class="text-[11px] font-pixel text-neutral-300">PURE SKILL</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">CUBE-01 // "THE ORIGIN"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-01')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-white hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-01', '01_cube_origin.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-white hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-01" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Exhaust Particle Trail -->
+                            <g class="anim-drift">
+                                <rect x="12" y="48" width="10" height="10" fill="#ffffff" />
+                                <rect x="14" y="50" width="6" height="6" fill="#09090b" />
+                                <rect x="22" y="66" width="8" height="8" fill="#d4d4d8" />
+                                <rect x="24" y="68" width="4" height="4" fill="#18181b" />
+                                <rect x="26" y="36" width="6" height="6" fill="#ffffff" />
+                                <rect x="16" y="78" width="5" height="5" fill="#a1a1aa" />
+                            </g>
+
+                            <!-- Main Cube-01 Body -->
+                            <g class="anim-float">
+                                <!-- Outer Beveled Shell -->
+                                <rect x="38" y="36" width="48" height="48" fill="#ffffff" />
+                                <rect x="38" y="36" width="3" height="3" fill="#27272a" />
+                                <rect x="83" y="36" width="3" height="3" fill="#27272a" />
+                                <rect x="38" y="81" width="3" height="3" fill="#27272a" />
+                                <rect x="83" y="81" width="3" height="3" fill="#27272a" />
+                                <!-- Inner Obsidian Frame -->
+                                <rect x="41" y="39" width="42" height="42" fill="#09090b" />
+                                <!-- Metallic Gray 3D Bevel -->
+                                <rect x="44" y="42" width="36" height="4" fill="#e4e4e7" />
+                                <rect x="44" y="46" width="4" height="32" fill="#a1a1aa" />
+                                <rect x="76" y="46" width="4" height="32" fill="#3f3f46" />
+                                <rect x="48" y="74" width="28" height="4" fill="#27272a" />
+                                <!-- Corner Rivets -->
+                                <rect x="45" y="43" width="2" height="2" fill="#09090b" />
+                                <rect x="77" y="43" width="2" height="2" fill="#09090b" />
+                                <rect x="45" y="75" width="2" height="2" fill="#09090b" />
+                                <rect x="77" y="75" width="2" height="2" fill="#09090b" />
+                                <!-- Core Matrix -->
+                                <rect x="48" y="46" width="28" height="28" fill="#121216" />
+                                <rect x="48" y="60" width="28" height="2" fill="#27272a" />
+                                <rect x="62" y="46" width="2" height="28" fill="#27272a" />
+                                <!-- Glowing White Visor Eye -->
+                                <rect x="56" y="49" width="16" height="10" fill="#ffffff" />
+                                <rect x="58" y="51" width="12" height="6" fill="#d4d4d8" />
+                                <rect x="64" y="51" width="5" height="6" fill="#09090b" />
+                                <rect x="65" y="52" width="2" height="2" fill="#ffffff" />
+                                <!-- Lower Exhaust Vents -->
+                                <rect x="51" y="65" width="4" height="5" fill="#71717a" />
+                                <rect x="57" y="65" width="4" height="5" fill="#a1a1aa" />
+                                <rect x="63" y="65" width="4" height="5" fill="#d4d4d8" />
+                                <rect x="69" y="65" width="4" height="5" fill="#ffffff" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-neutral-200 mb-1">ABILITY: NONE (BASELINE ARCADE SKILL)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Classic high-contrast monochrome mech-cube with corner rivets, visor glint, and hollow square exhaust trail.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-01" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 2. VOLT-CUBE // THUNDER (ELECTRIC YELLOW/CYAN - 3RD JUMP BLINK)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-amber-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-amber-400 text-black rounded-sm">#02 THUNDER</span>
+                                <span class="text-[11px] font-pixel text-amber-300">EVERY 3RD JUMP</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">VOLT-CUBE // "THUNDER"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-02')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-amber-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-02', '02_volt_thunder.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-amber-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-02" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Automatic Ability FX: Ghost Afterimage + Lightning Bolt Teleport Bridge -->
+                            <g class="ability-fx-layer anim-volt-arc">
+                                <!-- Origin Wireframe Afterimage Cube -->
+                                <rect x="16" y="38" width="44" height="44" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 2" />
+                                <rect x="24" y="46" width="28" height="28" fill="#0284c7" fill-opacity="0.25" />
+                                <!-- Horizontal Pixel Lightning Bolt Connecting Blink -->
+                                <polygon points="36,56 54,48 50,56 72,46 66,56 88,52 62,66 66,58 46,68 50,58" fill="#facc15" />
+                                <rect x="44" y="54" width="34" height="3" fill="#ffffff" />
+                                <!-- Spark Cubes -->
+                                <rect x="12" y="32" width="4" height="4" fill="#facc15" />
+                                <rect x="52" y="30" width="5" height="5" fill="#38bdf8" />
+                                <rect x="48" y="84" width="6" height="4" fill="#facc15" />
+                            </g>
+
+                            <!-- Main Volt-Cube Body (Blinks forward on 3rd jump) -->
+                            <g class="anim-volt-body">
+                                <!-- Overhead 3-Jump Charge Pips (1 - 2 - ⚡) -->
+                                <rect x="44" y="18" width="6" height="6" fill="#facc15" />
+                                <rect x="54" y="18" width="6" height="6" fill="#facc15" />
+                                <rect x="64" y="16" width="8" height="8" fill="#ffffff" />
+                                <rect x="66" y="18" width="4" height="4" fill="#38bdf8" />
+
+                                <!-- Top Dual Tesla Coils -->
+                                <rect x="44" y="28" width="8" height="8" fill="#a1a1aa" />
+                                <rect x="42" y="26" width="12" height="3" fill="#facc15" />
+                                <rect x="68" y="28" width="8" height="8" fill="#a1a1aa" />
+                                <rect x="66" y="26" width="12" height="3" fill="#facc15" />
+                                <!-- Electric Arc Between Coils -->
+                                <rect x="54" y="25" width="12" height="2" fill="#38bdf8" />
+                                <rect x="58" y="23" width="4" height="2" fill="#ffffff" />
+
+                                <!-- Capacitor Cube Chassis -->
+                                <rect x="36" y="36" width="48" height="48" fill="#facc15" />
+                                <rect x="39" y="39" width="42" height="42" fill="#09090b" />
+                                <!-- High-Voltage Diagonal Hazard Bevel -->
+                                <rect x="42" y="42" width="36" height="4" fill="#fef08a" />
+                                <rect x="42" y="46" width="4" height="32" fill="#eab308" />
+                                <rect x="74" y="46" width="4" height="32" fill="#713f12" />
+                                <!-- Inner Dark Core -->
+                                <rect x="46" y="46" width="28" height="28" fill="#0c1220" />
+                                <!-- Jagged Lightning Visor Eye -->
+                                <polygon points="52,50 72,50 68,56 74,56 56,64 60,57 52,57" fill="#ffffff" />
+                                <rect x="56" y="52" width="12" height="4" fill="#38bdf8" />
+                                <!-- Lower Capacitor Battery Bars -->
+                                <rect x="49" y="67" width="6" height="4" fill="#38bdf8" />
+                                <rect x="57" y="67" width="6" height="4" fill="#facc15" />
+                                <rect x="65" y="67" width="6" height="4" fill="#ffffff" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-amber-300 mb-1">AUTO ABILITY: PHASE BLINK (EVERY 3RD JUMP)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Charges 3 overhead pips, then vanishes in a yellow/cyan lightning bolt to teleport a short distance forward.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-02" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 3. NIMBUS // CLOUD (SKY CYAN & MIST WHITE - 5TH JUMP GHOST PHASE)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-sky-400/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-sky-300 text-black rounded-sm">#03 CLOUD</span>
+                                <span class="text-[11px] font-pixel text-sky-300">EVERY 5TH JUMP</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">NIMBUS // "CLOUD"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-03')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-sky-300 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-03', '03_nimbus_cloud.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-sky-300 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-03" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Automatic Ability FX: Obstacle Bar Passing Harmlessly Through Nimbus -->
+                            <g class="ability-fx-layer">
+                                <!-- Simulated Obstacle Pillar Slice Behind/Around Cloud -->
+                                <rect x="54" y="8" width="14" height="104" fill="#18181b" stroke="#71717a" stroke-width="2" opacity="0.55" />
+                                <!-- Dithered Phase Ring -->
+                                <rect x="30" y="30" width="60" height="60" fill="none" stroke="#bae6fd" stroke-width="2" stroke-dasharray="4 4" />
+                            </g>
+
+                            <!--Trailing Vapor Droplets -->
+                            <g class="anim-drift">
+                                <rect x="14" y="46" width="8" height="6" fill="#e0f2fe" />
+                                <rect x="20" y="64" width="10" height="6" fill="#bae6fd" />
+                                <rect x="12" y="76" width="6" height="6" fill="#7dd3fc" />
+                            </g>
+
+                            <!-- Main Nimbus Cloud Cube (Phases into semi-transparent mist on 5th jump) -->
+                            <g class="anim-nimbus">
+                                <!-- Billowy Pixel Cloud Puff Silhouette Around Cube -->
+                                <rect x="42" y="30" width="36" height="6" fill="#ffffff" />
+                                <rect x="30" y="42" width="6" height="36" fill="#e0f2fe" />
+                                <rect x="84" y="42" width="6" height="36" fill="#bae6fd" />
+                                <rect x="42" y="84" width="36" height="6" fill="#bae6fd" />
+
+                                <!-- Main Soft Voxel Cloud Cube -->
+                                <rect x="36" y="36" width="48" height="48" fill="#ffffff" />
+                                <rect x="40" y="40" width="40" height="40" fill="#e0f2fe" />
+                                <!-- Layered Sky-Mist Shading -->
+                                <rect x="44" y="44" width="32" height="32" fill="#bae6fd" />
+                                <rect x="44" y="64" width="32" height="12" fill="#7dd3fc" />
+                                <rect x="48" y="48" width="12" height="8" fill="#ffffff" />
+
+                                <!-- Calm Sky-Spirit Visor Eyes -->
+                                <rect x="52" y="52" width="6" height="8" fill="#0c4a6e" />
+                                <rect x="53" y="53" width="2" height="3" fill="#ffffff" />
+                                <rect x="66" y="52" width="6" height="8" fill="#0c4a6e" />
+                                <rect x="67" y="53" width="2" height="3" fill="#ffffff" />
+
+                                <!-- 5-Jump Condensation Counter Droplets -->
+                                <rect x="45" y="70" width="4" height="4" fill="#0284c7" />
+                                <rect x="51" y="70" width="4" height="4" fill="#0284c7" />
+                                <rect x="57" y="70" width="4" height="4" fill="#0284c7" />
+                                <rect x="63" y="70" width="4" height="4" fill="#0284c7" />
+                                <rect x="69" y="70" width="4" height="4" fill="#ffffff" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-sky-300 mb-1">AUTO ABILITY: MIST FORM (EVERY 5TH JUMP)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Builds 5 condensation droplets, turning ethereal and semi-transparent for 2.0s to phase straight through obstacles.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-03" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 4. AEGIS // IRONCLAD (BRONZE/AMBER & STEEL - RECHARGING SHIELD)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-orange-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-orange-400 text-black rounded-sm">#04 IRONCLAD</span>
+                                <span class="text-[11px] font-pixel text-orange-300">1-HIT SHIELD</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">AEGIS // "IRONCLAD"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-04')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-orange-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-04', '04_aegis_ironclad.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-orange-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-04" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Heavy Dark Furnace Soot Trail -->
+                            <g class="anim-drift">
+                                <rect x="12" y="52" width="10" height="10" fill="#27272a" stroke="#f97316" stroke-width="1" />
+                                <rect x="20" y="68" width="8" height="8" fill="#3f3f46" />
+                                <rect x="18" y="38" width="6" height="6" fill="#fb923c" />
+                            </g>
+
+                            <!-- Main Armored Aegis Cube -->
+                            <g class="anim-float">
+                                <!-- Automatic Ability FX: Outer Force-Field Barrier Frame -->
+                                <g class="ability-fx-layer anim-aegis-shield">
+                                    <!-- Corner Bastion Brackets -->
+                                    <rect x="26" y="26" width="16" height="4" fill="#fb923c" />
+                                    <rect x="26" y="26" width="4" height="16" fill="#fb923c" />
+                                    <rect x="78" y="26" width="16" height="4" fill="#fb923c" />
+                                    <rect x="90" y="26" width="4" height="16" fill="#fb923c" />
+                                    <rect x="26" y="90" width="16" height="4" fill="#fb923c" />
+                                    <rect x="26" y="78" width="4" height="16" fill="#fb923c" />
+                                    <rect x="78" y="90" width="16" height="4" fill="#fb923c" />
+                                    <rect x="90" y="78" width="4" height="16" fill="#fb923c" />
+                                    <!-- Energy Shield Perimeter -->
+                                    <rect x="30" y="30" width="60" height="60" fill="none" stroke="#fdba74" stroke-width="2" stroke-dasharray="6 3" />
+                                </g>
+
+                                <!-- Heavy Cast-Iron Safe Cube -->
+                                <rect x="36" y="36" width="48" height="48" fill="#d4d4d8" />
+                                <rect x="39" y="39" width="42" height="42" fill="#18181b" />
+                                <!-- Reinforced Corner Armor Plates -->
+                                <rect x="36" y="36" width="12" height="12" fill="#f4f4f5" />
+                                <rect x="39" y="39" width="6" height="6" fill="#52525b" />
+                                <rect x="72" y="36" width="12" height="12" fill="#f4f4f5" />
+                                <rect x="75" y="39" width="6" height="6" fill="#52525b" />
+                                <rect x="36" y="72" width="12" height="12" fill="#a1a1aa" />
+                                <rect x="39" y="75" width="6" height="6" fill="#27272a" />
+                                <rect x="72" y="72" width="12" height="12" fill="#a1a1aa" />
+                                <rect x="75" y="75" width="6" height="6" fill="#27272a" />
+
+                                <!-- Steel Cross-Braces -->
+                                <rect x="44" y="44" width="32" height="32" fill="#27272a" />
+                                <rect x="58" y="44" width="4" height="32" fill="#52525b" />
+                                <rect x="44" y="58" width="32" height="4" fill="#52525b" />
+
+                                <!-- Glowing Slotted Furnace Visor -->
+                                <rect x="48" y="49" width="24" height="10" fill="#09090b" />
+                                <rect x="50" y="51" width="4" height="6" fill="#f97316" />
+                                <rect x="56" y="51" width="4" height="6" fill="#fb923c" />
+                                <rect x="62" y="51" width="4" height="6" fill="#fdba74" />
+                                <rect x="68" y="51" width="2" height="6" fill="#ffffff" />
+
+                                <!-- Lower Heavy Grate -->
+                                <rect x="50" y="65" width="20" height="6" fill="#09090b" />
+                                <rect x="52" y="67" width="16" height="2" fill="#f97316" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-orange-300 mb-1">AUTO ABILITY: ABLATIVE ARMOR (1-HIT SHIELD)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Surrounded by a bastion pixel barrier that absorbs 1 fatal crash, shatters the obstacle, and recharges every 5 passes.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-04" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 5. PRISM // GLASS (MAGENTA/CRYSTAL - AUTO OBSTACLE SHATTER BEAM)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-fuchsia-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-fuchsia-400 text-black rounded-sm">#05 GLASS</span>
+                                <span class="text-[11px] font-pixel text-fuchsia-300">EVERY 4TH OBSTACLE</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">PRISM // "GLASS"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-05')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-fuchsia-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-05', '05_prism_glass.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-fuchsia-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-05" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Orbiting Crystal Splinters -->
+                            <g class="anim-drift">
+                                <polygon points="16,44 22,38 22,50" fill="#f0abfc" />
+                                <polygon points="12,68 18,62 18,74" fill="#e879f9" />
+                                <rect x="24" y="28" width="4" height="8" fill="#ffffff" />
+                            </g>
+
+                            <!-- Main Crystalline Prism Cube -->
+                            <g class="anim-float">
+                                <!-- Automatic Ability FX: Horizontal Resonance Laser Beam + Target Reticle -->
+                                <g class="ability-fx-layer anim-prism-beam">
+                                    <!-- Outer Laser Glow -->
+                                    <rect x="76" y="51" width="42" height="10" fill="#e879f9" fill-opacity="0.45" />
+                                    <!-- Core High-Intensity Pixel Beam -->
+                                    <rect x="74" y="54" width="44" height="4" fill="#ffffff" />
+                                    <!-- Target Shatter Sparks at Right Edge -->
+                                    <rect x="108" y="44" width="6" height="6" fill="#f0abfc" />
+                                    <rect x="110" y="62" width="6" height="6" fill="#ffffff" />
+                                    <rect x="102" y="38" width="4" height="4" fill="#e879f9" />
+                                </g>
+
+                                <!-- Faceted Crystalline Cube Body -->
+                                <polygon points="36,42 42,36 78,36 84,42 84,78 78,84 42,84 36,78" fill="#ffffff" />
+                                <polygon points="39,44 44,39 76,39 81,44 81,76 76,81 44,81 39,76" fill="#1e1b4b" />
+                                <!-- Prismatic Internal Facet Triangles -->
+                                <polygon points="42,42 60,42 60,60 42,60" fill="#701a75" />
+                                <polygon points="60,42 78,42 78,60 60,60" fill="#a21caf" />
+                                <polygon points="42,60 60,60 60,78 42,78" fill="#4a044e" />
+                                <polygon points="60,60 78,60 78,78 60,78" fill="#86198f" />
+                                <!-- Specular Crystal Ridge Lines -->
+                                <rect x="59" y="40" width="2" height="40" fill="#f5d0fe" />
+                                <rect x="40" y="59" width="40" height="2" fill="#f5d0fe" />
+
+                                <!-- Diamond Laser Emitter Visor -->
+                                <polygon points="56,56 66,48 76,56 66,64" fill="#ffffff" />
+                                <rect x="62" y="54" width="10" height="4" fill="#f0abfc" />
+                                <rect x="68" y="55" width="4" height="2" fill="#1e1b4b" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-fuchsia-300 mb-1">AUTO ABILITY: SHARD RESONANCE (GAP WIDENER)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Every 4th obstacle is marked; Prism auto-fires a crystalline laser beam that shatters obstacle tips to widen the gap by +45%.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-05" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 6. CHRONO // GLITCH (MATRIX GREEN & CRT RGB - DANGER SLOW-MO)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-emerald-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-emerald-400 text-black rounded-sm">#06 GLITCH</span>
+                                <span class="text-[11px] font-pixel text-emerald-300">PROXIMITY SLOW-MO</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">CHRONO // "GLITCH"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-06')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-emerald-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-06', '06_chrono_glitch.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-emerald-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-06" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Automatic Ability FX: Time-Dilation Clock Field Ring -->
+                            <g class="ability-fx-layer anim-chrono-ring">
+                                <rect x="22" y="22" width="76" height="76" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="8 4" />
+                                <!-- Clock Tick Markers -->
+                                <rect x="58" y="18" width="4" height="6" fill="#ffffff" />
+                                <rect x="58" y="96" width="4" height="6" fill="#ffffff" />
+                                <rect x="18" y="58" width="6" height="4" fill="#ffffff" />
+                                <rect x="96" y="58" width="6" height="4" fill="#ffffff" />
+                            </g>
+
+                            <!-- Trailing Binary 0 & 1 Pixel Particles -->
+                            <g class="anim-drift">
+                                <!-- Pixel "1" -->
+                                <rect x="14" y="42" width="3" height="10" fill="#34d399" />
+                                <!-- Pixel "0" -->
+                                <rect x="20" y="60" width="8" height="10" fill="none" stroke="#34d399" stroke-width="2" />
+                                <!-- Glitch Slice -->
+                                <rect x="10" y="76" width="12" height="3" fill="#f43f5e" />
+                            </g>
+
+                            <!-- Main CRT Glitch Cube -->
+                            <g class="anim-chrono-body">
+                                <!-- RGB Chromatic Offset Shadow Layers -->
+                                <rect x="33" y="36" width="48" height="48" fill="#f43f5e" fill-opacity="0.7" />
+                                <rect x="39" y="36" width="48" height="48" fill="#38bdf8" fill-opacity="0.7" />
+
+                                <!-- Main CRT Monitor Cube -->
+                                <rect x="36" y="36" width="48" height="48" fill="#ffffff" />
+                                <rect x="39" y="39" width="42" height="42" fill="#052e16" />
+                                <!-- CRT Screen Bezel -->
+                                <rect x="43" y="43" width="34" height="34" fill="#022c22" />
+                                <!-- Scanlines -->
+                                <rect x="43" y="47" width="34" height="2" fill="#064e3b" />
+                                <rect x="43" y="53" width="34" height="2" fill="#064e3b" />
+                                <rect x="43" y="59" width="34" height="2" fill="#064e3b" />
+                                <rect x="43" y="65" width="34" height="2" fill="#064e3b" />
+                                <rect x="43" y="71" width="34" height="2" fill="#064e3b" />
+
+                                <!-- Digital Hourglass / Clock Hands Visor -->
+                                <rect x="52" y="48" width="16" height="3" fill="#34d399" />
+                                <rect x="55" y="51" width="10" height="4" fill="#6ee7b7" />
+                                <rect x="58" y="55" width="4" height="6" fill="#ffffff" />
+                                <rect x="55" y="61" width="10" height="4" fill="#6ee7b7" />
+                                <rect x="52" y="65" width="16" height="3" fill="#34d399" />
+
+                                <!-- Horizontal Glitch Tear Bar -->
+                                <rect x="32" y="56" width="56" height="3" fill="#a7f3d0" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-emerald-300 mb-1">AUTO ABILITY: TIME DILATION (DANGER SLOW-MO)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Automatically slows game speed &amp; gravity by 40% for 1.5s whenever dangerously close to an obstacle. Recharges in 6 jumps.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-06" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 7. CINDER // PHOENIX (CRIMSON/GOLD EMBER - SMOKE SURF + REVIVE)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-red-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-red-500 text-white rounded-sm">#07 PHOENIX</span>
+                                <span class="text-[11px] font-pixel text-amber-300">SMOKE BOUNCE + REVIVE</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">CINDER // "PHOENIX"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-07')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-red-500 hover:text-white text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-07', '07_cinder_phoenix.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-red-500 hover:text-white text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-07" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Rising Ember Sparks -->
+                            <g class="anim-ember">
+                                <rect x="22" y="72" width="5" height="5" fill="#facc15" />
+                                <rect x="44" y="92" width="6" height="6" fill="#f97316" />
+                                <rect x="76" y="88" width="5" height="5" fill="#ef4444" />
+                                <rect x="92" y="68" width="4" height="4" fill="#fef08a" />
+                            </g>
+
+                            <!-- Main Cinder Phoenix Cube -->
+                            <g class="anim-float">
+                                <!-- Automatic Ability FX: Flaring Pixel Fire Wings & Thermal Updraft Plume -->
+                                <g class="ability-fx-layer anim-cinder-wings">
+                                    <!-- Left Pixel Flame Wing -->
+                                    <polygon points="36,48 12,32 18,48 8,54 22,64 14,72 36,70" fill="#ef4444" />
+                                    <polygon points="36,52 20,40 24,52 16,58 36,66" fill="#f97316" />
+                                    <rect x="26" y="52" width="10" height="8" fill="#facc15" />
+
+                                    <!-- Right Pixel Flame Wing -->
+                                    <polygon points="84,48 108,32 102,48 112,54 98,64 106,72 84,70" fill="#ef4444" />
+                                    <polygon points="84,52 100,40 96,52 104,58 84,66" fill="#f97316" />
+                                    <rect x="84" y="52" width="10" height="8" fill="#facc15" />
+
+                                    <!-- Top Flame Crest -->
+                                    <polygon points="48,36 54,20 60,28 66,18 72,36" fill="#f97316" />
+                                    <polygon points="54,36 60,24 66,36" fill="#fef08a" />
+                                </g>
+
+                                <!-- Charred Obsidian Brick Cube -->
+                                <rect x="36" y="36" width="48" height="48" fill="#f97316" />
+                                <rect x="39" y="39" width="42" height="42" fill="#18181b" />
+                                <!-- Glowing Magma Cracks Inside Charcoal Shell -->
+                                <rect x="43" y="43" width="34" height="34" fill="#27272a" />
+                                <rect x="46" y="46" width="6" height="2" fill="#f97316" />
+                                <rect x="46" y="48" width="2" height="8" fill="#facc15" />
+                                <rect x="46" y="68" width="10" height="3" fill="#ef4444" />
+
+                                <!-- Blazing White-Hot Phoenix Visor -->
+                                <polygon points="52,48 74,48 70,60 56,60" fill="#ef4444" />
+                                <rect x="56" y="50" width="14" height="7" fill="#facc15" />
+                                <rect x="60" y="52" width="8" height="4" fill="#ffffff" />
+
+                                <!-- Molten Core Vent -->
+                                <rect x="50" y="66" width="20" height="6" fill="#f97316" />
+                                <rect x="54" y="68" width="12" height="3" fill="#fef08a" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-red-400 mb-1">AUTO ABILITY: THERMAL UPDRAFT &amp; ASH REBIRTH</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Bounces upward off the bottom smoke trench instead of dying + automatically revives from ash once per run.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-07" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 8. GRAV-0 // VOID (DEEP VIOLET SINGULARITY - APEX ZERO-G HOVER)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-violet-500/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-violet-400 text-black rounded-sm">#08 VOID</span>
+                                <span class="text-[11px] font-pixel text-violet-300">APEX ZERO-G HOVER</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">GRAV-0 // "VOID"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-08')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-violet-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-08', '08_grav0_void.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-violet-400 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-08" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Inward-Pulled Gravity Motes -->
+                            <g class="anim-drift">
+                                <rect x="16" y="36" width="5" height="5" fill="#c4b5fd" />
+                                <rect x="18" y="76" width="6" height="6" fill="#a78bfa" />
+                                <rect x="96" y="40" width="5" height="5" fill="#ddd6fe" />
+                            </g>
+
+                            <!-- Main Inverted Singularity Cube -->
+                            <g class="anim-float">
+                                <!-- Automatic Ability FX: Zero-Gravity Apex Stabilization Plane -->
+                                <g class="ability-fx-layer">
+                                    <rect x="16" y="88" width="88" height="3" fill="#a78bfa" />
+                                    <rect x="28" y="94" width="64" height="2" fill="#ddd6fe" />
+                                </g>
+
+                                <!-- Inverted Obsidian Exterior with Violet Event-Horizon Halo -->
+                                <rect x="34" y="34" width="52" height="52" fill="#8b5cf6" fill-opacity="0.35" />
+                                <rect x="36" y="36" width="48" height="48" fill="#09090b" />
+                                <rect x="39" y="39" width="42" height="42" fill="#c4b5fd" />
+                                <rect x="41" y="41" width="38" height="38" fill="#050507" />
+
+                                <!-- Singularity Core Eye -->
+                                <rect x="52" y="50" width="16" height="16" fill="#6d28d9" />
+                                <rect x="55" y="53" width="10" height="10" fill="#ffffff" />
+                                <rect x="58" y="56" width="4" height="4" fill="#09090b" />
+
+                                <!-- Orbiting Accretion Ring (Tilted Pixel Ring) -->
+                                <g class="anim-grav-orbit">
+                                    <rect x="20" y="56" width="80" height="4" fill="#ddd6fe" />
+                                    <rect x="26" y="54" width="68" height="2" fill="#8b5cf6" />
+                                    <rect x="16" y="55" width="6" height="6" fill="#ffffff" />
+                                    <rect x="98" y="55" width="6" height="6" fill="#ffffff" />
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-violet-300 mb-1">AUTO ABILITY: FEATHER-FALL HOVER (APEX GLIDE)</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Automatically negates gravity for 0.65s at the top of every jump to glide horizontally + falls 35% slower.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-08" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+            <!-- =================================================================
+                 9. ECHO // PHANTOM (CRIMSON SCARF & TEAL HOLOGRAM CLONE - 6TH JUMP)
+                 ================================================================= -->
+            <article class="bg-neutral-900 border border-teal-400/40 rounded-xl overflow-hidden flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="p-3.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 text-[10px] font-pixel bg-teal-300 text-black rounded-sm">#09 PHANTOM</span>
+                                <span class="text-[11px] font-pixel text-teal-300">6TH JUMP CLONE + 2X</span>
+                            </div>
+                            <h2 class="font-pixel text-sm text-white mt-1">ECHO // "PHANTOM"</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="copyCharacterSvg('svg-char-09')" class="px-2.5 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-teal-300 hover:text-black text-neutral-200 border border-neutral-600 rounded transition">COPY</button>
+                            <button onclick="downloadSingleCharacterSvg('svg-char-09', '09_echo_phantom.svg')" class="px-2 py-1 text-[10px] font-pixel bg-neutral-800 hover:bg-teal-300 hover:text-black text-neutral-200 border border-neutral-600 rounded transition" title="Download SVG">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="h-60 pixel-stage flex items-center justify-center p-4 relative">
+                        <svg id="svg-char-09" class="pixel-svg w-44 h-44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Automatic Ability FX: Projected Hologram Decoy Clone + "+2" Badge -->
+                            <g class="ability-fx-layer anim-echo-clone">
+                                <!-- Hologram Wireframe Twin Cube -->
+                                <rect x="46" y="38" width="44" height="44" fill="#14b8a6" fill-opacity="0.2" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="4 2" />
+                                <rect x="62" y="50" width="14" height="6" fill="#5eead4" />
+                                <!-- Floating "+2" Double Score Pixel Tag -->
+                                <rect x="56" y="22" width="24" height="11" fill="#09090b" stroke="#2dd4bf" stroke-width="1" />
+                                <rect x="60" y="26" width="6" height="2" fill="#2dd4bf" />
+                                <rect x="62" y="24" width="2" height="6" fill="#2dd4bf" />
+                                <rect x="70" y="24" width="6" height="2" fill="#ffffff" />
+                                <rect x="70" y="27" width="6" height="2" fill="#ffffff" />
+                                <rect x="70" y="30" width="6" height="2" fill="#ffffff" />
+                            </g>
+
+                            <!-- Main Stealth Ninja Cube -->
+                            <g class="anim-float">
+                                <!-- Flowing Pixel Scarf Trailing Behind -->
+                                <g class="anim-drift">
+                                    <rect x="6" y="42" width="16" height="6" fill="#f43f5e" />
+                                    <rect x="16" y="46" width="16" height="6" fill="#e11d48" />
+                                    <rect x="24" y="44" width="14" height="8" fill="#f43f5e" />
+                                </g>
+
+                                <!-- Obsidian Stealth Chassis -->
+                                <rect x="34" y="36" width="48" height="48" fill="#e4e4e7" />
+                                <rect x="37" y="39" width="42" height="42" fill="#09090b" />
+                                <!-- Dark Slate Stealth Armor Plates -->
+                                <rect x="41" y="43" width="34" height="34" fill="#18181b" />
+                                <!-- Crimson Headband / Scarf Wrap -->
+                                <rect x="34" y="44" width="48" height="7" fill="#e11d48" />
+                                <rect x="36" y="45" width="44" height="3" fill="#fb7185" />
+
+                                <!-- Sharp Slanted Cyber-Ninja Visor -->
+                                <polygon points="52,54 74,50 74,58 52,60" fill="#2dd4bf" />
+                                <rect x="64" y="52" width="6" height="4" fill="#ffffff" />
+
+                                <!-- Stealth Shuriken Core Emblem -->
+                                <rect x="54" y="66" width="8" height="8" fill="#27272a" />
+                                <rect x="57" y="65" width="2" height="10" fill="#2dd4bf" />
+                                <rect x="53" y="69" width="10" height="2" fill="#2dd4bf" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-neutral-950 border-t border-neutral-800">
+                    <div class="text-[11px] font-pixel text-teal-300 mb-1">AUTO ABILITY: SHADOW DECOY &amp; 2X SCORE DASH</div>
+                    <p class="text-[11px] text-neutral-400 mb-2">Every 6th jump projects a teal hologram clone for 2.5s: awards Double Points (+2) and swaps places to dodge 1 crash.</p>
+                    <details>
+                        <summary class="text-[10px] font-pixel text-neutral-300 cursor-pointer hover:text-white">▸ VIEW SVG CODE</summary>
+                        <pre id="code-svg-char-09" class="mt-2 p-2 bg-black border border-neutral-800 text-[10px] text-neutral-300 overflow-x-auto max-h-32"></pre>
+                    </details>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- MASTER SPRITE SHEET EXPORT SECTION -->
+        <section class="bg-neutral-900 border border-neutral-700 rounded-xl overflow-hidden shadow-xl">
+            <div class="p-4 bg-neutral-950 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <span class="px-2 py-0.5 text-[10px] font-pixel bg-white text-black rounded-sm">MASTER CHARACTER SPRITE SHEET</span>
+                    <h2 class="font-pixel text-sm sm:text-base text-white mt-1">
+                        COMBINED <code class="text-amber-300">characters.svg</code> (&lt;symbol&gt; DEFINITIONS FOR ALL 9 CHARACTERS)
+                    </h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="copyMasterCharactersSvg()" class="px-3.5 py-2 text-xs font-pixel bg-white text-black font-bold rounded border border-black shadow-[3px_3px_0px_#52525b] hover:bg-neutral-200 transition">
+                        COPY characters.svg
+                    </button>
+                    <button onclick="downloadMasterCharactersSvg()" class="px-3.5 py-2 text-xs font-pixel bg-neutral-800 text-white rounded border border-neutral-600 hover:bg-neutral-700 transition">
+                        ⬇ DOWNLOAD characters.svg
+                    </button>
+                </div>
+            </div>
+            <div class="p-4 bg-black">
+                <pre id="masterSvgCodePreview" class="text-[11px] text-neutral-300 font-mono overflow-x-auto max-h-80 leading-relaxed select-all"></pre>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const CHAR_IDS = [
+            { id: 'svg-char-01', symbolId: 'char-01-origin' },
+            { id: 'svg-char-02', symbolId: 'char-02-thunder' },
+            { id: 'svg-char-03', symbolId: 'char-03-cloud' },
+            { id: 'svg-char-04', symbolId: 'char-04-ironclad' },
+            { id: 'svg-char-05', symbolId: 'char-05-glass' },
+            { id: 'svg-char-06', symbolId: 'char-06-glitch' },
+            { id: 'svg-char-07', symbolId: 'char-07-phoenix' },
+            { id: 'svg-char-08', symbolId: 'char-08-void' },
+            { id: 'svg-char-09', symbolId: 'char-09-phantom' }
+        ];
+
+        let showAbilityFx = true;
+        let animsRunning = true;
+
+        function buildCodePreviews() {
+            const symbolsList = [];
+
+            CHAR_IDS.forEach(({ id, symbolId }) => {
+                const svgEl = document.getElementById(id);
+                const preEl = document.getElementById(`code-${id}`);
+                if (!svgEl) return;
+
+                const cleanOuter = svgEl.outerHTML.trim();
+                if (preEl) {
+                    preEl.textContent = cleanOuter;
+                }
+
+                const inner = svgEl.innerHTML.trim();
+                symbolsList.push(
+`    <symbol id="${symbolId}" viewBox="0 0 120 120">
+${inner}
+    </symbol>`
+                );
+            });
+
+            const masterSvg =
+`<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" shape-rendering="crispEdges">
+${symbolsList.join('\n\n')}
+</svg>`;
+
+            const masterPre = document.getElementById('masterSvgCodePreview');
+            if (masterPre) {
+                masterPre.textContent = masterSvg;
+            }
+        }
+
+        function toggleAbilityMode() {
+            showAbilityFx = !showAbilityFx;
+            document.body.classList.toggle('mode-idle-only', !showAbilityFx);
+            const btn = document.getElementById('modeToggleBtn');
+            if (btn) {
+                if (showAbilityFx) {
+                    btn.textContent = 'MODE: IDLE + AUTO ABILITY FX';
+                    btn.className = 'px-3 py-1.5 text-xs font-pixel bg-emerald-400 text-black font-bold rounded border border-black shadow-[2px_2px_0px_#000] hover:bg-emerald-300 transition';
+                } else {
+                    btn.textContent = 'MODE: IDLE SPRITE ONLY';
+                    btn.className = 'px-3 py-1.5 text-xs font-pixel bg-neutral-800 text-neutral-200 rounded border border-neutral-600 hover:bg-neutral-700 transition';
+                }
+            }
+        }
+
+        function togglePauseAnims() {
+            animsRunning = !animsRunning;
+            document.body.classList.toggle('paused-anims', !animsRunning);
+            const btn = document.getElementById('pauseAnimBtn');
+            if (btn) {
+                btn.textContent = animsRunning ? '60FPS: RUNNING' : '60FPS: PAUSED';
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            const txt = document.getElementById('toastText');
+            if (!t || !txt) return;
+            txt.textContent = msg;
+            t.classList.remove('hidden');
+            t.classList.add('flex');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                t.classList.add('hidden');
+                t.classList.remove('flex');
+            }, 2200);
+        }
+
+        function copyText(text, label) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(`[OK] COPIED ${label}`);
+            } catch (e) {}
+            document.body.removeChild(ta);
+        }
+
+        function copyCharacterSvg(svgId) {
+            const el = document.getElementById(svgId);
+            if (!el) return;
+            copyText(`<?xml version="1.0" encoding="UTF-8"?>\n` + el.outerHTML.trim(), svgId.toUpperCase());
+        }
+
+        function copyMasterCharactersSvg() {
+            const pre = document.getElementById('masterSvgCodePreview');
+            if (!pre) return;
+            copyText(pre.textContent, 'characters.svg');
+        }
+
+        function triggerSvgDownload(filename, content) {
+            const blob = new Blob([content], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 500);
+        }
+
+        function downloadSingleCharacterSvg(svgId, filename) {
+            const el = document.getElementById(svgId);
+            if (!el) return;
+            const standalone = `<?xml version="1.0" encoding="UTF-8"?>\n` + el.outerHTML.trim();
+            triggerSvgDownload(filename, standalone);
+            showToast(`[OK] DOWNLOADED ${filename}`);
+        }
+
+        function downloadMasterCharactersSvg() {
+            const pre = document.getElementById('masterSvgCodePreview');
+            if (!pre) return;
+            triggerSvgDownload('characters.svg', pre.textContent);
+            showToast('[OK] DOWNLOADED characters.svg');
+        }
+
+        window.addEventListener('DOMContentLoaded', buildCodePreviews);
+    </script>
+</body>
+</html>

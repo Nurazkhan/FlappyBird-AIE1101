@@ -455,12 +455,26 @@
 
         async function preloadCharacterRosterSprites() {
             try {
+                // 1. Direct embedded DOM lookup (Guarantees 100% offline & GitHub Pages asset availability)
+                if (document.getElementById('svg-char-01')) {
+                    await Promise.all(CHARACTER_ROSTER.map(async (character) => {
+                        const node = document.getElementById(character.spriteId);
+                        if (node) {
+                            SPRITE_CACHE[`character-${character.id}`] = await rasterizeSymbolNode(node);
+                        }
+                    }));
+                    return;
+                }
+
+                // 2. Fetch external roster file fallback
                 const response = await fetch(CHARACTER_ROSTER_FILE);
                 if (!response.ok) return;
                 const rosterDoc = new DOMParser().parseFromString(await response.text(), 'text/html');
                 await Promise.all(CHARACTER_ROSTER.map(async (character) => {
                     const node = rosterDoc.getElementById(character.spriteId);
-                    SPRITE_CACHE[`character-${character.id}`] = await rasterizeSymbolNode(node);
+                    if (node) {
+                        SPRITE_CACHE[`character-${character.id}`] = await rasterizeSymbolNode(node);
+                    }
                 }));
             } catch (err) {
                 console.warn('Character roster sprites could not be loaded:', err);
@@ -1404,7 +1418,7 @@
             CHARACTER_ROSTER.forEach((character) => {
                 const thumb = document.getElementById(`shopSprite-${character.id}`);
                 const sprite = SPRITE_CACHE[`character-${character.id}`];
-                if (!thumb || !sprite) return;
+                if (!thumb) return;
                 const thumbCtx = thumb.getContext('2d');
                 thumbCtx.imageSmoothingEnabled = false;
                 thumbCtx.clearRect(0, 0, thumb.width, thumb.height);
@@ -1413,15 +1427,28 @@
                 thumbCtx.fillStyle = 'rgba(0, 0, 0, 0.45)';
                 thumbCtx.fillRect(Math.round(thumb.width * 0.15), thumb.height - 10, Math.round(thumb.width * 0.7), 6);
 
-                // Draw sprite large, crisp, edge-to-edge
-                thumbCtx.drawImage(sprite, 2, 2, thumb.width - 4, thumb.height - 12);
+                if (sprite) {
+                    // Draw sprite large, crisp, edge-to-edge
+                    thumbCtx.drawImage(sprite, 2, 2, thumb.width - 4, thumb.height - 12);
+                } else {
+                    // Procedural styled cube fallback
+                    const cx = thumb.width / 2;
+                    const cy = thumb.height / 2 - 4;
+                    const size = 38;
+                    thumbCtx.fillStyle = character.color;
+                    thumbCtx.fillRect(cx - size / 2, cy - size / 2, size, size);
+                    thumbCtx.fillStyle = '#09090b';
+                    thumbCtx.fillRect(cx - size / 2 + 4, cy - size / 2 + 4, size - 8, size - 8);
+                    thumbCtx.fillStyle = character.color;
+                    thumbCtx.fillRect(cx + 2, cy - 4, 8, 8);
+                }
             });
 
             // Also draw the large active pilot showcase preview in the shop detail footer
             const active = getActiveCharacter();
             const bigCanvas = document.getElementById('shopSelectedHeroBig');
             const bigSprite = SPRITE_CACHE[`character-${active.id}`];
-            if (bigCanvas && bigSprite) {
+            if (bigCanvas) {
                 const bigCtx = bigCanvas.getContext('2d');
                 bigCtx.imageSmoothingEnabled = false;
                 bigCtx.clearRect(0, 0, bigCanvas.width, bigCanvas.height);
@@ -1430,8 +1457,19 @@
                 bigCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 bigCtx.fillRect(16, bigCanvas.height - 14, bigCanvas.width - 32, 8);
 
-                // Draw large showcase cube
-                bigCtx.drawImage(bigSprite, 4, 4, bigCanvas.width - 8, bigCanvas.height - 16);
+                if (bigSprite) {
+                    bigCtx.drawImage(bigSprite, 4, 4, bigCanvas.width - 8, bigCanvas.height - 16);
+                } else {
+                    const cx = bigCanvas.width / 2;
+                    const cy = bigCanvas.height / 2 - 6;
+                    const size = 64;
+                    bigCtx.fillStyle = active.color;
+                    bigCtx.fillRect(cx - size / 2, cy - size / 2, size, size);
+                    bigCtx.fillStyle = '#09090b';
+                    bigCtx.fillRect(cx - size / 2 + 6, cy - size / 2 + 6, size - 12, size - 12);
+                    bigCtx.fillStyle = active.color;
+                    bigCtx.fillRect(cx + 4, cy - 8, 14, 14);
+                }
             }
         }
 
