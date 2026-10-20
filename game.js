@@ -184,48 +184,16 @@
         }
 
         /***********************************************************************
-         * 1.5. FIRST-LOAD RETRO TERMINAL STORY INTRO (Lore & Plot Stream)
+         * 1.5. FIRST-LOAD BLACK SCREEN STORY CRAWL (Human-Voice Simple Lore)
          ***********************************************************************/
-        const STORY_CHAPTERS = [
-            {
-                tag: "ENTRY 01 // THE VESSEL: CUBE-01",
-                title: "THE LAST SENTIENT QUANTUM PIXEL",
-                text: "Before the void, there was the Genesis Canvas — a radiant digital universe of infinite resolution, harmony, and light.\n\nThen came the Great Deprecation. A cascading hardware corruption wiped the canvas, dissolving the cosmos into lifeless monochrome static.\n\nYou are CUBE-01. The last surviving quantum sub-pixel. Fragile, solitary, and cast adrift, you carry within your cubic core the only remaining uncorrupted Seed of Luminescence."
-            },
-            {
-                tag: "ENTRY 02 // THE GRAVEYARD: THE JUNK TOWERS",
-                title: "MONOLITHS OF OBSOLETE SCRAP",
-                text: "In the eons following the collapse, trillions of petabytes of discarded human machinery — shattered CRT monitors, burned server racks, industrial vacuum tubes, and toxic silicon scrap — sank into the abyssal Shadow Trench.\n\nCompacted by systemic gravity, this digital graveyard coalesced into the Junk Towers: jagged, monolithic pillars reaching endlessly toward a dead sky.\n\nThese scrap towers pulse with erratic magnetic distortion, crushing any wandering signal foolish enough to trespass between them."
-            },
-            {
-                tag: "ENTRY 03 // THE EXPEDITION: THE ROOT FRAME",
-                title: "RESTORE LIGHT TO THE CANVAS",
-                text: "Beyond the perimeter of the Junk Towers lies Sector 0: the mythical Root Frame Terminal at origin coordinates (0, 0, 0).\n\nYour directive is absolute: navigate the treacherous corridors of scrap, defy systemic entropy with every thrust flap, and reach the Root Terminal.\n\nWhen your quantum core docks with the Terminal, you will trigger the Universal Frame Refresh — purging the junk towers and rekindling brilliant light across the entire universe.\n\nEvery jump is a fight for existence. Initiate flight sequence."
-            }
-        ];
-
         let storyIntroActive = false;
-        let storyCurrentChapter = 0;
-        let storyCharIndex = 0;
-        let storyTypeTimer = null;
-        let storyIsTyping = false;
-        let storyGraphicsLoaded = false;
 
         function isStoryIntroActive() {
             return storyIntroActive;
         }
 
         function notifyStoryGraphicsReady() {
-            storyGraphicsLoaded = true;
-            const dot = document.getElementById('storyGraphicsStatusDot');
-            const text = document.getElementById('storyGraphicsStatusText');
-            if (dot) {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
-            }
-            if (text) {
-                text.className = 'font-pixel text-[10px] sm:text-[11px] text-emerald-400';
-                text.textContent = '✔ ALL GRAPHICS COMPILED & BUFFERED (100%)';
-            }
+            // Background graphics load seamlessly while crawl is active
         }
 
         function playStoryIntro(force = false) {
@@ -234,145 +202,32 @@
             }
 
             storyIntroActive = true;
-            storyCurrentChapter = 0;
 
             const overlay = document.getElementById('storyIntroOverlay');
             if (overlay) {
                 overlay.style.display = 'flex';
                 overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
                 overlay.classList.remove('hidden');
             }
 
-            renderStoryChapter(0);
-        }
-
-        function renderStoryChapter(chapterIndex) {
-            if (chapterIndex < 0 || chapterIndex >= STORY_CHAPTERS.length) {
-                exitStoryIntro();
-                return;
-            }
-
-            const chapter = STORY_CHAPTERS[chapterIndex];
-            storyCurrentChapter = chapterIndex;
-            storyCharIndex = 0;
-            storyIsTyping = true;
-
-            if (storyTypeTimer) {
-                clearTimeout(storyTypeTimer);
-                storyTypeTimer = null;
-            }
-
-            const tagEl = document.getElementById('storyChapterTag');
-            const headEl = document.getElementById('storyLogHeading');
-            const badgeEl = document.getElementById('storyChapterBadge');
-            const progressEl = document.getElementById('storyProgressBar');
-            const textBox = document.getElementById('storyTextBox');
-            const continueBtn = document.getElementById('storyContinueBtn');
-            const hintEl = document.getElementById('storyPromptHint');
-
-            if (tagEl) tagEl.textContent = chapter.tag;
-            if (headEl) headEl.textContent = chapter.title;
-            if (badgeEl) badgeEl.textContent = `ENTRY ${chapterIndex + 1}/${STORY_CHAPTERS.length}`;
-            if (progressEl) {
-                progressEl.style.width = `${((chapterIndex + 1) / STORY_CHAPTERS.length) * 100}%`;
-            }
-            if (textBox) textBox.textContent = '';
-            if (hintEl) hintEl.textContent = 'PRESS [SPACE] OR CLICK TO ACCELERATE';
-
-            if (continueBtn) {
-                continueBtn.textContent = 'FAST-FORWARD >>';
-                continueBtn.className = 'pixel-btn-dark px-5 py-2.5 font-pixel text-xs transition-all';
-            }
-
-            typeNextStoryChar();
-        }
-
-        function typeNextStoryChar() {
-            const chapter = STORY_CHAPTERS[storyCurrentChapter];
-            if (!chapter) return;
-
-            const textBox = document.getElementById('storyTextBox');
-            const continueBtn = document.getElementById('storyContinueBtn');
-            const hintEl = document.getElementById('storyPromptHint');
-
-            if (storyCharIndex < chapter.text.length) {
-                const char = chapter.text.charAt(storyCharIndex);
-                if (textBox) {
-                    textBox.textContent += char;
-                }
-                storyCharIndex++;
-
-                let delay = 18;
-                if (char === '.' || char === '!' || char === '?') {
-                    delay = 140;
-                } else if (char === ',' || char === ';' || char === ':') {
-                    delay = 70;
-                } else if (char === '\n') {
-                    delay = 100;
-                }
-
-                storyTypeTimer = setTimeout(typeNextStoryChar, delay);
-            } else {
-                storyIsTyping = false;
-                storyTypeTimer = null;
-
-                const isLast = storyCurrentChapter >= STORY_CHAPTERS.length - 1;
-                if (continueBtn) {
-                    continueBtn.textContent = isLast ? 'INITIALIZE FLIGHT [SPACE] >>' : 'NEXT LOG [SPACE] >>';
-                    continueBtn.className = 'pixel-btn px-5 py-2.5 font-pixel text-xs font-bold transition-all';
-                }
-                if (hintEl) {
-                    hintEl.textContent = isLast ? 'READY TO COMMENCE MISSION' : 'PRESS [SPACE] OR CLICK TO CONTINUE';
-                }
-            }
-        }
-
-        function advanceOrSkipStoryIntro() {
-            if (!storyIntroActive) return;
-
-            const chapter = STORY_CHAPTERS[storyCurrentChapter];
-            const textBox = document.getElementById('storyTextBox');
-            const continueBtn = document.getElementById('storyContinueBtn');
-            const hintEl = document.getElementById('storyPromptHint');
-
-            if (storyIsTyping) {
-                if (storyTypeTimer) {
-                    clearTimeout(storyTypeTimer);
-                    storyTypeTimer = null;
-                }
-                storyIsTyping = false;
-                if (textBox && chapter) {
-                    textBox.textContent = chapter.text;
-                }
-                const isLast = storyCurrentChapter >= STORY_CHAPTERS.length - 1;
-                if (continueBtn) {
-                    continueBtn.textContent = isLast ? 'INITIALIZE FLIGHT [SPACE] >>' : 'NEXT LOG [SPACE] >>';
-                    continueBtn.className = 'pixel-btn px-5 py-2.5 font-pixel text-xs font-bold transition-all';
-                }
-                if (hintEl) {
-                    hintEl.textContent = isLast ? 'READY TO COMMENCE MISSION' : 'PRESS [SPACE] OR CLICK TO CONTINUE';
-                }
-                return;
-            }
-
-            if (storyCurrentChapter < STORY_CHAPTERS.length - 1) {
-                renderStoryChapter(storyCurrentChapter + 1);
-            } else {
-                exitStoryIntro();
+            const track = document.getElementById('storyCrawlTrack');
+            if (track) {
+                track.classList.remove('story-crawl-active');
+                void track.offsetWidth; // Force CSS reflow to replay
+                track.classList.add('story-crawl-active');
+                track.onanimationend = () => {
+                    exitStoryIntro();
+                };
             }
         }
 
         function handleStoryOverlayClick(event) {
-            if (event.target.closest('#storySkipBtn') || event.target.closest('#storyContinueBtn')) return;
-            advanceOrSkipStoryIntro();
+            exitStoryIntro();
         }
 
         function exitStoryIntro() {
-            if (storyTypeTimer) {
-                clearTimeout(storyTypeTimer);
-                storyTypeTimer = null;
-            }
-            storyIsTyping = false;
+            if (!storyIntroActive) return;
             storyIntroActive = false;
 
             try {
@@ -388,7 +243,7 @@
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     overlay.classList.add('hidden');
-                }, 300);
+                }, 400);
             }
         }
 
@@ -1186,7 +1041,7 @@
             }
 
             if (storyIntroActive) {
-                advanceOrSkipStoryIntro();
+                exitStoryIntro();
                 return;
             }
 
@@ -2299,11 +2154,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (storyIntroActive) {
-                if (e.code === 'Space' || e.code === 'Enter') {
-                    e.preventDefault();
-                    advanceOrSkipStoryIntro();
-                    return;
-                } else if (e.code === 'Escape') {
+                if (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape') {
                     e.preventDefault();
                     exitStoryIntro();
                     return;
